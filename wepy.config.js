@@ -5,6 +5,7 @@ module.exports = {
   wpyExt: '.wpy',
   eslint: true,
   cliLogs: !prod,
+  static: ['src/image', 'src/custom-tab-bar'],
   build: {
   },
   resolve: {

@@ -1,0 +1,56 @@
+<style lang="less" src='./index.less'></style>
+<template>
+  <div class="container">
+    <div class="userinfo" @tap="handleViewTap">
+      <image class="userinfo-avatar" src="{{ userInfo.avatarUrl }}" background-size="cover"/>
+      <div class="userinfo-nickname">{{ userInfo.nickName }}</div>
+    </div>
+
+    
+
+    <panel>
+        <button open-type="getUserInfo"  @getuserinfo="onGotUserInfo">
+            <view>微信登录</view>
+        </button>
+    </panel>
+    <!--toast /-->
+  </div>
+</template>
+
+<script>
+import wepy from '@wepy/core';
+import eventHub from '@/common/eventHub';
+import { mapState } from '@wepy/x';
+import store from '@/store';
+import { userLogin } from '@/utils/common';
+
+wepy.page({
+  store,
+  data: {},
+
+  computed: {},
+
+  methods: {
+    onGotUserInfo(res) {
+      if (res.$wx.detail.iv) {
+        userLogin(true);
+      }
+    }
+  },
+  onShow() {
+    
+    if (typeof this.$wx.getTabBar === 'function' && this.$wx.getTabBar()) {
+      console.log('首页');
+      this.$wx.getTabBar().setData({
+        selected: 0
+      });
+    }
+  }
+});
+</script>
+<config>
+{
+    navigationBarTitleText: '宠物喂养',
+    usingComponents: {}
+}
+</config>

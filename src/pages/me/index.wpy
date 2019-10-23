@@ -1,0 +1,67 @@
+<style lang="less">
+</style>
+<wxs module="m1" lang="babel">
+const getTime = (time) => {
+  let date = getDate(time);
+  let hour = date.getHours();
+  let mins = date.getMinutes();
+  let sec = date.getSeconds();
+  let milli = date.getMilliseconds();
+  return `${hour}:${mins}:${sec}.${milli}`;
+}
+module.exports.getTime = getTime;
+</wxs>
+<template>
+  <div class="container">
+    <div class="userinfo" @tap="handleViewTap">
+      <image class="userinfo-avatar" src="{{ userInfo.avatarUrl }}" background-size="cover"/>
+      <div class="userinfo-nickname">{{ userInfo.nickName }}</div>
+    </div>
+
+    
+
+    <panel>
+        <button open-type="getUserInfo"  bindgetuserinfo="onGotUserInfo">
+            <view>微信登录</view>
+        </button>
+    </panel>
+    <!--toast /-->
+  </div>
+</template>
+
+<script>
+import wepy from '@wepy/core';
+import { mapState } from '@wepy/x';
+import store from '@/store';
+import { userLogin } from '@/utils/common';
+
+wepy.page({
+  store,
+  data: {},
+
+  computed: {},
+
+  methods: {
+    onGotUserInfo(res) {
+      if (res.$wx.detail.iv) {
+        userLogin(true);
+      }
+    }
+  },
+
+  onShow() {
+    if (typeof this.$wx.getTabBar === 'function' && this.$wx.getTabBar()) {
+      console.log('我的');
+      this.$wx.getTabBar().setData({
+        selected: 3
+      });
+    }
+  }
+});
+</script>
+<config>
+{
+    navigationBarTitleText: '我的',
+    usingComponents: {}
+}
+</config>

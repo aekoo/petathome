@@ -1,0 +1,30 @@
+
+<template>
+    <div class="container">
+    </div>
+</template>
+<script>
+import wepy from '@wepy/core';
+
+wepy.page({
+  data: {},
+
+  methods: {},
+
+  onLoad() {},
+  onShow() {
+    if (typeof this.$wx.getTabBar === 'function' && this.$wx.getTabBar()) {
+      console.log('客服');
+      this.$wx.getTabBar().setData({
+        selected: 1
+      });
+    }
+  }
+});
+</script>
+<config>
+{
+    navigationBarTitleText: '客服',
+    usingComponents: {}
+}
+</config>
