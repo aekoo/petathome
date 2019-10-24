@@ -18,7 +18,7 @@ Component({
         'selectedIconPath': '/image/service-s.png',
         "text": "客服"
       }, {
-        "pagePath": "/pages/order/index",
+        "pagePath": "/pages/orders/index",
         'iconPath': '/image/order.png',
         'selectedIconPath': '/image/order-s.png',
         "text": "订单"

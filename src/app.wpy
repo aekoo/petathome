@@ -20,7 +20,7 @@ wepy.app({
     pages: [
       'pages/home/index',
       'pages/service/index',
-      'pages/order/index',
+      'pages/orders/index',
       'pages/me/index',
     ],
     window: {
@@ -45,7 +45,7 @@ wepy.app({
         'selectedIconPath':'image/service-s.png',
         "text": "客服"
       }, {
-        "pagePath": "pages/order/index",
+        "pagePath": "pages/orders/index",
         'iconPath':'image/order.png',
         'selectedIconPath':'image/order-s.png',
         "text": "订单"

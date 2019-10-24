@@ -1,0 +1,52 @@
+<style lang="less" src="./index.less"></style>
+<template>
+  <div class="container">
+    <van-tabs sticky swipeable class="orderTab" active="{{ active }}" bind:change="onChange">
+      <van-tab v-for="(item,i) in tabs" title="{{item}}">{{item}}</van-tab>
+    </van-tabs>
+  </div>
+</template>
+
+<script>
+import wepy from '@wepy/core';
+import eventHub from '@/common/eventHub';
+import { mapState } from '@wepy/x';
+import store from '@/store';
+
+wepy.page({
+  store,
+  data: {
+    tabs: ['全部订单', '待支付', '进行中', '已完成']
+  },
+
+  computed: {},
+
+  methods: {
+    onChange(event) {
+      console.log(event);
+
+      wx.showToast({
+        title: `切换到标签 ${event.$wx.detail.title}`,
+        icon: 'none'
+      });
+    }
+  },
+  onShow() {
+    if (typeof this.$wx.getTabBar === 'function' && this.$wx.getTabBar()) {
+      console.log('订单');
+      this.$wx.getTabBar().setData({
+        selected: 2
+      });
+    }
+  }
+});
+</script>
+<config>
+{
+    navigationBarTitleText: "我的订单",
+    usingComponents: {
+      "van-tab": "~@/components/vant-weapp/tab/index",
+      "van-tabs": "~@/components/vant-weapp/tabs/index"
+    }
+}
+</config>

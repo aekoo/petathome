@@ -1,30 +1,64 @@
-<style lang="less">
-</style>
-<wxs module="m1" lang="babel">
-const getTime = (time) => {
-  let date = getDate(time);
-  let hour = date.getHours();
-  let mins = date.getMinutes();
-  let sec = date.getSeconds();
-  let milli = date.getMilliseconds();
-  return `${hour}:${mins}:${sec}.${milli}`;
-}
-module.exports.getTime = getTime;
-</wxs>
+<style lang="less" src="./index.less"></style>
 <template>
   <div class="container">
-    <div class="userinfo" @tap="handleViewTap">
-      <image class="userinfo-avatar" src="{{ userInfo.avatarUrl }}" background-size="cover"/>
-      <div class="userinfo-nickname">{{ userInfo.nickName }}</div>
-    </div>
+    <view class="userHeader">
+        <view class="userHeaderInfo">
+            <view class="useHeaderImg">
+                <image mode="aspectFill" src="../../image/default.png" />
+            </view>
+            <view class="userHeaderBox">
+              <view class="userHeaderName">哈哈哈</view>
+              <view class="userHeaderPhone">18672886886</view>
+            </view>
+        </view>
+        <view class="myPetBox">
+          <view class="myPetTitle">我的爱宠</view>
+          <view class="myPetList">
+              <image class="myPetImage" mode="widthFix" src="../../image/default.png"/>
+              <image class="myPetImage" mode="widthFix" src="../../image/default.png"/>
+          </view>
+          <view class="myPetBoxArrow">
+              <image mode="widthFix" src="../../image/arrow.png"/>
+          </view>
+        </view>
+    </view>
+    <view class="userContent">
+        <view class="userContentLi" >
+            <view class="userContentLiIcon"><image src="../../image/info.png" mode="widthFix"/></view>
+            <view class="userContentLiText">个人信息</view>
+            <view class="userContentLiArrow">
+                <image mode="widthFix" src="../../image/arrow.png"/>
+            </view>
+        </view>
+        <view class="userContentLi" @tap="toAbout">
+            <view class="userContentLiIcon"><image src="../../image/address.png" mode="widthFix"/></view>
+            <view class="userContentLiText">管理地址</view>
+            <view class="userContentLiArrow">
+                <image mode="widthFix" src="../../image/arrow.png"/>
+            </view>
+        </view>
+        <view class="userContentLi">
+            <view class="userContentLiIcon"><image src="../../image/wechat.png" mode="widthFix"/></view>
+            <view class="userContentLiText">客服</view>
+            <view class="userContentLiArrow">
+                <image mode="widthFix" src="../../image/arrow.png"/>
+            </view>
+            <button open-type="contact"></button>
+        </view>
+        <view class="userContentLi">
+            <view class="userContentLiIcon"><image src="../../image/join.png" mode="widthFix"/></view>
+            <view class="userContentLiText">我想成为爱宠官</view>
+            <view class="userContentLiArrow">
+                <image mode="widthFix" src="../../image/arrow.png"/>
+            </view>
+        </view>
+    </view>
 
-    
-
-    <panel>
-        <button open-type="getUserInfo"  bindgetuserinfo="onGotUserInfo">
-            <view>微信登录</view>
-        </button>
-    </panel>
+    <!-- <panel>
+      <button open-type="getUserInfo"  bindgetuserinfo="onGotUserInfo">
+        <view>微信登录</view>
+      </button>
+    </panel> -->
     <!--toast /-->
   </div>
 </template>
@@ -61,7 +95,12 @@ wepy.page({
 </script>
 <config>
 {
-    navigationBarTitleText: '我的',
-    usingComponents: {}
+    navigationBarTitleText: "我的",
+    "usingComponents": {
+      "van-cell": "~@/components/vant-weapp/cell/index",
+      "van-cell-group": "~@/components/vant-weapp/cell-group/index",
+      "van-icon": "~@/components/vant-weapp/icon/index",
+      "van-tag": "~@/components/vant-weapp/tag/index"
+    }
 }
 </config>
