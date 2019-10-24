@@ -1,18 +1,18 @@
-<style lang="less" src='./index.less'></style>
+<style lang="less" src="./index.less"></style>
 <template>
   <div class="container">
-    <div class="userinfo" @tap="handleViewTap">
-      <image class="userinfo-avatar" src="{{ userInfo.avatarUrl }}" background-size="cover"/>
-      <div class="userinfo-nickname">{{ userInfo.nickName }}</div>
-    </div>
+    <view class="notice-bar">
+      <view class="notice-bar-icon"><image src="../../image/bell.png"/></view>
+      <view class="notice-bar-text" bindtap="textclick">北京国庆期间上门喂养注意事项</view>
+    </view>
 
     
 
-    <panel>
+    <!-- <panel>
         <button open-type="getUserInfo"  @getuserinfo="onGotUserInfo">
             <view>微信登录</view>
         </button>
-    </panel>
+    </panel> -->
     <!--toast /-->
   </div>
 </template>
@@ -38,7 +38,6 @@ wepy.page({
     }
   },
   onShow() {
-    
     if (typeof this.$wx.getTabBar === 'function' && this.$wx.getTabBar()) {
       console.log('首页');
       this.$wx.getTabBar().setData({
@@ -50,7 +49,7 @@ wepy.page({
 </script>
 <config>
 {
-    navigationBarTitleText: '宠物喂养',
+    navigationBarTitleText: "宠物喂养",
     usingComponents: {}
 }
 </config>

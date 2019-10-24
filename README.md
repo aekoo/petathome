@@ -3,7 +3,7 @@
 ## Usage
 
 ```bash
-# 先确保电脑上安装过 caiyi-cli
+
 npm install 
 
 # 开发构建，监听
