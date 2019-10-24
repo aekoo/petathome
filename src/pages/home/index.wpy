@@ -5,6 +5,20 @@
       <view class="notice-bar-icon"><image src="../../image/bell.png"/></view>
       <view class="notice-bar-text" bindtap="textclick">北京国庆期间上门喂养注意事项</view>
     </view>
+    <view class="location">
+      <view class="location-box">
+        <image class="location-icon" src="../../image/location.png"/>
+        <text class="location-name">北京市</text>
+      </view>
+    </view>
+    <swiper class="top-banner" indicator-dots="{{indicatorDots}}" indicator-color="#000" indicator-active-color="#FFF" autoplay="true" circular="true">
+        <swiper-item>
+          <view class="swiper-item">banner1</view>
+        </swiper-item>
+        <swiper-item>          
+          <view class="swiper-item">banner2</view>
+        </swiper-item>
+    </swiper>
 
     
 
@@ -26,7 +40,9 @@ import { userLogin } from '@/utils/common';
 
 wepy.page({
   store,
-  data: {},
+  data: {
+    indicatorDots: true,
+  },
 
   computed: {},
 
