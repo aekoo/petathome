@@ -1,12 +1,18 @@
 @import '../../app.less';
+
+page {
+  background: #FFF;
+}
+
 // 通告栏
-.notice-bar{
+.notice-bar {
   position: relative;
   width: 100%;
   background: #F0F0F0;
   height: 60rpx;
   overflow: hidden;
-  &:after{
+
+  &:after {
     position: absolute;
     content: '';
     top: 0;
@@ -16,48 +22,57 @@
     background: #F0F0F0;
     z-index: 2;
   }
-  .notice-bar-icon{
+
+  .notice-bar-icon {
     position: absolute;
-    padding:10rpx 10rpx 10rpx 24rpx;
+    padding: 10rpx 10rpx 10rpx 24rpx;
     width: 40rpx;
     height: 42rpx;
     background: #F0F0F0;
     z-index: 2;
   }
-  .notice-bar-text{
+
+  .notice-bar-text {
     position: absolute;
-    top:0rpx;
+    top: 0rpx;
     height: 60rpx;
     line-height: 60rpx;
     font-size: 26rpx;
     color: #656565;
     white-space: nowrap;
-    animation:myfirst 20s linear infinite;
+    animation: myfirst 20s linear infinite;
     z-index: 1;
-    }
-}
-  @keyframes myfirst
-  {
-    0% {left:750rpx;}
-    100% {left:-100%;}
   }
+}
+
+@keyframes myfirst {
+  0% {
+    left: 750rpx;
+  }
+
+  100% {
+    left: -100%;
+  }
+}
+
 // 位置
-.location{
+.location {
   margin: 0 32rpx;
   height: 72rpx;
   line-height: 72rpx;
-  
-  .location-box{
+
+  .location-box {
     display: inline-block;
     height: 100%;
     box-sizing: border-box;
 
-    .location-icon{
+    .location-icon {
       width: 36rpx;
       height: 36rpx;
       vertical-align: middle;
     }
-    .location-name{
+
+    .location-name {
       padding: 0 12rpx;
       font-size: 30rpx;
       color: @text-color;
@@ -65,12 +80,108 @@
     }
   }
 }
+
 // banner
-.top-banner{
-  margin: 0 32rpx;
+.top-banner {
+  margin: 6rpx 32rpx 0;
   height: 364rpx;
-  background:#F8E9CA;
+  background: #7D7D7D;
   border-radius: 12rpx;
+
+  // 指示点
+  .wx-swiper-dot {
+    width: 8rpx;
+    height: 8rpx;
+    border-radius: 6px;
+  }
+
+  // 未选中
+  .wx-swiper-dot::before {}
+
+  // 选中
+  .wx-swiper-dot-active::before {}
+
 }
-.swiper-item{
+
+// 喂养列表
+.feed-pet-box {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  margin: 32rpx 32rpx 0;
+
+  .feed-pet {
+    width: 328rpx;
+    height: 324rpx;
+    border-radius: 12rpx;
+  }
+}
+
+//我的爱宠
+.myPetBox {
+  display: flex;
+  position: relative;
+  margin: 32rpx 32rpx 0;
+  height: 120rpx;
+  line-height: 120rpx;
+  background: #F9F7EE;
+  border-radius: 78rpx;
+
+  .myPetTitle {
+    margin: auto 0 auto 36rpx;
+    font-size: 34rpx;
+    color: @text-color;
+  }
+
+  .myPetList {
+    margin: auto 0;
+    height: 92rpx;
+
+    .myPetImage {
+      margin-left: 24rpx;
+      width: 92rpx;
+      height: 92rpx;
+      border-radius: 50%;
+    }
+  }
+
+  .myPetAdd {
+    position: relative;
+    margin: auto 24rpx;
+    width: 92rpx;
+    height: 92rpx;
+    background: #F9F0DD;
+    border-radius: 50%;
+
+    &::before {
+      position: absolute;
+      content: '';
+      top: 50%;
+      left: 50%;
+      transform: translateX(-50%) translateY(-50%);
+      width: 32rpx;
+      height: 4rpx;
+      background: #E2BF51;
+    }
+
+    &::after {
+      position: absolute;
+      content: '';
+      top: 50%;
+      left: 50%;
+      transform: translateX(-50%) translateY(-50%);
+      width: 4rpx;
+      height: 32rpx;
+      background: #E2BF51;
+    }
+  }
+}
+
+// info-banner
+.info-banner {
+  margin: 32rpx 32rpx 0;
+  height: 274rpx;
+  background: linear-gradient(140deg, #F5F3ED 0%, #EFE3CE 100%);
+  border-radius: 12rpx;
 }

@@ -1,10 +1,44 @@
 <style lang="less" src="./index.less"></style>
 <template>
-  <div class="container">
-    <van-tabs sticky swipeable class="orderTab" active="{{ active }}" bind:change="onChange">
-      <van-tab v-for="(item,i) in tabs" title="{{item}}">{{item}}</van-tab>
+  <view class="container">
+    <van-tabs sticky="true" swipeable animated="true" class="orderBox" border="false" line-width="36" active="{{ active }}" bind:change="onChange">
+      <van-tab v-for="(item,i) in tabNames" v-bind:key="i" title="{{item}}">
+          <view class="orderCard">
+            <view class="order-title">
+              <text>上门喂猫</text>
+              <text class="order-time">2019-09-14 13:00 下单</text>
+            </view>
+            <view class="select-item">
+              <text class="select-item-name">高级选择：</text>
+              <text class="select-item-value">剪指甲、换猫砂、打针、各种高级选择的标签、租赁摄像头×2</text>
+            </view>
+            <view class="select-item">
+              <text class="select-item-name">服务地址：</text>
+              <text class="select-item-value">这是地址这是地址这是地址这是地址这是地址这是地址</text>
+            </view>
+            <view class="serviceBox">
+              <view class="select-item">
+                <text class="select-item-name">上门日期 </text>
+                <text class="select-item-value">09月14日、09月15日、09月16日、09月17日</text>
+              </view>
+              <view class="select-item">
+                <text class="select-item-name">服务时间 </text>
+                <text class="select-item-value">上午8点-9点</text>
+              </view>
+            </view>
+            <view class="order-action">
+              <view class="order-price">总价<text class="price">199</text></view>
+              <!-- <view class="order-operate goPay">去支付</view> -->
+              <!-- <view class="order-operate">待服务</view> -->
+              <!-- <view class="order-operate goEvaluate">去评价</view> -->
+              <view class="order-operate haveEvaluate">已评价</view>
+              <!-- <view class="order-operate cancelOrder">取消订单</view> -->
+              <!-- <view class="order-operate">已取消</view> -->
+            </view>
+          </view>
+      </van-tab>
     </van-tabs>
-  </div>
+  </view>
 </template>
 
 <script>
@@ -16,7 +50,9 @@ import store from '@/store';
 wepy.page({
   store,
   data: {
-    tabs: ['全部订单', '待支付', '进行中', '已完成']
+    tabNames: ['全部订单', '待支付', '进行中', '已完成'],
+    ipX: false,
+    scrollHeight: 500 //订单列表滚动区域高度
   },
 
   computed: {},

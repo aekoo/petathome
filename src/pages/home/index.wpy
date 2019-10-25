@@ -1,9 +1,9 @@
 <style lang="less" src="./index.less"></style>
 <template>
-  <div class="container">
-    <view class="notice-bar">
+  <view class="container">
+    <view class="notice-bar" v-if="noticeText">
       <view class="notice-bar-icon"><image src="../../image/bell.png"/></view>
-      <view class="notice-bar-text" bindtap="textclick">北京国庆期间上门喂养注意事项</view>
+      <view class="notice-bar-text" bindtap="textclick">{{noticeText}}</view>
     </view>
     <view class="location">
       <view class="location-box">
@@ -11,15 +11,32 @@
         <text class="location-name">北京市</text>
       </view>
     </view>
-    <swiper class="top-banner" indicator-dots="{{indicatorDots}}" indicator-color="#000" indicator-active-color="#FFF" autoplay="true" circular="true">
-        <swiper-item>
-          <view class="swiper-item">banner1</view>
-        </swiper-item>
-        <swiper-item>          
-          <view class="swiper-item">banner2</view>
-        </swiper-item>
+    <!-- top banner -->
+    <swiper class="top-banner" indicator-dots="{{indicatorDots}}" indicator-color="#5E5E60" indicator-active-color="#FFF" autoplay="true" circular="true">
+      <swiper-item>
+        <view class="swiper-item"></view>
+      </swiper-item>
+      <swiper-item>          
+        <view class="swiper-item"></view>
+      </swiper-item>
     </swiper>
-
+    <!-- 预约 -->
+    <view class="feed-pet-box">
+      <view class="feed-pet"><image src="../../image/feed-dog.png"/></view>
+      <view class="feed-pet"><image src="../../image/feed-cat.png"/></view>
+    </view>
+    <!-- 我的爱宠 -->
+    <view class="myPetBox">
+      <view class="myPetTitle">我的爱宠</view>
+      <view class="myPetList">
+        <image class="myPetImage" mode="widthFix" src="../../image/default.png"/>
+        <image class="myPetImage" mode="widthFix" src="../../image/default.png"/>
+      </view>
+      <view class="myPetAdd"></view>
+    </view>
+    <!-- info banner -->
+    <view class="info-banner">
+    </view>
     
 
     <!-- <panel>
@@ -28,7 +45,7 @@
         </button>
     </panel> -->
     <!--toast /-->
-  </div>
+  </view>
 </template>
 
 <script>
@@ -41,7 +58,8 @@ import { userLogin } from '@/utils/common';
 wepy.page({
   store,
   data: {
-    indicatorDots: true,
+    noticeText: '北京国庆期间上门喂养注意事项',
+    indicatorDots: true
   },
 
   computed: {},

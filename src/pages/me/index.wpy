@@ -1,6 +1,6 @@
 <style lang="less" src="./index.less"></style>
 <template>
-  <div class="container">
+  <view class="container">
     <view class="userHeader">
         <view class="userHeaderInfo">
             <view class="useHeaderImg">
@@ -60,7 +60,7 @@
       </button>
     </panel> -->
     <!--toast /-->
-  </div>
+  </view>
 </template>
 
 <script>
