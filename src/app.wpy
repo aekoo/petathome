@@ -39,6 +39,7 @@ wepy.app({
       'pages/service/index',
       'pages/orders/index',
       'pages/me/index',
+      'pages/me/mypet',
       'pages/me/personal',
       'pages/me/address',
     ],

@@ -1,0 +1,52 @@
+<style lang="less" src="./mypet.less"></style>
+<template>
+  <view class="petList">
+    <view class="petCard">
+      <view class="petAvatar"><image mode="widthFix" src="../../image/default.png"/></view>
+      <view class="petName">nico</view>
+      <view class="petVariety">加菲猫</view>
+      <view class="petActivity">
+        <view class="petEdit"><image mode="widthFix" src="../../image/edit.png"/></view>
+        <view class="petDelete"><image mode="widthFix" src="../../image/delete.png"/></view>
+      </view>
+    </view>
+    <view class="petCard">
+      <view class="petAvatar"><image mode="widthFix" src="../../image/default.png"/></view>
+      <view class="petName">nico</view>
+      <view class="petVariety">加菲猫</view>
+      <view class="petActivity">
+        <view class="petEdit"><image mode="widthFix" src="../../image/edit.png"/></view>
+        <view class="petDelete"><image mode="widthFix" src="../../image/delete.png"/></view>
+      </view>
+    </view>
+    <view class="petCard">
+      <view class="petAvatar"><image mode="widthFix" src="../../image/default.png"/></view>
+      <view class="petName">nico</view>
+      <view class="petVariety">加菲猫</view>
+      <view class="petActivity">
+        <view class="petEdit"><image mode="widthFix" src="../../image/edit.png"/></view>
+        <view class="petDelete"><image mode="widthFix" src="../../image/delete.png"/></view>
+      </view>
+    </view>
+  </view>
+</template>
+
+<script>
+import wepy from '@wepy/core';
+
+wepy.page({
+  data: {},
+
+  computed: {},
+
+  methods: {},
+  onLoad() {},
+  onShow() {}
+});
+</script>
+<config>
+{
+    navigationBarTitleText: "我的爱宠",
+    "usingComponents": {}
+}
+</config>

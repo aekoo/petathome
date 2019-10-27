@@ -12,7 +12,7 @@
               <view class="userHeaderPhone">{{userInfo.phone}}</view>
             </view>
         </view>
-        <view class="myPetBox">
+        <view class="myPetBox" @tap="goPage('mypet')">
           <view class="myPetTitle">我的爱宠</view>
           <view class="myPetList">
               <image class="myPetImage" mode="widthFix" src="../../image/default.png"/>
