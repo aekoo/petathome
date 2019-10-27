@@ -1,0 +1,77 @@
+<style lang="less" src="./personal.less"></style>
+<template>
+  <view class="container">
+    <view class="personalList">
+      <view class="personalLi avatarLi" >
+        <view class="personalTitle">头像</view>
+        <view class="personalAvatar"><image mode="widthFix" src="{{userInfo.avatarUrl||'../../image/default.png'}}"/></view>
+        <view class="personalArrow"><image mode="widthFix" src="../../image/arrow.png"/></view>
+      </view>
+      <view class="personalLi" >
+        <view class="personalTitle">昵称</view>
+        <view class="personalInput"><input type="text" placeholder="未设置昵称" placeholder-class="placeholderStyle"></view>
+      </view>
+      <view class="personalLi" >
+        <view class="personalTitle">性别</view>
+        <radio-group class="radio-group">
+          <radio class="radio man checked" value="1" checked="true"></radio>
+          <radio class="radio woman" value="0" checked="false"></radio>
+        </radio-group>
+      </view>
+      <view class="personalLi" >
+        <view class="personalTitle">生日</view>
+        <picker mode="date" value="{{birthDate}}" bindchange="birthDateChange">
+          <view class="picker">{{birthDate}}</view>
+        </picker>
+        <view class="personalArrow"><image mode="widthFix" src="../../image/arrow.png"/></view>
+      </view>
+      <view class="personalLi" >
+        <view class="personalTitle">年龄</view>
+        <picker value="{{selIndex}}" range="{{ageArray}}" bindchange="AgeChange">
+          <view class="picker">{{ageArray[selIndex]}}</view>
+        </picker>
+        <view class="personalArrow"><image mode="widthFix" src="../../image/arrow.png"/></view>
+      </view>
+    </view>
+    <view class="submitBtn">保存</view>
+  </view>
+</template>
+
+<script>
+import wepy from '@wepy/core';
+
+wepy.page({
+  data: {
+    userInfo: wx.getStorageSync('userInfo'),
+    ageArray: [],
+    selIndex: 17,
+    birthDate: '1990-01-01'
+  },
+
+  computed: {},
+
+  methods: {
+    generateAge() {
+      let arr = [];
+      for (let i = 1; i <= 100; i++) {
+        arr.push(i);
+      }
+      this.ageArray = arr;
+    },
+    birthDateChange(e) {
+      console.log(e);
+    },
+    AgeChange(e) {}
+  },
+  onLoad() {
+    this.generateAge();
+  },
+  onShow() {}
+});
+</script>
+<config>
+{
+    navigationBarTitleText: "个人信息",
+    "usingComponents": {}
+}
+</config>

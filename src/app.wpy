@@ -12,16 +12,35 @@ wepy.app({
   globalData: {
     userInfo: null
   },
-  onLaunch() {}
+  onLaunch() {
+    // 查看是否授权
+    wx.getSetting({
+      success(res) {
+        if (res.authSetting['scope.userInfo']) {
+          // 已经授权，可以直接调用 getUserInfo 获取头像昵称
+          wx.getUserInfo({
+            success: function(res) {
+              // console.log(res);
+              wx.setStorageSync('userInfo', res.userInfo);
+            }
+          });
+        } else {
+          wx.clearStorageSync();
+        }
+      }
+    });
+  }
 });
 </script>
 <config>
 {
     pages: [
-      'pages/orders/index',
       'pages/home/index',
       'pages/service/index',
+      'pages/orders/index',
       'pages/me/index',
+      'pages/me/personal',
+      'pages/me/address',
     ],
     window: {
       backgroundTextStyle: 'light',

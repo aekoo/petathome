@@ -1,4 +1,5 @@
 import wepy from '@wepy/core';
+import store from '@/store';
 import { getUserId } from '../api/index.js'
 
 export const toastSelf = (title, duration) => {
@@ -36,32 +37,37 @@ export async function userLogin(flag) {
       toastSelf('登录失败', 2000)
       return -2
     } else {
-      let to = wx.getStorageSync('to');
-      console.log(to)
+      const { openId } = identify.data.results;
+      wx.setStorageSync('openId', openId);
+      wx.setStorageSync('userInfo', userRes.userInfo);
+      // store.dispatch('setStoreData', { key: 'userInfo', value: userRes.userInfo })
+      // store.dispatch('setStoreData', 'openId', openId)
+      // let to = wx.getStorageSync('to');
+      // console.log(to)
       // store.dispatch(changeUpdate())
-      if (flag) {
-        console.log('重新授权')
-        //重新授权
-        if (to == 'record') {
-          wx.reLaunch({
-            url: '/pages/home?to=record'
-          })
-        } else {
-          wx.reLaunch({
-            url: '/pages/home'
-          })
-        }
-      }
+      // if (flag) {
+      //   console.log('重新授权')
+      //   //重新授权
+      //   if (to == 'record') {
+      //     wx.reLaunch({
+      //       url: '/pages/home?to=record'
+      //     })
+      //   } else {
+      //     wx.reLaunch({
+      //       url: '/pages/home'
+      //     })
+      //   }
+      // }
       return 1
     }
   } catch (error) {
     console.log(error)
     wx.hideLoading()
-    if (!flag) {
-      return wx.redirectTo({
-        url: '/pages/home'
-      })
-    }
+    // if (!flag) {
+    //   return wx.redirectTo({
+    //     url: '/pages/home'
+    //   })
+    // }
   }
 }
 

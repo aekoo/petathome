@@ -3,7 +3,13 @@
   <view class="container">
     <van-tabs sticky="true" swipeable animated="true" class="orderBox" border="false" line-width="36" active="{{ active }}" bind:change="onChange">
       <van-tab v-for="(item,i) in tabNames" v-bind:key="i" title="{{item}}">
-          <view class="orderCard">
+          <!-- <van-loading /> -->
+          <view class="noOrder" wx:if="{{dataList.length<1}}">
+            <view class="noOrderImg"><image src="../../image/noOrders.png"/></view>
+            <view class="noOrderText">你还没订单，快去下单吧</view>
+          </view>
+          <block wx:else>
+          <view class="orderCard" wx:for="{{dataList}}" wx:key="unique">
             <view class="order-title">
               <text>上门喂猫</text>
               <text class="order-time">2019-09-14 13:00 下单</text>
@@ -36,6 +42,7 @@
               <!-- <view class="order-operate">已取消</view> -->
             </view>
           </view>
+          </block>
       </van-tab>
     </van-tabs>
   </view>
@@ -46,28 +53,48 @@ import wepy from '@wepy/core';
 import eventHub from '@/common/eventHub';
 import { mapState } from '@wepy/x';
 import store from '@/store';
+import { getOrders } from '../../api/index.js';
 
 wepy.page({
   store,
   data: {
+    tabId: 0,
     tabNames: ['全部订单', '待支付', '进行中', '已完成'],
-    ipX: false,
-    scrollHeight: 500 //订单列表滚动区域高度
+    openId: wx.getStorageSync('openId') || '',
+    dataList: []
   },
 
   computed: {},
 
   methods: {
     onChange(event) {
-      console.log(event);
-
-      wx.showToast({
-        title: `切换到标签 ${event.$wx.detail.title}`,
-        icon: 'none'
-      });
+      const { index, title } = event.$wx.detail;
+      console.log(`切换到标签 ${title}`);
+      this.tabId = index;
+      this.getListData(index);
+    },
+    // 查询订单
+    async getListData() {
+      try {
+        wx.showLoading({ title: '加载中' });
+        let res = await getOrders({
+          openId: this.openId,
+          status: this.tabId
+        });
+        setTimeout(() => {
+          wx.hideLoading();
+        }, 300);
+        const { results = [] } = res.data || {};
+        console.log(results);
+        this.dataList = results;
+      } catch (error) {
+        wx.showToast({ title: '出错了', icon: 'none' });
+        return -1;
+      }
     }
   },
   onShow() {
+    this.getListData();
     if (typeof this.$wx.getTabBar === 'function' && this.$wx.getTabBar()) {
       console.log('订单');
       this.$wx.getTabBar().setData({
@@ -82,7 +109,8 @@ wepy.page({
     navigationBarTitleText: "我的订单",
     usingComponents: {
       "van-tab": "~@/components/vant-weapp/tab/index",
-      "van-tabs": "~@/components/vant-weapp/tabs/index"
+      "van-tabs": "~@/components/vant-weapp/tabs/index",
+      "van-loading": "~@/components/vant-weapp/loading/index"
     }
 }
 </config>

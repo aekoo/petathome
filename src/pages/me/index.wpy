@@ -1,14 +1,15 @@
 <style lang="less" src="./index.less"></style>
 <template>
   <view class="container">
+    <button class="author" open-type="getUserInfo"  bindgetuserinfo="onGotUserInfo" v-if="!openId"></button>
     <view class="userHeader">
         <view class="userHeaderInfo">
             <view class="useHeaderImg">
-                <image mode="aspectFill" src="../../image/default.png" />
+                <image mode="aspectFill" src="{{userInfo.avatarUrl}}" />
             </view>
             <view class="userHeaderBox">
-              <view class="userHeaderName">哈哈哈</view>
-              <view class="userHeaderPhone">18672886886</view>
+              <view class="userHeaderName">{{userInfo.nickName}}</view>
+              <view class="userHeaderPhone">{{userInfo.phone}}</view>
             </view>
         </view>
         <view class="myPetBox">
@@ -23,14 +24,14 @@
         </view>
     </view>
     <view class="userContent">
-        <view class="userContentLi" >
+        <view class="userContentLi" @tap="goPage('personal')">
             <view class="userContentLiIcon"><image src="../../image/info.png" mode="widthFix"/></view>
             <view class="userContentLiText">个人信息</view>
             <view class="userContentLiArrow">
                 <image mode="widthFix" src="../../image/arrow.png"/>
             </view>
         </view>
-        <view class="userContentLi" @tap="toAbout">
+        <view class="userContentLi" @tap="goPage('address')">
             <view class="userContentLiIcon"><image src="../../image/address.png" mode="widthFix"/></view>
             <view class="userContentLiText">管理地址</view>
             <view class="userContentLiArrow">
@@ -53,12 +54,6 @@
             </view>
         </view>
     </view>
-
-    <!-- <panel>
-      <button open-type="getUserInfo"  bindgetuserinfo="onGotUserInfo">
-        <view>微信登录</view>
-      </button>
-    </panel> -->
     <!--toast /-->
   </view>
 </template>
@@ -67,28 +62,38 @@
 import wepy from '@wepy/core';
 import { mapState } from '@wepy/x';
 import store from '@/store';
-import { userLogin } from '@/utils/common';
+import { checkLogin, userLogin } from '@/utils/common';
 
 wepy.page({
   store,
-  data: {},
+  data: {
+    openId: wx.getStorageSync('openId') || '',
+    userInfo: wx.getStorageSync('userInfo') || {
+      avatarUrl: '../../image/default.png',
+      nickName: '请先登陆'
+    }
+  },
 
   computed: {},
 
   methods: {
-    onGotUserInfo(res) {
+    async onGotUserInfo(res) {
       if (res.$wx.detail.iv) {
-        userLogin(true);
+        const loginRes = await userLogin(true);
+        if (loginRes == 1) {
+          this.openId = wx.getStorageSync('openId');
+          this.userInfo = wx.getStorageSync('userInfo');
+        }
       }
+    },
+    // 页面跳转
+    goPage(url) {
+      wx.navigateTo({ url });
     }
   },
-
   onShow() {
     if (typeof this.$wx.getTabBar === 'function' && this.$wx.getTabBar()) {
-      console.log('我的');
-      this.$wx.getTabBar().setData({
-        selected: 3
-      });
+      this.$wx.getTabBar().setData({ selected: 3 });
     }
   }
 });
@@ -96,11 +101,6 @@ wepy.page({
 <config>
 {
     navigationBarTitleText: "我的",
-    "usingComponents": {
-      "van-cell": "~@/components/vant-weapp/cell/index",
-      "van-cell-group": "~@/components/vant-weapp/cell-group/index",
-      "van-icon": "~@/components/vant-weapp/icon/index",
-      "van-tag": "~@/components/vant-weapp/tag/index"
-    }
+    "usingComponents": {}
 }
 </config>

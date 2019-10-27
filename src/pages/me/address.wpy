@@ -1,0 +1,43 @@
+<style lang="less" src="./address.less"></style>
+<template>
+  <view class="addressList">
+    <view class="addressRow">
+      <view class="lable"></view>
+      <view class="addressContent">
+        <view class="linkman">有宠 18614057607</view>
+        <view class="contactAddress">什么地址什么地址什么地址什么地址什么地址什么地址什么地址</view>
+      </view>
+      <view class="editAddress">修改</view>
+    </view>
+  </view>
+  
+  <!-- <radio-group class="radio-group addressList" bindchange="radioChange">
+      <radio class="radio addressRow" >
+        <view class="addressContent">
+          <view class="linkman">有宠 18614057607</view>
+          <view class="contactAddress">什么地址什么地址什么地址什么地址什么地址什么地址什么地址</view>
+        </view>
+        <view class="editAddress">sfsd</view>
+      </radio>
+  </radio-group> -->
+</template>
+
+<script>
+import wepy from '@wepy/core';
+
+wepy.page({
+  data: {},
+
+  computed: {},
+
+  methods: {},
+  onLoad() {},
+  onShow() {}
+});
+</script>
+<config>
+{
+    navigationBarTitleText: "我的地址",
+    "usingComponents": {}
+}
+</config>

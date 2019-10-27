@@ -2,27 +2,17 @@ import Vuex from '@wepy/x';
 
 export default new Vuex.Store({
   state: {
-    counter: 0
+    openId: '',
   },
   mutations: {
-    increment (state) {
-      state.counter++;
-    },
-    decrement (state) {
-      state.counter--;
+    changeData(state, key, value) {
+
+      state[key] = value;
     }
   },
   actions: {
-    increment ({ commit }) {
-      commit('increment');
+    setStoreData({ commit }, { key, value }) {
+      commit('changeData', key, value);
     },
-    decrement ({ commit }) {
-      commit('decrement');
-    },
-    incrementAsync ({ commit }) {
-      setTimeout(() => {
-        commit('increment');
-      }, 1000);
-    }
   }
 });

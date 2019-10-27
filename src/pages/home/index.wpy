@@ -22,7 +22,7 @@
     </swiper>
     <!-- 预约 -->
     <view class="feed-pet-box">
-      <view class="feed-pet"><image src="../../image/feed-dog.png"/></view>
+      <view class="feed-pet" @tap="reservation"><image src="../../image/feed-dog.png"/></view>
       <view class="feed-pet"><image src="../../image/feed-cat.png"/></view>
     </view>
     <!-- 我的爱宠 -->
@@ -54,6 +54,7 @@ import eventHub from '@/common/eventHub';
 import { mapState } from '@wepy/x';
 import store from '@/store';
 import { userLogin } from '@/utils/common';
+import { placeAnOrder } from '../../api/index.js';
 
 wepy.page({
   store,
@@ -68,6 +69,27 @@ wepy.page({
     onGotUserInfo(res) {
       if (res.$wx.detail.iv) {
         userLogin(true);
+      }
+    },
+    async reservation() {
+      console.log('aaa');
+      let params = {
+        userId: 'ojE985QmUgZZopp6sP5MTjgIaws4',
+        addressId: 0,
+        keyHandover: 0,
+        payMoney: 199,
+        petIds: 0,
+        serverType: 0
+      };
+
+      try {
+        wx.showLoading({ title: '正在提交预约' });
+        let res = await placeAnOrder(params);
+        console.log(res);
+        wx.hideLoading();
+      } catch (error) {
+        wx.showToast({ title: '请求服务失败', icon: 'none' });
+        return -1;
       }
     }
   },
@@ -84,6 +106,8 @@ wepy.page({
 <config>
 {
     navigationBarTitleText: "宠物喂养",
-    usingComponents: {}
+    usingComponents: {
+      "van-notice-bar": "~@/components/vant-weapp/notice-bar/index"
+    }
 }
 </config>
