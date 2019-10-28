@@ -64,6 +64,13 @@ wepy.page({
     dataList: []
   },
 
+  watch: {
+    // 监听openId变化
+    '$store.state.openId': function(newFlag, oldFlag) {
+      this.openId = wx.getStorageSync('openId') || '';
+    }
+  },
+
   computed: {},
 
   methods: {
@@ -96,10 +103,7 @@ wepy.page({
   onShow() {
     this.getListData();
     if (typeof this.$wx.getTabBar === 'function' && this.$wx.getTabBar()) {
-      console.log('订单');
-      this.$wx.getTabBar().setData({
-        selected: 2
-      });
+      this.$wx.getTabBar().setData({ selected: 2 });
     }
   }
 });

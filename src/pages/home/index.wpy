@@ -1,42 +1,45 @@
 <style lang="less" src="./index.less"></style>
 <template>
   <view class="container">
-    <view class="notice-bar" v-if="noticeText">
-      <view class="notice-bar-icon"><image src="../../image/bell.png"/></view>
-      <view class="notice-bar-text" bindtap="textclick">{{noticeText}}</view>
-    </view>
+    <!-- <view class="notice-bar" v-if="notice.text">
+      <view class="notice-bar-icon"><image src="{{notice.icon||'../../image/bell.png'}}"/></view>
+      <view class="notice-bar-text" bindtap="textclick">{{notice.text}}</view>
+    </view> -->
+    <van-notice-bar class="van-notice" text="{{notice.text}}" backgroundColor="#F0F0F0" color="#656565" wx:if="{{notice.text}}" @tap="toWebview(notice.link)">
+      <view class="van-notice-icon" slot="left-icon"><image mode="aspectFill" src="{{notice.icon||'../../image/bell.png'}}"/></view>
+    </van-notice-bar>
     <view class="location">
       <view class="location-box">
-        <image class="location-icon" src="../../image/location.png"/>
+        <image mode="aspectFill" class="location-icon" src="../../image/location.png"/>
         <text class="location-name">北京市</text>
       </view>
     </view>
     <!-- top banner -->
-    <swiper class="top-banner" indicator-dots="{{indicatorDots}}" indicator-color="#5E5E60" indicator-active-color="#FFF" autoplay="true" circular="true">
-      <swiper-item>
-        <view class="swiper-item"></view>
-      </swiper-item>
-      <swiper-item>          
-        <view class="swiper-item"></view>
+    <swiper class="top-banner" indicator-dots="{{topBannerList.length>0}}" indicator-color="#5E5E60" indicator-active-color="#FFF" autoplay="true" circular="true">
+      <swiper-item wx:for="{{topBannerList}}" wx:key="unique">
+        <image mode="aspectFill" src="{{item.image}}"/>
       </swiper-item>
     </swiper>
     <!-- 预约 -->
     <view class="feed-pet-box">
-      <view class="feed-pet" @tap="reservation"><image src="../../image/feed-dog.png"/></view>
-      <view class="feed-pet"><image src="../../image/feed-cat.png"/></view>
+      <view class="feed-pet" @tap="reservation"><image mode="aspectFill" src="../../image/feed-dog.png"/></view>
+      <view class="feed-pet"><image mode="aspectFill" src="../../image/feed-cat.png"/></view>
     </view>
     <!-- 我的爱宠 -->
     <view class="myPetBox">
       <view class="myPetTitle">我的爱宠</view>
       <view class="myPetList">
-        <image class="myPetImage" mode="widthFix" src="../../image/default.png"/>
-        <image class="myPetImage" mode="widthFix" src="../../image/default.png"/>
+        <image class="myPetImage" mode="aspectFill" src="../../image/default.png"/>
+        <image class="myPetImage" mode="aspectFill" src="../../image/default.png"/>
       </view>
       <view class="myPetAdd"></view>
     </view>
-    <!-- info banner -->
-    <view class="info-banner">
-    </view>
+    <!-- info banner -->    
+    <swiper class="info-banner" autoplay="true" circular="true">
+      <swiper-item wx:for="{{buttomBannerList}}" wx:key="unique">
+        <view class="swiper-item"></view>
+      </swiper-item>
+    </swiper>
     
 
     <!-- <panel>
@@ -54,13 +57,18 @@ import eventHub from '@/common/eventHub';
 import { mapState } from '@wepy/x';
 import store from '@/store';
 import { userLogin } from '@/utils/common';
-import { placeAnOrder } from '../../api/index.js';
+import {
+  getBanner,
+  getTopScrollingText,
+  placeAnOrder
+} from '../../api/index.js';
 
 wepy.page({
   store,
   data: {
-    noticeText: '北京国庆期间上门喂养注意事项',
-    indicatorDots: true
+    notice: {},
+    topBannerList: [],
+    buttomBannerList: []
   },
 
   computed: {},
@@ -69,6 +77,39 @@ wepy.page({
     onGotUserInfo(res) {
       if (res.$wx.detail.iv) {
         userLogin(true);
+      }
+    },
+    toWebview(url) {
+      wx.navigateTo({ url: `/pages/webview?url=${url}` });
+    },
+    // 查询通告
+    async getTopScroll(position) {
+      try {
+        // wx.showLoading({ title: '加载中' });
+        let res = await getTopScrollingText({ position });
+        const { results = [] } = res.data || {};
+        // console.log(results);
+        this.notice = results[0];
+      } catch (error) {
+        wx.showToast({ title: '获取通告信息出错', icon: 'none' });
+        return -1;
+      }
+    },
+    // 查询banner
+    async getBannerData(position) {
+      try {
+        // wx.showLoading({ title: '加载中' });
+        let res = await getBanner({ position });
+        const { results = [] } = res.data || {};
+        // console.log(results);
+        if (position == 'top') {
+          this.topBannerList = results;
+        } else if (position == 'buttom') {
+          this.buttomBannerList = results;
+        }
+      } catch (error) {
+        wx.showToast({ title: '获取banner信息出错', icon: 'none' });
+        return -1;
       }
     },
     async reservation() {
@@ -93,12 +134,14 @@ wepy.page({
       }
     }
   },
+  onLoad() {
+    this.getTopScroll();
+    this.getBannerData('top');
+    this.getBannerData('button');
+  },
   onShow() {
     if (typeof this.$wx.getTabBar === 'function' && this.$wx.getTabBar()) {
-      console.log('首页');
-      this.$wx.getTabBar().setData({
-        selected: 0
-      });
+      this.$wx.getTabBar().setData({ selected: 0 });
     }
   }
 });

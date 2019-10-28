@@ -5,14 +5,13 @@ export default new Vuex.Store({
     openId: '',
   },
   mutations: {
-    changeData(state, key, value) {
-
+    changeData(state, { key, value }) {
       state[key] = value;
     }
   },
   actions: {
     setStoreData({ commit }, { key, value }) {
-      commit('changeData', key, value);
+      commit('changeData', { key, value });
     },
   }
 });

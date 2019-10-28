@@ -1,0 +1,28 @@
+<style lang="less"></style>
+<template>
+  <view class="container">
+    <web-view src='{{url}}' bindmessage='getMessage'></web-view>
+  </view>
+</template>
+
+<script>
+import wepy from '@wepy/core';
+
+wepy.page({
+  data: {
+    url: ''
+  },
+
+  computed: {},
+
+  methods: {
+    getMessage(e) {
+      console.log(e);
+    }
+  },
+  onLoad(option) {
+    console.log(decodeURIComponent(option.url));
+    this.url = decodeURIComponent(option.url);
+  }
+});
+</script>

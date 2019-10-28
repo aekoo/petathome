@@ -2,30 +2,30 @@
 <template>
   <view class="petList">
     <view class="petCard">
-      <view class="petAvatar"><image mode="widthFix" src="../../image/default.png"/></view>
+      <view class="petAvatar"><image mode="aspectFill" src="../../image/default.png"/></view>
       <view class="petName">nico</view>
       <view class="petVariety">加菲猫</view>
       <view class="petActivity">
-        <view class="petEdit"><image mode="widthFix" src="../../image/edit.png"/></view>
-        <view class="petDelete"><image mode="widthFix" src="../../image/delete.png"/></view>
+        <view class="petEdit"><image mode="aspectFill" src="../../image/edit.png"/></view>
+        <view class="petDelete"><image mode="aspectFill" src="../../image/delete.png"/></view>
       </view>
     </view>
     <view class="petCard">
-      <view class="petAvatar"><image mode="widthFix" src="../../image/default.png"/></view>
+      <view class="petAvatar"><image mode="aspectFill" src="../../image/default.png"/></view>
       <view class="petName">nico</view>
       <view class="petVariety">加菲猫</view>
       <view class="petActivity">
-        <view class="petEdit"><image mode="widthFix" src="../../image/edit.png"/></view>
-        <view class="petDelete"><image mode="widthFix" src="../../image/delete.png"/></view>
+        <view class="petEdit"><image mode="aspectFill" src="../../image/edit.png"/></view>
+        <view class="petDelete"><image mode="aspectFill" src="../../image/delete.png"/></view>
       </view>
     </view>
     <view class="petCard">
-      <view class="petAvatar"><image mode="widthFix" src="../../image/default.png"/></view>
+      <view class="petAvatar"><image mode="aspectFill" src="../../image/default.png"/></view>
       <view class="petName">nico</view>
       <view class="petVariety">加菲猫</view>
       <view class="petActivity">
-        <view class="petEdit"><image mode="widthFix" src="../../image/edit.png"/></view>
-        <view class="petDelete"><image mode="widthFix" src="../../image/delete.png"/></view>
+        <view class="petEdit"><image mode="aspectFill" src="../../image/edit.png"/></view>
+        <view class="petDelete"><image mode="aspectFill" src="../../image/delete.png"/></view>
       </view>
     </view>
   </view>

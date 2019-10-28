@@ -45,6 +45,21 @@ page {
   }
 }
 
+//通告栏-vant weapp
+.van-notice {
+  .van-notice-bar {
+    padding: 0 15px 0 0;
+    height: 60rpx;
+    font-size: 26rpx;
+  }
+
+  .van-notice-icon {
+    margin: auto 10rpx auto 24rpx;
+    width: 40rpx;
+    height: 42rpx;
+  }
+}
+
 @keyframes myfirst {
   0% {
     left: 750rpx;
@@ -85,8 +100,15 @@ page {
 .top-banner {
   margin: 6rpx 32rpx 0;
   height: 364rpx;
-  background: #7D7D7D;
+  // background: #7D7D7D;
+  background: #F0F0F0;
   border-radius: 12rpx;
+  overflow: hidden;
+  transform: translateY(0);
+
+  image {
+    border-radius: 12rpx;
+  }
 
   // 指示点
   .wx-swiper-dot {
@@ -183,6 +205,7 @@ page {
 .info-banner {
   margin: 32rpx 32rpx 0;
   height: 274rpx;
-  background: linear-gradient(140deg, #F5F3ED 0%, #EFE3CE 100%);
+  // background: linear-gradient(140deg, #F5F3ED 0%, #EFE3CE 100%);
+  background: #F0F0F0;
   border-radius: 12rpx;
 }

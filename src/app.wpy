@@ -42,6 +42,7 @@ wepy.app({
       'pages/me/mypet',
       'pages/me/personal',
       'pages/me/address',
+      'pages/webview',
     ],
     window: {
       backgroundTextStyle: 'light',

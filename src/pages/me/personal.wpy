@@ -1,77 +1,180 @@
 <style lang="less" src="./personal.less"></style>
 <template>
   <view class="container">
+    <van-notify id="van-notify" />
     <view class="personalList">
-      <view class="personalLi avatarLi" >
+      <view class="personalLi avatarLi" @tap="showMenu">
         <view class="personalTitle">头像</view>
-        <view class="personalAvatar"><image mode="widthFix" src="{{userInfo.avatarUrl||'../../image/default.png'}}"/></view>
-        <view class="personalArrow"><image mode="widthFix" src="../../image/arrow.png"/></view>
+        <view class="personalAvatar"><image mode="aspectFill" src="{{userInfo.avatar||'../../image/default.png'}}"/></view>
+        <view class="personalArrow"><image mode="aspectFill" src="../../image/arrow.png"/></view>
       </view>
       <view class="personalLi" >
         <view class="personalTitle">昵称</view>
-        <view class="personalInput"><input type="text" placeholder="未设置昵称" placeholder-class="placeholderStyle"></view>
+        <view class="personalInput"><input type="text" placeholder="未设置昵称" placeholder-class="placeholderStyle" value="{{userInfo.nickName}}" bindchange="dataChange"></view>
       </view>
       <view class="personalLi" >
         <view class="personalTitle">性别</view>
-        <radio-group class="radio-group">
-          <radio class="radio man checked" value="1" checked="true"></radio>
-          <radio class="radio woman" value="0" checked="false"></radio>
+        <radio-group class="radio-group" bindchange="sexChange">
+          <radio class="radio man {{userInfo.gender==1?'checked':''}}" value="1" checked="{{userInfo.gender==1}}"></radio>
+          <radio class="radio woman {{userInfo.gender==2?'checked':''}}" value="2" checked="{{userInfo.gender==2}}"></radio>
         </radio-group>
       </view>
       <view class="personalLi" >
         <view class="personalTitle">生日</view>
-        <picker mode="date" value="{{birthDate}}" bindchange="birthDateChange">
-          <view class="picker">{{birthDate}}</view>
+        <picker mode="date" value="{{userInfo.birthday||'1990-01-01'}}" bindchange="birthdayChange">
+          <view class="picker">{{userInfo.birthday||'1990-01-01'}}</view>
         </picker>
-        <view class="personalArrow"><image mode="widthFix" src="../../image/arrow.png"/></view>
-      </view>
-      <view class="personalLi" >
-        <view class="personalTitle">年龄</view>
-        <picker value="{{selIndex}}" range="{{ageArray}}" bindchange="AgeChange">
-          <view class="picker">{{ageArray[selIndex]}}</view>
-        </picker>
-        <view class="personalArrow"><image mode="widthFix" src="../../image/arrow.png"/></view>
+        <view class="personalArrow"><image mode="aspectFill" src="../../image/arrow.png"/></view>
       </view>
     </view>
-    <view class="submitBtn">保存</view>
+    <view class="submitBtn" @tap="editUserInfo">保存</view>
   </view>
 </template>
 
 <script>
 import wepy from '@wepy/core';
+import Notify from '@/components/vant-weapp/notify/notify';
+import {
+  gainUserInfo,
+  updateAvatar,
+  editUserInfo,
+  uploadFile
+} from '../../api/index.js';
 
 wepy.page({
   data: {
-    userInfo: wx.getStorageSync('userInfo'),
-    ageArray: [],
-    selIndex: 17,
-    birthDate: '1990-01-01'
+    userInfo: {},
+    ageArray: []
   },
 
   computed: {},
 
   methods: {
-    generateAge() {
-      let arr = [];
-      for (let i = 1; i <= 100; i++) {
-        arr.push(i);
+    // 修改昵称
+    inputChange(e) {
+      this.userInfo.nickName = e.$wx.detail.value;
+    },
+    // 选择性别
+    sexChange(e) {
+      this.userInfo.gender = e.$wx.detail.value;
+    },
+    // 选择生日
+    birthdayChange(e) {
+      this.userInfo.birthday = e.$wx.detail.value;
+    },
+    // 选择图片来源
+    showMenu() {
+      const _this = this;
+      wx.showActionSheet({
+        itemList: ['拍照', '从相册中选择'],
+        success(res) {
+          console.log(res.tapIndex);
+          let sourceType = 'camera';
+          if (res.tapIndex == 1) {
+            sourceType = 'album';
+          }
+          wx.chooseImage({
+            count: 1,
+            sizeType: ['original', 'compressed'],
+            sourceType: [sourceType],
+            success: function(res) {
+              console.log(res);
+              const tempFilePaths = res.tempFilePaths;
+
+              _this.uploadAvatar(tempFilePaths[0]); //先上传头像，获取图片url
+            }
+          });
+        }
+      });
+    },
+    //上传文件、头像
+    async uploadAvatar(avatarUrl) {
+      try {
+        let res = await uploadFile({
+          type: 0,
+          file: avatarUrl
+        });
+        console.log(res);
+        const { code, results = {} } = res.data || {};
+        if (code == 1) {
+          this.updateAvatar(results.imageUrl); //获取图片url,更新头像
+        }
+      } catch (error) {
+        wx.showToast({ title: '上传头像出错了', icon: 'none' });
+        return -1;
       }
-      this.ageArray = arr;
     },
-    birthDateChange(e) {
-      console.log(e);
+    // 更新头像
+    async updateAvatar(avatarUrl) {
+      try {
+        wx.showLoading({ title: '头像上传中', mask: true });
+        let res = await updateAvatar({
+          userId: wx.getStorageSync('openId'),
+          avatarUrl
+        });
+        console.log(res);
+        const { code } = res.data || {};
+        if (code == 1) {
+          this.getUserInfo();
+        }
+        setTimeout(() => {
+          wx.hideLoading();
+        }, 300);
+      } catch (error) {
+        wx.showToast({ title: '更新头像出错了', icon: 'none' });
+        return -1;
+      }
     },
-    AgeChange(e) {}
+    // 查询个人信息
+    async getUserInfo(position) {
+      try {
+        // wx.showLoading({ title: '加载中' });
+        let res = await gainUserInfo({ userId: wx.getStorageSync('openId') });
+        const { results = {} } = res.data || {};
+        this.userInfo = results;
+      } catch (error) {
+        wx.showToast({ title: '获取个人信息出错', icon: 'none' });
+        return -1;
+      }
+    },
+    // 更新个人信息
+    async editUserInfo() {
+      try {
+        wx.showLoading({ title: '请稍后' });
+        const { userId, nickName, gender, birthday } = this.userInfo;
+        let res = await editUserInfo({ userId, nickName, gender, birthday });
+        console.log(res);
+        if (res.data.code != 1) {
+          // return wx.showToast({ title: '更新失败', icon: 'none' });
+          return Notify({
+            type: 'danger',
+            message: '更新失败',
+            duration: 2000
+          });
+        }
+
+        setTimeout(() => {
+          wx.hideLoading();
+          // wx.showToast({ title: '更新成功', icon: 'none' });
+          Notify({ type: 'primary', message: '更新成功', duration: 2000 });
+        }, 300);
+      } catch (error) {
+        console.log(error);
+        wx.showToast({ title: '更新个人信息出错', icon: 'none' });
+        return -1;
+      }
+    }
   },
   onLoad() {
-    this.generateAge();
-  },
-  onShow() {}
+    this.getUserInfo();
+  }
 });
 </script>
 <config>
 {
     navigationBarTitleText: "个人信息",
-    "usingComponents": {}
+    "usingComponents": {
+      "van-notify": "~@/components/vant-weapp/notify/index"
+    }
 }
 </config>

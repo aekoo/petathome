@@ -14,10 +14,7 @@ wepy.page({
   onLoad() {},
   onShow() {
     if (typeof this.$wx.getTabBar === 'function' && this.$wx.getTabBar()) {
-      console.log('客服');
-      this.$wx.getTabBar().setData({
-        selected: 1
-      });
+      this.$wx.getTabBar().setData({ selected: 1 });
     }
   }
 });

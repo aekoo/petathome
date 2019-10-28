@@ -15,42 +15,42 @@
         <view class="myPetBox" @tap="goPage('mypet')">
           <view class="myPetTitle">我的爱宠</view>
           <view class="myPetList">
-              <image class="myPetImage" mode="widthFix" src="../../image/default.png"/>
-              <image class="myPetImage" mode="widthFix" src="../../image/default.png"/>
+              <image class="myPetImage" mode="aspectFill" src="../../image/default.png"/>
+              <image class="myPetImage" mode="aspectFill" src="../../image/default.png"/>
           </view>
           <view class="myPetBoxArrow">
-              <image mode="widthFix" src="../../image/arrow.png"/>
+              <image mode="aspectFill" src="../../image/arrow.png"/>
           </view>
         </view>
     </view>
     <view class="userContent">
         <view class="userContentLi" @tap="goPage('personal')">
-            <view class="userContentLiIcon"><image src="../../image/info.png" mode="widthFix"/></view>
+            <view class="userContentLiIcon"><image src="../../image/info.png" mode="aspectFill"/></view>
             <view class="userContentLiText">个人信息</view>
             <view class="userContentLiArrow">
-                <image mode="widthFix" src="../../image/arrow.png"/>
+                <image mode="aspectFill" src="../../image/arrow.png"/>
             </view>
         </view>
         <view class="userContentLi" @tap="goPage('address')">
-            <view class="userContentLiIcon"><image src="../../image/address.png" mode="widthFix"/></view>
+            <view class="userContentLiIcon"><image src="../../image/address.png" mode="aspectFill"/></view>
             <view class="userContentLiText">管理地址</view>
             <view class="userContentLiArrow">
-                <image mode="widthFix" src="../../image/arrow.png"/>
+                <image mode="aspectFill" src="../../image/arrow.png"/>
             </view>
         </view>
         <view class="userContentLi">
-            <view class="userContentLiIcon"><image src="../../image/wechat.png" mode="widthFix"/></view>
+            <view class="userContentLiIcon"><image src="../../image/wechat.png" mode="aspectFill"/></view>
             <view class="userContentLiText">客服</view>
             <view class="userContentLiArrow">
-                <image mode="widthFix" src="../../image/arrow.png"/>
+                <image mode="aspectFill" src="../../image/arrow.png"/>
             </view>
             <button open-type="contact"></button>
         </view>
         <view class="userContentLi">
-            <view class="userContentLiIcon"><image src="../../image/join.png" mode="widthFix"/></view>
+            <view class="userContentLiIcon"><image src="../../image/join.png" mode="aspectFill"/></view>
             <view class="userContentLiText">我想成为爱宠官</view>
             <view class="userContentLiArrow">
-                <image mode="widthFix" src="../../image/arrow.png"/>
+                <image mode="aspectFill" src="../../image/arrow.png"/>
             </view>
         </view>
     </view>
@@ -67,29 +67,37 @@ import { checkLogin, userLogin } from '@/utils/common';
 wepy.page({
   store,
   data: {
-    openId: wx.getStorageSync('openId') || '',
-    userInfo: wx.getStorageSync('userInfo') || {
-      avatarUrl: '../../image/default.png',
-      nickName: '请先登陆'
+    openId: '',
+    userInfo: {}
+  },
+  watch: {
+    // 监听openId变化
+    '$store.state.openId': function(newFlag, oldFlag) {
+      if (newFlag != oldFlag) this.initUser();
     }
   },
-
   computed: {},
 
   methods: {
-    async onGotUserInfo(res) {
+    onGotUserInfo(res) {
       if (res.$wx.detail.iv) {
-        const loginRes = await userLogin(true);
-        if (loginRes == 1) {
-          this.openId = wx.getStorageSync('openId');
-          this.userInfo = wx.getStorageSync('userInfo');
-        }
+        userLogin(true);
       }
+    },
+    initUser() {
+      this.openId = wx.getStorageSync('openId') || '';
+      this.userInfo = wx.getStorageSync('userInfo') || {
+        avatarUrl: '../../image/default.png',
+        nickName: '请先登陆'
+      };
     },
     // 页面跳转
     goPage(url) {
       wx.navigateTo({ url });
     }
+  },
+  onLoad() {
+    this.initUser();
   },
   onShow() {
     if (typeof this.$wx.getTabBar === 'function' && this.$wx.getTabBar()) {
