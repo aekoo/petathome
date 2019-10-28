@@ -39,8 +39,8 @@ export async function userLogin(flag) {
     } else {
       const { openId } = identify.data.results;
       wx.setStorageSync('openId', openId);
-      wx.setStorageSync('userInfo', userRes.userInfo);
       store.dispatch('setStoreData', { key: 'openId', value: openId });
+      // wx.setStorageSync('userInfo', userRes.userInfo);
       // store.dispatch('setStoreData', { key: 'userInfo', value: userRes.userInfo })
       // let to = wx.getStorageSync('to');
       // console.log(to)

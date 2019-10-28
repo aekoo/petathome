@@ -21,7 +21,7 @@ export default class fetch {
       formData: data,
     }
     console.log(param)
-    return wx.uploadFile(param)
+    return wepy.wx.uploadFile(param)
   }
   static get(url, data) {
     return this.request('GET', url, data, 'application/x-www-form-urlencoded')

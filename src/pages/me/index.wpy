@@ -5,7 +5,7 @@
     <view class="userHeader">
         <view class="userHeaderInfo">
             <view class="useHeaderImg">
-                <image mode="aspectFill" src="{{userInfo.avatarUrl}}" />
+                <image mode="aspectFill" src="{{userInfo.avatar}}" />
             </view>
             <view class="userHeaderBox">
               <view class="userHeaderName">{{userInfo.nickName}}</view>
@@ -62,18 +62,22 @@
 import wepy from '@wepy/core';
 import { mapState } from '@wepy/x';
 import store from '@/store';
-import { checkLogin, userLogin } from '@/utils/common';
+import { userLogin } from '@/utils/common';
+import { gainUserInfo } from '@/api/index.js';
 
 wepy.page({
   store,
   data: {
-    openId: '',
-    userInfo: {}
+    openId: wx.getStorageSync('openId') || '',
+    userInfo: {
+      avatarUrl: '../../image/default.png',
+      nickName: '请先登陆'
+    }
   },
   watch: {
     // 监听openId变化
     '$store.state.openId': function(newFlag, oldFlag) {
-      if (newFlag != oldFlag) this.initUser();
+      if (newFlag != oldFlag) this.getUserInfo();
     }
   },
   computed: {},
@@ -84,12 +88,19 @@ wepy.page({
         userLogin(true);
       }
     },
-    initUser() {
+    // 查询个人信息
+    async getUserInfo() {
       this.openId = wx.getStorageSync('openId') || '';
-      this.userInfo = wx.getStorageSync('userInfo') || {
-        avatarUrl: '../../image/default.png',
-        nickName: '请先登陆'
-      };
+      try {
+        let res = await gainUserInfo({ userId: this.openId });
+        const { results = {} } = res.data || {};
+        this.userInfo = results;
+      } catch (error) {
+        console.log(error);
+
+        wx.showToast({ title: '获取个人信息出错', icon: 'none' });
+        return -1;
+      }
     },
     // 页面跳转
     goPage(url) {
@@ -97,7 +108,9 @@ wepy.page({
     }
   },
   onLoad() {
-    this.initUser();
+    if (this.openId) {
+      this.getUserInfo();
+    }
   },
   onShow() {
     if (typeof this.$wx.getTabBar === 'function' && this.$wx.getTabBar()) {
