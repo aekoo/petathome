@@ -15,8 +15,7 @@
         <view class="myPetBox" @tap="goPage('mypet')">
           <view class="myPetTitle">我的爱宠</view>
           <view class="myPetList">
-              <image class="myPetImage" mode="aspectFill" src="../../image/default.png"/>
-              <image class="myPetImage" mode="aspectFill" src="../../image/default.png"/>
+              <image class="myPetImage" mode="aspectFill" wx:for="{{myPetList}}" wx:key="unique" src="{{item.avatar}}"/>
           </view>
           <view class="myPetBoxArrow">
               <image mode="aspectFill" src="../../image/arrow.png"/>
@@ -63,7 +62,7 @@ import wepy from '@wepy/core';
 import { mapState } from '@wepy/x';
 import store from '@/store';
 import { userLogin } from '@/utils/common';
-import { gainUserInfo } from '@/api/index.js';
+import { gainUserInfo, gainMyPet } from '@/api/index.js';
 
 wepy.page({
   store,
@@ -72,20 +71,43 @@ wepy.page({
     userInfo: {
       avatarUrl: '../../image/default.png',
       nickName: '请先登陆'
-    }
+    },
+    myPetList: []
   },
   watch: {
-    // 监听openId变化
+    // 监听登录后openId变化
     '$store.state.openId': function(newFlag, oldFlag) {
-      if (newFlag != oldFlag) this.getUserInfo();
+      if (newFlag != oldFlag) {
+        this.getUserInfo();
+        this.getMyPet();
+      }
+    },
+    //监听flage，更新用户头像等信息
+    '$store.state.flag': function(newFlag, oldFlag) {
+      if (newFlag != oldFlag) {
+        this.getUserInfo();
+      }
     }
   },
   computed: {},
 
   methods: {
+    // login
     onGotUserInfo(res) {
       if (res.$wx.detail.iv) {
         userLogin(true);
+      }
+    },
+    // 查询我的宠物
+    async getMyPet() {
+      try {
+        let res = await gainMyPet({ userId: this.openId });
+        const { results = {} } = res.data || {};
+        this.myPetList = results;
+      } catch (error) {
+        console.log(error);
+        wx.showToast({ title: '查询我的宠物出错', icon: 'none' });
+        return -1;
       }
     },
     // 查询个人信息
@@ -110,6 +132,7 @@ wepy.page({
   onLoad() {
     if (this.openId) {
       this.getUserInfo();
+      this.getMyPet();
     }
   },
   onShow() {

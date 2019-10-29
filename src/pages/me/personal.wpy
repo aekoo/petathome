@@ -33,13 +33,14 @@
 
 <script>
 import wepy from '@wepy/core';
+import store from '@/store';
 import Notify from '@/components/vant-weapp/notify/notify';
 import {
   gainUserInfo,
   updateAvatar,
   editUserInfo,
   uploadFile
-} from '../../api/index.js';
+} from '@/api/index.js';
 
 wepy.page({
   data: {
@@ -78,7 +79,7 @@ wepy.page({
             sizeType: ['original', 'compressed'],
             sourceType: [sourceType],
             success: function(res) {
-              console.log(res);
+              // console.log(res);
               const tempFilePaths = res.tempFilePaths;
 
               _this.uploadAvatar(tempFilePaths[0]); //先上传头像，获取图片url
@@ -94,7 +95,7 @@ wepy.page({
           type: 0,
           file: avatarUrl
         });
-        console.log(res);
+        // console.log(res);
         const { code, results = {} } = JSON.parse(res.data) || {};
         if (code == 1) {
           this.updateAvatar(results.imageUrl); //获取图片url,更新头像
@@ -112,10 +113,11 @@ wepy.page({
           userId: wx.getStorageSync('openId'),
           avatarUrl
         });
-        console.log(res);
+        // console.log(res);
         const { code } = res.data || {};
         if (code == 1) {
-          this.getUserInfo();
+          this.getUserInfo(); //更新当前页面数据
+          store.dispatch('changeFlag'); //更新"我的"页面数据
         }
         setTimeout(() => {
           wx.hideLoading();
@@ -146,15 +148,13 @@ wepy.page({
         console.log(res);
         if (res.data.code != 1) {
           // return wx.showToast({ title: '更新失败', icon: 'none' });
-          return Notify({
-            type: 'danger',
-            message: '更新失败',
-            duration: 2000
-          });
+          Notify({ type: 'danger', message: '更新失败', duration: 2000 });
+          return;
         }
 
         setTimeout(() => {
           wx.hideLoading();
+          store.dispatch('changeFlag'); //更新"我的"页面数据
           // wx.showToast({ title: '更新成功', icon: 'none' });
           Notify({ type: 'primary', message: '更新成功', duration: 2000 });
         }, 300);

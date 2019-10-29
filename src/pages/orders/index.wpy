@@ -3,11 +3,7 @@
   <view class="container">
     <van-tabs sticky="true" swipeable animated="true" class="orderBox" border="false" line-width="36" active="{{ active }}" bind:change="onChange">
       <van-tab v-for="(item,i) in tabNames" v-bind:key="i" title="{{item}}">
-          <!-- <van-loading /> -->
-          <view class="noOrder" wx:if="{{dataList.length<1}}">
-            <view class="noOrderImg"><image src="../../image/noOrders.png"/></view>
-            <view class="noOrderText">你还没订单，快去下单吧</view>
-          </view>
+          <nodata text="你还没订单，快去下单吧" img="../../image/noOrders.png" wx:if="{{dataList.length<1}}"></nodata>
           <block wx:else>
           <view class="orderCard" wx:for="{{dataList}}" wx:key="unique">
             <view class="order-title">
@@ -53,7 +49,7 @@ import wepy from '@wepy/core';
 import eventHub from '@/common/eventHub';
 import { mapState } from '@wepy/x';
 import store from '@/store';
-import { getOrders } from '../../api/index.js';
+import { getOrders } from '@/api/index.js';
 
 wepy.page({
   store,
@@ -112,6 +108,7 @@ wepy.page({
 {
     navigationBarTitleText: "我的订单",
     usingComponents: {
+      nodata: '~@/components/nodata/index',
       "van-tab": "~@/components/vant-weapp/tab/index",
       "van-tabs": "~@/components/vant-weapp/tabs/index",
       "van-loading": "~@/components/vant-weapp/loading/index"

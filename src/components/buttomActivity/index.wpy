@@ -1,0 +1,22 @@
+<style lang="less" src="./index.less"></style>
+<template>
+  <view class="buttomActivity">
+    <view class="activityButton" @tap="onClick"><image class="activityImg" mode="aspectFill" src="../../image/add.png"/><text>{{title}}</text></view>
+  </view>
+</template>
+<script>
+import wepy from '@wepy/core';
+
+wepy.component({
+  props: {
+    title: '',
+    click: function() {}
+  },
+
+  methods: {
+    onClick() {
+      this.$wx.triggerEvent('click');
+    }
+  }
+});
+</script>

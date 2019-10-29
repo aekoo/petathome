@@ -1,43 +1,73 @@
 <style lang="less" src="./address.less"></style>
 <template>
-  <view class="addressList">
-    <view class="addressRow">
-      <view class="lable"></view>
-      <view class="addressContent">
-        <view class="linkman">有宠 18614057607</view>
-        <view class="contactAddress">什么地址什么地址什么地址什么地址什么地址什么地址什么地址</view>
-      </view>
-      <view class="editAddress">修改</view>
-    </view>
-  </view>
-  
-  <!-- <radio-group class="radio-group addressList" bindchange="radioChange">
-      <radio class="radio addressRow" >
+  <view class="container">
+    <nodata text="你还没地址，快新增一个吧" img="../../image/noAddress.png" wx:if="{{addressList.length<1}}"></nodata>
+    <view class="addressList" wx:else>
+      <view class="addressRow" wx:for="{{addressList}}" wx:key="unique">
+        <view class="lable"><radio class="radio" value="0" checked="{{true}}" color="#76B372"/></view>
         <view class="addressContent">
-          <view class="linkman">有宠 18614057607</view>
+          <view class="linkman"><text class="name">有宠</text><text class="phone">18614057607</text></view>
           <view class="contactAddress">什么地址什么地址什么地址什么地址什么地址什么地址什么地址</view>
         </view>
-        <view class="editAddress">sfsd</view>
-      </radio>
-  </radio-group> -->
+        <view class="editAddress"><image mode="aspectFill" src="../../image/edit.png"/></view>
+      </view>
+    </view>
+    <buttomActivity bind:click="goPage" title="新增地址" />
+  </view>
 </template>
 
 <script>
 import wepy from '@wepy/core';
+import { gainAddressList } from '@/api/index.js';
 
 wepy.page({
-  data: {},
+  data: {
+    addressList: [],
+    radio: '1'
+  },
 
   computed: {},
 
-  methods: {},
-  onLoad() {},
-  onShow() {}
+  methods: {
+    // 页面跳转
+    goPage(url) {
+      // wx.navigateTo({ url });
+    },
+    // 选中地址
+    onChange(event) {
+      this.setData({
+        radio: event.detail
+      });
+    },
+    // 查询地址列表
+    async getAddressList() {
+      try {
+        wx.showLoading({ title: '加载中' });
+        let res = await gainAddressList({
+          userId: wx.getStorageSync('openId')
+        });
+        const { results = {} } = res.data || {};
+        this.addressList = results.address;
+        setTimeout(() => {
+          wx.hideLoading();
+        }, 300);
+      } catch (error) {
+        wx.showToast({ title: '获取地址列表出错', icon: 'none' });
+        return -1;
+      }
+    }
+  },
+  onLoad() {
+    this.getAddressList();
+  }
 });
 </script>
 <config>
 {
     navigationBarTitleText: "我的地址",
-    "usingComponents": {}
+    "usingComponents": {
+      nodata: '~@/components/nodata/index',
+      buttomActivity: '~@/components/buttomActivity/index',
+    }
 }
 </config>

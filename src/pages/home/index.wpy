@@ -61,7 +61,7 @@ import {
   getBanner,
   getTopScrollingText,
   placeAnOrder
-} from '../../api/index.js';
+} from '@/api/index.js';
 
 wepy.page({
   store,

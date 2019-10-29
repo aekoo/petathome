@@ -1,52 +1,86 @@
 <style lang="less" src="./mypet.less"></style>
 <template>
-  <view class="petList">
-    <view class="petCard">
-      <view class="petAvatar"><image mode="aspectFill" src="../../image/default.png"/></view>
-      <view class="petName">nico</view>
-      <view class="petVariety">加菲猫</view>
-      <view class="petActivity">
-        <view class="petEdit"><image mode="aspectFill" src="../../image/edit.png"/></view>
-        <view class="petDelete"><image mode="aspectFill" src="../../image/delete.png"/></view>
+  <view class="container">
+    <nodata text="添加您的爱宠，让我们为您的爱宠提供更优质的服务吧" img="../../image/noPet.png" wx:if="{{myPetList.length<1}}"></nodata>
+    <view class="petList" wx:else>
+      <view class="petCard" wx:for="{{myPetList}}" wx:key="unique">
+        <view class="petAvatar"><image mode="aspectFill" src="{{item.avatar||'../../image/default.png'}}"/></view>
+        <view class="petName">{{item.nickName}}</view>
+        <view class="petVariety">{{KindList[item.kind]}}</view>
+        <view class="petActivity">
+          <view class="petEdit"><image mode="aspectFill" src="../../image/edit.png"/></view>
+          <view class="petDelete"><image mode="aspectFill" src="../../image/delete.png"/></view>
+        </view>
       </view>
     </view>
-    <view class="petCard">
-      <view class="petAvatar"><image mode="aspectFill" src="../../image/default.png"/></view>
-      <view class="petName">nico</view>
-      <view class="petVariety">加菲猫</view>
-      <view class="petActivity">
-        <view class="petEdit"><image mode="aspectFill" src="../../image/edit.png"/></view>
-        <view class="petDelete"><image mode="aspectFill" src="../../image/delete.png"/></view>
-      </view>
-    </view>
-    <view class="petCard">
-      <view class="petAvatar"><image mode="aspectFill" src="../../image/default.png"/></view>
-      <view class="petName">nico</view>
-      <view class="petVariety">加菲猫</view>
-      <view class="petActivity">
-        <view class="petEdit"><image mode="aspectFill" src="../../image/edit.png"/></view>
-        <view class="petDelete"><image mode="aspectFill" src="../../image/delete.png"/></view>
-      </view>
-    </view>
+    <buttomActivity bind:click="goPage" title="添加宠物" />
   </view>
 </template>
 
 <script>
 import wepy from '@wepy/core';
+import { gainPetKinds, gainMyPet } from '@/api/index.js';
 
 wepy.page({
-  data: {},
+  data: { KindList: [], myPetList: [] },
 
   computed: {},
 
-  methods: {},
-  onLoad() {},
+  methods: {
+    // 页面跳转
+    goPage(url) {
+      // wx.navigateTo({ url });
+    },
+    // 查询品种
+    async getPetKinds() {
+      try {
+        let res = await gainPetKinds({ type: 0 });
+        const { results = {} } = res.data || {};
+        let kinds = {};
+        results.map(item => {
+          let { kinId, petName } = item;
+          kinds[kinId] = petName;
+        });
+        this.KindList = kinds;
+      } catch (error) {
+        wx.showToast({ title: '获取品种出错', icon: 'none' });
+        return -1;
+      }
+    },
+    // 查询我的宠物
+    async getMyPet() {
+      try {
+        wx.showLoading({ title: '加载中' });
+        let res = await gainMyPet({
+          userId: wx.getStorageSync('openId')
+        });
+        const { results = {} } = res.data || {};
+        console.log(this.KindList);
+        this.myPetList = results;
+        setTimeout(() => {
+          wx.hideLoading();
+        }, 500);
+      } catch (error) {
+        console.log(error);
+
+        wx.showToast({ title: '查询我的宠物出错', icon: 'none' });
+        return -1;
+      }
+    }
+  },
+  onLoad() {
+    this.getPetKinds();
+    this.getMyPet();
+  },
   onShow() {}
 });
 </script>
 <config>
 {
     navigationBarTitleText: "我的爱宠",
-    "usingComponents": {}
+    "usingComponents": {
+      nodata: '~@/components/nodata/index',
+      buttomActivity: '~@/components/buttomActivity/index',
+    }
 }
 </config>

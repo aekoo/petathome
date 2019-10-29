@@ -69,6 +69,23 @@ export const updateAvatar = (data) => {
   return fetch.post(REQ_URL + pathUrl, data)
 }
 
+// 查询品种
+export const gainPetKinds = (data) => {
+  let pathUrl = '/pet/queryPetKinds'
+  return fetch.get(REQ_URL + pathUrl, data)
+}
+// 我的宠物
+export const gainMyPet = (data) => {
+  let pathUrl = '/pet/queryMyPet'
+  return fetch.get(REQ_URL + pathUrl, data)
+}
+
+// 我的地址列表
+export const gainAddressList = (data) => {
+  let pathUrl = '/address/queryAddressListByUserId'
+  return fetch.post(REQ_URL + pathUrl, data)
+}
+
 
 
 

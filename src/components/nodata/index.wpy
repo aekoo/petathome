@@ -1,0 +1,19 @@
+<style lang="less" src="./index.less"></style>
+<template>
+  <view class="noData">
+    <view class="noDataImg"><image src="{{img}}"/></view>
+    <view class="noDataText">{{text}}</view>
+  </view>
+</template>
+<script>
+import wepy from '@wepy/core';
+
+wepy.component({
+  props: {
+    text: '',
+    img: ''
+  },
+
+  methods: {},
+});
+</script>

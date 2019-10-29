@@ -1,17 +1,65 @@
 @import '../../app.less';
-.addressList{
-  padding: 32rpx 32rpx 134rpx;
-  .addressRow{
+
+
+/* 自定义 radio 样式 */
+radio {
+  margin: auto;
+  width: 39rpx;
+}
+
+.addressList {
+  padding-bottom: 134rpx;
+  overflow: auto;
+  box-sizing: border-box;
+
+  .addressRow {
     display: flex;
+    margin: 32rpx;
     padding: 30rpx 0;
     background: #fff;
     border-radius: 16rpx;
-    .addressContent{
-      flex: 1;
+
+    .lable {
+      display: flex;
+      align-items: center;
+      justify-items: center;
+      width: 80rpx;
     }
-    .editAddress{
-      margin: auto 30rpx;
-      width: 36rpx;
+
+    .addressContent {
+      flex: 1;
+
+      .linkman {
+        font-size: 34rpx;
+        font-weight: 500;
+        color: @text-color;
+
+        .name {}
+
+        .phone {
+          margin-left: 32rpx;
+        }
+      }
+
+      .contactAddress {
+        margin-top: 8rpx;
+        font-size: 26rpx;
+        color: @low-text-color;
+      }
+    }
+
+    .editAddress {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-items: center;
+      width: 95rpx;
+
+      image {
+        margin: auto;
+        width: 35rpx;
+        height: 35rpx;
+      }
     }
   }
 }
