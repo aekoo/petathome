@@ -30,7 +30,7 @@
                 <image mode="aspectFill" src="../../image/arrow.png"/>
             </view>
         </view>
-        <view class="userContentLi" @tap="goPage('address')">
+        <view class="userContentLi" @tap="goPage('/pages/address/index')">
             <view class="userContentLiIcon"><image src="../../image/address.png" mode="aspectFill"/></view>
             <view class="userContentLiText">管理地址</view>
             <view class="userContentLiArrow">
