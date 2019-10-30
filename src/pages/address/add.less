@@ -1,0 +1,140 @@
+@import '../../app.less';
+
+.tips {
+  margin: 24rpx 32rpx 0;
+  box-sizing: border-box;
+
+  .tipsTitle {
+    margin-left: 6rpx;
+    font-size: 34rpx;
+    color: @text-color;
+  }
+
+  .tipsContent {
+    margin-top: 2rpx;
+    margin-left: 8rpx;
+    font-size: 24rpx;
+    color: #929292;
+  }
+}
+
+// 地址信息
+.addAddressContainer {
+  margin: 32rpx;
+  padding: 0 24rpx;
+  background: #FFF;
+  border-radius: 16rpx;
+  box-sizing: border-box;
+
+  .addAddressRow {
+    display: flex;
+    position: relative;
+    height: 108rpx;
+    line-height: 108rpx;
+    border-bottom: 2rpx solid #F0F0F0;
+    box-sizing: border-box;
+    align-items: center;
+
+    &:last-child {
+      border: none;
+    }
+
+    .addAddressRowIcon {
+      width: 44rpx;
+      height: 44rpx;
+      margin-left: 8rpx;
+      margin-right: 32rpx;
+
+      image {
+        width: 100%;
+        display: block;
+      }
+    }
+
+    .addAddressRowText {
+      flex: 1;
+      font-size: 30rpx;
+      color: @text-color;
+    }
+
+    .addAddressRowArrow {
+      position: absolute;
+      z-index: 2;
+      width: 14rpx;
+      height: 26rpx;
+      top: 50%;
+      right: 12rpx;
+      transform: translateY(-50%);
+
+      image {
+        width: 100%;
+        display: block;
+      }
+    }
+  }
+
+  // 地址部分的样式
+  .region {
+    border: none;
+
+    .addAddressRowText {
+      height: 100%;
+      border-bottom: 2rpx solid #F0F0F0;
+      overflow: hidden;
+
+      .addressRegion {
+        margin-right: 36rpx;
+      }
+      input{
+        display: block;
+        height: 100%;
+      }
+    }
+  }
+}
+
+// 确认添加
+.submitBtn {
+  margin: 48rpx 36rpx 0;
+  height: 92rpx;
+  line-height: 92rpx;
+  text-align: center;
+  font-size: 34rpx;
+  color: @text-color;
+  background: @button-color;
+  border-radius: 16rpx;
+  overflow: auto;
+
+  &:active {
+    opacity: .6;
+  }
+}
+
+// 删除地址
+.deleteButton {
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 92rpx;
+  line-height: 92rpx;
+  text-align: center;
+  color: @red-color;
+  background: #FFF;
+  box-shadow: 0 -4rpx 12rpx 0 rgba(0, 0, 0, 0.06);
+
+  &:active {
+    opacity: .6;
+  }
+
+  .deleteImg {
+    margin-right: 24rpx;
+    width: 30rpx;
+    height: 32rpx;
+    vertical-align: middle;
+  }
+
+  text {
+    vertical-align: middle;
+  }
+}

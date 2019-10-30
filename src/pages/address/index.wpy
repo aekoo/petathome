@@ -1,18 +1,18 @@
-<style lang="less" src="./address.less"></style>
+<style lang="less" src="./index.less"></style>
 <template>
   <view class="container">
     <nodata text="你还没地址，快新增一个吧" img="../../image/noAddress.png" wx:if="{{addressList.length<1}}"></nodata>
     <view class="addressList" wx:else>
       <view class="addressRow" wx:for="{{addressList}}" wx:key="unique">
-        <view class="lable"><radio class="radio" value="0" checked="{{true}}" color="#76B372"/></view>
+        <view class="lable"><radio class="radio" value="0" checked="{{item.whetherDefault}}" color="#76B372"/></view>
         <view class="addressContent">
-          <view class="linkman"><text class="name">有宠</text><text class="phone">18614057607</text></view>
-          <view class="contactAddress">什么地址什么地址什么地址什么地址什么地址什么地址什么地址</view>
+          <view class="linkman"><text class="name">{{item.realName}}</text><text class="phone">{{item.phone}}</text></view>
+          <view class="contactAddress">{{item.province}}{{item.city}}{{item.area}}{{item.detailAddress}}</view>
         </view>
-        <view class="editAddress"><image mode="aspectFill" src="../../image/edit.png"/></view>
+        <view class="editAddress" data-id="{{item.addressId}}" @tap="editAddress"><image mode="aspectFill" src="../../image/edit.png"/></view>
       </view>
     </view>
-    <buttomActivity bind:click="goPage" title="新增地址" />
+    <buttomActivity @tap="goPage" title="新增地址" />
   </view>
 </template>
 
@@ -30,8 +30,12 @@ wepy.page({
 
   methods: {
     // 页面跳转
-    goPage(url) {
-      // wx.navigateTo({ url });
+    goPage() {
+      wx.navigateTo({ url: 'add' });
+    },
+    editAddress(e) {
+      const { id } = e.currentTarget.dataset;
+      wx.navigateTo({ url: `add?addressId=${id}` });
     },
     // 选中地址
     onChange(event) {
@@ -57,7 +61,7 @@ wepy.page({
       }
     }
   },
-  onLoad() {
+  onShow() {
     this.getAddressList();
   }
 });

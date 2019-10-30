@@ -1,0 +1,46 @@
+<style lang="less" src="./addPet.less"></style>
+<template>
+  <view class="container">
+  </view>
+</template>
+
+<script>
+import wepy from '@wepy/core';
+import { gainAddressList } from '@/api/index.js';
+
+wepy.page({
+  data: {
+    addressList: [],
+    radio: '1'
+  },
+
+  computed: {},
+
+  methods: {
+    // 查询地址列表
+    async getAddressList() {
+      try {
+        wx.showLoading({ title: '加载中' });
+        let res = await gainAddressList({
+          userId: wx.getStorageSync('openId')
+        });
+        const { results = {} } = res.data || {};
+        this.addressList = results.address;
+        setTimeout(() => {
+          wx.hideLoading();
+        }, 300);
+      } catch (error) {
+        wx.showToast({ title: '获取地址列表出错', icon: 'none' });
+        return -1;
+      }
+    }
+  },
+  onLoad() {}
+});
+</script>
+<config>
+{
+    navigationBarTitleText: "新增地址",
+    "usingComponents": {}
+}
+</config>

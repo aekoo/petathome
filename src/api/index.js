@@ -85,6 +85,11 @@ export const gainAddressList = (data) => {
   let pathUrl = '/address/queryAddressListByUserId'
   return fetch.post(REQ_URL + pathUrl, data)
 }
+// 添加或修改地址
+export const addOrUpdateAddress = (data) => {
+  let pathUrl = '/address/addOrUpdateAddress'
+  return fetch.post(REQ_URL + pathUrl, data)
+}
 
 
 
