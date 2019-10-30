@@ -1,27 +1,80 @@
 <style lang="less" src="./addPet.less"></style>
 <template>
   <view class="container">
+    <view class="addPetAvatar"><image mode="aspectFill" src="{{item.avatar||'../../image/default.png'}}"/></view>
+    <view class="addPetContainer">
+        <view class="addPetRow">
+          <view class="addPetTitle">宠物昵称</view>
+          <view class="addPetContent"><input type="text" placeholder="请输入宠物昵称" placeholder-class="placeholderStyle" value="{{realName}}" bindchange="nameChange"></view>
+        </view>
+        <view class="addPetRow">
+          <view class="addPetTitle">种类</view>
+          <view class="addPetRowArrow"><image mode="aspectFill" src="../../image/arrow.png"/></view>
+        </view>
+        <view class="addPetRow">
+          <view class="addPetTitle">品种</view>
+          <picker mode="date" value="{{PetInfo.birthday||'1990-01-01'}}" bindchange="birthdayChange">
+            <view class="picker">{{PetInfo.birthday||'1990-01-01'}}</view>
+          </picker>
+          <view class="addPetRowArrow"><image mode="aspectFill" src="../../image/arrow.png"/></view>
+        </view>
+        <view class="addPetRow">
+          <view class="addPetTitle">性别</view>
+          <radio-group class="radio-group" bindchange="sexChange">
+            <radio class="radio man {{PetInfo.gender==1?'checked':''}}" value="1" checked="{{PetInfo.gender==1}}"></radio>
+            <radio class="radio woman {{PetInfo.gender==2?'checked':''}}" value="2" checked="{{PetInfo.gender==2}}"></radio>
+          </radio-group>
+        </view>
+        <view class="addPetRow">
+          <view class="addPetTitle">生日</view>
+          <picker mode="date" value="{{PetInfo.birthday||'1990-01-01'}}" bindchange="birthdayChange">
+            <view class="picker">{{PetInfo.birthday||'1990-01-01'}}</view>
+          </picker>
+          <view class="addPetRowArrow"><image mode="aspectFill" src="../../image/arrow.png"/></view>
+        </view>
+        <view class="addPetRow">
+          <view class="addPetTitle">已绝育</view>
+          <switch class="addPetSwitch" checked="{{true}}" bindchange="switch1Change" color="#F7E6B2"/>
+        </view>
+        <view class="addPetRow">
+          <view class="addPetTitle">已做免疫</view>
+          <switch class="addPetSwitch" checked="{{false}}" bindchange="switch1Change" color="#F7E6B2"/>
+        </view>
+    </view>
+    <view class="submitBtn" @tap="addOrUpdate">{{addressId ? '确认修改' : '确认添加'}}</view>
   </view>
 </template>
 
 <script>
 import wepy from '@wepy/core';
-import { gainAddressList } from '@/api/index.js';
+import { gainPetList } from '@/api/index.js';
 
 wepy.page({
   data: {
-    addressList: [],
+    PetInfo: {},
     radio: '1'
   },
 
   computed: {},
 
   methods: {
+    // 修改昵称
+    inputChange(e) {
+      this.PetInfo.nickName = e.$wx.detail.value;
+    },
+    // 选择性别
+    sexChange(e) {
+      this.PetInfo.gender = e.$wx.detail.value;
+    },
+    // 选择生日
+    birthdayChange(e) {
+      this.PetInfo.birthday = e.$wx.detail.value;
+    },
     // 查询地址列表
-    async getAddressList() {
+    async getPetList() {
       try {
         wx.showLoading({ title: '加载中' });
-        let res = await gainAddressList({
+        let res = await gainPetList({
           userId: wx.getStorageSync('openId')
         });
         const { results = {} } = res.data || {};
@@ -40,7 +93,7 @@ wepy.page({
 </script>
 <config>
 {
-    navigationBarTitleText: "新增地址",
+    navigationBarTitleText: "添加爱宠",
     "usingComponents": {}
 }
 </config>

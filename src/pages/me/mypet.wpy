@@ -28,8 +28,8 @@ wepy.page({
 
   methods: {
     // 页面跳转
-    goPage(url) {
-      // wx.navigateTo({ url });
+    goPage() {
+      wx.navigateTo({ url: 'addPet' });
     },
     // 查询品种
     async getPetKinds() {

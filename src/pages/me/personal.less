@@ -22,28 +22,32 @@
       font-size: 34rpx;
       color: @text-color;
     }
-// 头像
+
+    // 头像
     .personalAvatar {
       margin-right: 6rpx;
       width: 92rpx;
       height: 92rpx;
       border-radius: 50%;
-      image{
+
+      image {
         border-radius: 50%;
       }
     }
+
     //昵称
-    .personalInput{
+    .personalInput {
       margin-right: 16rpx;
       text-align: right;
       font-size: 30rpx;
       color: @low-text-color;
     }
+
     //性别
-    .radio-group{
+    .radio-group {
       position: relative;
 
-      .radio{
+      .radio {
         position: relative;
         margin: 0 12rpx;
         width: 164rpx;
@@ -55,7 +59,9 @@
         border: 2rpx solid #E5E5E5;
         border-radius: 8rpx;
       }
-      .man::after,.woman::after{
+
+      .man::after,
+      .woman::after {
         position: absolute;
         top: 0;
         left: 0;
@@ -64,22 +70,26 @@
         background: #FFF;
         border-radius: 8rpx;
       }
+
       //男
-      .man::after{
+      .man::after {
         margin-right: 24rpx;
         content: '男';
       }
+
       //女
-      .woman::after{
+      .woman::after {
         content: '女';
       }
+
       //选中
-      .checked{
+      .checked {
         border: 2rpx solid #F7E6B2;
         color: @select-color;
       }
     }
-    .picker{
+
+    .picker {
       width: 520rpx;
       height: 100%;
       text-align: right;
@@ -93,12 +103,15 @@
       width: 14rpx;
       height: 26rpx;
 
-      image{
+      image {
         display: block;
-      };
+      }
+
+      ;
     }
   }
-  .avatarLi{
+
+  .avatarLi {
     height: 144rpx;
 
     .personalArrow {
@@ -106,7 +119,8 @@
     }
   }
 }
-.submitBtn{
+
+.submitBtn {
   margin: 8rpx 36rpx 0;
   height: 96rpx;
   line-height: 96rpx;
@@ -116,7 +130,8 @@
   letter-spacing: 1.08rpx;
   background: @button-color;
   border-radius: 16rpx;
-  &:active{
+
+  &:active {
     opacity: .6;
   }
 }
