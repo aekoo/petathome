@@ -35,7 +35,6 @@ wepy.app({
 <config>
 {
     pages: [
-      'pages/address/index',
       'pages/home/index',
       'pages/service/index',
       'pages/orders/index',
@@ -43,6 +42,7 @@ wepy.app({
       'pages/me/mypet',
       'pages/me/addPet',
       'pages/me/personal',
+      'pages/address/index',
       'pages/address/add',
       'pages/webview',
     ],

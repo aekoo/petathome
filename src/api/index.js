@@ -80,14 +80,27 @@ export const gainMyPet = (data) => {
   return fetch.get(REQ_URL + pathUrl, data)
 }
 
+
+
+
 // 我的地址列表
 export const gainAddressList = (data) => {
   let pathUrl = '/address/queryAddressListByUserId'
   return fetch.post(REQ_URL + pathUrl, data)
 }
+// 查询地址详情
+export const gainAddressDetail = (data) => {
+  let pathUrl = '/address/queryAddressDetail'
+  return fetch.get(REQ_URL + pathUrl, data)
+}
 // 添加或修改地址
 export const addOrUpdateAddress = (data) => {
   let pathUrl = '/address/addOrUpdateAddress'
+  return fetch.post(REQ_URL + pathUrl, data)
+}
+// 删除地址
+export const deleteAddress = (data) => {
+  let pathUrl = '/address/deleteAddress'
   return fetch.post(REQ_URL + pathUrl, data)
 }
 
