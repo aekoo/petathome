@@ -9,26 +9,29 @@
         </view>
         <view class="addPetRow">
           <view class="addPetTitle">种类</view>
+          <picker bindchange="kindChange" value="{{kindIndex}}" range="{{kindArray}}">
+            <view class="picker">{{kindArray[kindIndex]}}</view>
+          </picker>
           <view class="addPetRowArrow"><image mode="aspectFill" src="../../image/arrow.png"/></view>
         </view>
         <view class="addPetRow">
           <view class="addPetTitle">品种</view>
-          <picker mode="date" value="{{PetInfo.birthday||'1990-01-01'}}" bindchange="birthdayChange">
-            <view class="picker">{{PetInfo.birthday||'1990-01-01'}}</view>
+          <picker mode="date" value="{{birthday||'1990-01-01'}}" bindchange="birthdayChange">
+            <view class="picker">{{birthday||'1990-01-01'}}</view>
           </picker>
           <view class="addPetRowArrow"><image mode="aspectFill" src="../../image/arrow.png"/></view>
         </view>
         <view class="addPetRow">
           <view class="addPetTitle">性别</view>
           <radio-group class="radio-group" bindchange="sexChange">
-            <radio class="radio man {{PetInfo.gender==1?'checked':''}}" value="1" checked="{{PetInfo.gender==1}}"></radio>
-            <radio class="radio woman {{PetInfo.gender==2?'checked':''}}" value="2" checked="{{PetInfo.gender==2}}"></radio>
+            <radio class="radio man {{gender==1?'checked':''}}" value="1" checked="{{gender==1}}"></radio>
+            <radio class="radio woman {{gender==2?'checked':''}}" value="2" checked="{{gender==2}}"></radio>
           </radio-group>
         </view>
         <view class="addPetRow">
           <view class="addPetTitle">生日</view>
-          <picker mode="date" value="{{PetInfo.birthday||'1990-01-01'}}" bindchange="birthdayChange">
-            <view class="picker">{{PetInfo.birthday||'1990-01-01'}}</view>
+          <picker mode="date" value="{{birthday||'1990-01-01'}}" bindchange="birthdayChange">
+            <view class="picker">{{birthday||'1990-01-01'}}</view>
           </picker>
           <view class="addPetRowArrow"><image mode="aspectFill" src="../../image/arrow.png"/></view>
         </view>
@@ -51,24 +54,26 @@ import { gainPetList } from '@/api/index.js';
 
 wepy.page({
   data: {
-    PetInfo: {},
-    radio: '1'
+    radio: '1',
+    kindArray: ['猫', '狗'],
+    kindIndex: 0,
+    gender: 1
   },
 
   computed: {},
 
   methods: {
-    // 修改昵称
-    inputChange(e) {
-      this.PetInfo.nickName = e.$wx.detail.value;
+    // 种类
+    kindChange(e) {
+      this.kindIndex = e.$wx.detail.value;
     },
     // 选择性别
     sexChange(e) {
-      this.PetInfo.gender = e.$wx.detail.value;
+      this.gender = e.$wx.detail.value;
     },
     // 选择生日
     birthdayChange(e) {
-      this.PetInfo.birthday = e.$wx.detail.value;
+      this.birthday = e.$wx.detail.value;
     },
     // 查询地址列表
     async getPetList() {

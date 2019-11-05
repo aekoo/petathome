@@ -7,35 +7,37 @@
           <block wx:else>
           <view class="orderCard" wx:for="{{dataList}}" wx:key="unique">
             <view class="order-title">
-              <text>上门喂猫</text>
-              <text class="order-time">2019-09-14 13:00 下单</text>
+              <text>上门{{item.serverType==1?'遛狗':'喂猫'}}</text>
+              <text class="order-time">{{item.time}} 下单</text>
             </view>
-            <view class="select-item">
+            <view class="select-item" wx:if="{{item.serverItemList}}">
               <text class="select-item-name">高级选择：</text>
-              <text class="select-item-value">剪指甲、换猫砂、打针、各种高级选择的标签、租赁摄像头×2</text>
+              <text class="select-item-value">
+                <text  wx:for="{{item.serverItemList}}" wx:for-item="server" wx:key="unique">{{server.serverName}}、</text>
+              </text>
             </view>
             <view class="select-item">
               <text class="select-item-name">服务地址：</text>
-              <text class="select-item-value">这是地址这是地址这是地址这是地址这是地址这是地址</text>
+              <text class="select-item-value">{{item.address}}</text>
             </view>
             <view class="serviceBox">
               <view class="select-item">
                 <text class="select-item-name">上门日期 </text>
-                <text class="select-item-value">09月14日、09月15日、09月16日、09月17日</text>
+                <text class="select-item-value">{{item.serverDate}}</text>
               </view>
               <view class="select-item">
                 <text class="select-item-name">服务时间 </text>
-                <text class="select-item-value">上午8点-9点</text>
+                <text class="select-item-value">{{item.serverPeriod}}</text>
               </view>
             </view>
             <view class="order-action">
-              <view class="order-price">总价<text class="price">199</text></view>
-              <!-- <view class="order-operate goPay">去支付</view> -->
-              <!-- <view class="order-operate">待服务</view> -->
-              <!-- <view class="order-operate goEvaluate">去评价</view> -->
-              <view class="order-operate haveEvaluate">已评价</view>
-              <!-- <view class="order-operate cancelOrder">取消订单</view> -->
-              <!-- <view class="order-operate">已取消</view> -->
+              <view class="order-price">总价<text class="price">{{item.totalMoney}}</text></view>
+              <view class="order-operate goPay" wx:if="{{item.payStatus==0}}">去支付</view>
+              <view class="order-operate cancelOrder" wx:if="{{item.payStatus==0}}">取消订单</view>
+              <view class="order-operate" wx:if="{{item.payStatus==1&&item.serverStatus!=2}}">待服务</view>
+              <view class="order-operate goEvaluate" wx:if="{{item.payStatus==1&&item.serverStatus==2&&item.evaluationStatus==0}}">去评价</view>
+              <view class="order-operate haveEvaluate" wx:if="{{item.payStatus==1&&item.serverStatus==2&&item.evaluationStatus==1}}">已评价</view>
+              <view class="order-operate" wx:if="{{item.payStatus==4}}">已取消</view>
             </view>
           </view>
           </block>
