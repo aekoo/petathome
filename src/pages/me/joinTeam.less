@@ -1,0 +1,151 @@
+@import '../../app.less';
+
+.tips {
+  margin: 32rpx 36rpx 0;
+  box-sizing: border-box;
+
+  .tipsTitle {
+    margin-left: 6rpx;
+    font-size: 34rpx;
+    color: @text-color;
+  }
+
+  .tipsContent {
+    margin-top: 2rpx;
+    margin-left: 8rpx;
+    font-size: 24rpx;
+    color: @red-color;
+  }
+}
+
+// 信息
+.joinTeamContainer {
+  margin: 32rpx;
+  padding: 0 24rpx;
+  background: #FFF;
+  border-radius: 16rpx;
+  box-sizing: border-box;
+
+  .joinTeamRow {
+    display: flex;
+    position: relative;
+    height: 108rpx;
+    line-height: 108rpx;
+    border-bottom: 2rpx solid #F0F0F0;
+    box-sizing: border-box;
+    align-items: center;
+
+
+    .joinTeamTitle {
+      flex: 1;
+    }
+
+    .joinTeamContent {
+      width: 490rpx;
+      margin-right: 12rpx;
+      text-align: right;
+      font-size: 30rpx;
+      color: @text-color;
+    }
+
+    //性别
+    .radio-group,
+    .checkbox-group {
+      position: relative;
+
+      .label_option {
+        display: inline-block;
+        margin: 0 12rpx;
+        padding: 0 24rpx;
+        min-width: 116rpx;
+        height: 64rpx;
+        line-height: 64rpx;
+        text-align: center;
+        font-size: 30rpx;
+        color: @low-text-color;
+        border: 2rpx solid #E5E5E5;
+        border-radius: 8rpx;
+
+        radio,
+        checkbox {
+          display: none;
+        }
+      }
+
+      //选中
+      .checked {
+        border: 2rpx solid #F7E6B2;
+        color: @select-color;
+      }
+    }
+
+    .picker {
+      margin-right: 48rpx;
+      width: 460rpx;
+      height: 100%;
+      text-align: right;
+      font-size: 30rpx;
+      color: @low-text-color;
+    }
+
+    .joinTeamRowArrow {
+      position: absolute;
+      z-index: 2;
+      width: 14rpx;
+      height: 26rpx;
+      top: 50%;
+      right: 12rpx;
+      transform: translateY(-50%);
+
+      image {
+        width: 100%;
+        display: block;
+      }
+    }
+  }
+
+  .bigRow {
+    display: block;
+    padding-bottom: 24rpx;
+    height: auto;
+    line-height: normal;
+    border: none;
+
+    &:last-child {
+      padding-bottom: 48rpx;
+    }
+
+    .bigRowTitle {
+      margin-top: 24rpx;
+      height: 42rpx;
+      line-height: 42rpx;
+    }
+
+
+    // 担任
+    .radio-group,
+    .checkbox-group {
+      .label_option {
+        margin-top: 24rpx;
+      }
+    }
+
+  }
+}
+
+// 确认添加
+.submitBtn {
+  margin: 48rpx 36rpx 0;
+  height: 92rpx;
+  line-height: 92rpx;
+  text-align: center;
+  font-size: 34rpx;
+  color: @text-color;
+  background: @button-color;
+  border-radius: 16rpx;
+  overflow: auto;
+
+  &:active {
+    opacity: .6;
+  }
+}

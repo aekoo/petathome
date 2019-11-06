@@ -1,0 +1,268 @@
+<style lang="less" src="./joinTeam.less"></style>
+<template>
+  <view class="container">
+    <view class="tips">
+      <view class="tipsContent">因上门服务特殊性，在您成为铲屎官前，我们需要收集一些必要信息进行背景调查，审核合格后我们会尽快与您联系</view>
+    </view>
+    <view class="joinTeamContainer">
+      <view class="joinTeamRow">
+        <view class="joinTeamTitle">姓名</view>
+        <view class="joinTeamContent"><input type="text" placeholder="请输入姓名" placeholder-class="placeholderStyle" value="{{realName}}" bindchange="nameChange"></view>
+      </view>
+      <view class="joinTeamRow">
+        <view class="joinTeamTitle">微信号</view>
+        <view class="joinTeamContent"><input type="text" placeholder="请输入微信号" placeholder-class="placeholderStyle" value="{{wechatNo}}" bindchange="wechatChange"></view>
+      </view>
+      <view class="joinTeamRow">
+        <view class="joinTeamTitle">性别</view>
+        <radio-group class="radio-group" bindchange="sexChange">
+          <label class="label_option {{gender==1?'checked':''}}">
+            <radio value="1" checked="{{gender==1}}"></radio><text class="label_text">男</text>
+          </label>
+          <label class="label_option {{gender==2?'checked':''}}">
+            <radio value="2" checked="{{gender==2}}"></radio><text class="label_text">女</text>
+          </label>
+        </radio-group>
+      </view>
+      <view class="joinTeamRow">
+        <view class="joinTeamTitle selectTitle">所在区域</view>
+        <picker bindchange="regionChange" mode="region" value="{{residentArea}}" >
+          <view class="picker">{{residentArea[0]}} | {{residentArea[1]}} | {{residentArea[2]}}</view>
+        </picker>
+        <view class="joinTeamRowArrow"><image mode="aspectFill" src="../../image/arrow.png"/></view>
+      </view>
+      <view class="joinTeamRow">
+        <view class="joinTeamTitle selectTitle">年龄</view>
+        <picker value="{{age}}" range="{{ageArray}}" bindchange="ageChange">
+          <view class="picker">{{ageArray[age]}}</view>
+        </picker>
+        <view class="joinTeamRowArrow"><image mode="aspectFill" src="../../image/arrow.png"/></view>
+      </view>
+      <view class="joinTeamRow">
+        <view class="joinTeamTitle selectTitle">学历</view>
+        <picker bindchange="educationChange" value="{{education}}" range="{{educationArray}}">
+          <view class="picker">{{educationArray[education]}}</view>
+        </picker>
+        <view class="joinTeamRowArrow"><image mode="aspectFill" src="../../image/arrow.png"/></view>
+      </view>
+      <!-- 其他信息 -->
+      <view class="joinTeamRow bigRow">
+        <view class="bigRowTitle">想担任（可多选）</view>
+        <checkbox-group class="checkbox-group" bindchange="professionChange">
+          <label class="label_option {{item.checked?'checked':''}}" wx:for="{{professionsArr}}" wx:key="unique">
+            <checkbox value="{{item.value}}" checked="{{item.checked}}"></checkbox>
+            <text class="label_text">{{item.value}}</text>
+          </label>
+        </checkbox-group>
+      </view>
+      <view class="joinTeamRow bigRow">
+        <view class="bigRowTitle">是否有养宠物经历（狗或猫）</view>
+        <radio-group class="radio-group" bindchange="experienceChange">
+          <label class="label_option {{hasPet==item?'checked':''}}" wx:for="{{whetherArr}}" wx:key="unique">
+            <radio value="{{item}}" checked="{{hasPet==item}}"></radio><text class="label_text">{{item}}</text>
+          </label>
+        </radio-group>
+      </view>
+      <view class="joinTeamRow bigRow">
+        <view class="bigRowTitle">是否接种过狂犬疫苗</view>
+        <radio-group class="radio-group" bindchange="vaccineChange">
+          <label class="label_option {{vaccination==item?'checked':''}}" wx:for="{{whetherArr}}" wx:key="unique">
+            <radio value="{{item}}" checked="{{vaccination==item}}"></radio><text class="label_text">{{item}}</text>
+          </label>
+        </radio-group>
+      </view>
+      <view class="joinTeamRow bigRow">
+        <view class="bigRowTitle">当前工作状况</view>
+        <radio-group class="radio-group" bindchange="workChange">
+          <label class="label_option {{workingStatus==item?'checked':''}}" wx:for="{{workingStatusArr}}" wx:key="unique">
+            <radio value="{{item}}" checked="{{workingStatus==item}}"></radio><text class="label_text">{{item}}</text>
+          </label>
+        </radio-group>
+      </view>
+      <view class="joinTeamRow bigRow">
+        <view class="bigRowTitle">可服务时间（多选）</view>
+        <checkbox-group class="checkbox-group" bindchange="serveTimeChange">
+          <label class="label_option {{item.checked?'checked':''}}" wx:for="{{canServerTimeArr}}" wx:key="unique">
+            <checkbox value="{{item.value}}" checked="{{item.checked}}"></checkbox>
+            <text class="label_text">{{item.value}}</text>
+          </label>
+        </checkbox-group>
+      </view>
+    </view>
+    <view class="submitBtn" @tap="addOrUpdate">提交</view>
+  </view>
+</template>
+
+<script>
+import wepy from '@wepy/core';
+import {
+  gainAddressDetail,
+  addOrUpdateAddress,
+  deleteAddress
+} from '@/api/index.js';
+
+wepy.page({
+  data: {
+    ageArray: [],
+    educationArray: ['其他', '中专', '大专', '本科', '研究生', '博士'],
+    whetherArr: ['是', '否'],
+    workingStatusArr: ['学生', '待业', '有工作想兼职'],
+    // professionsArr: ['铲屎官（猫）', '遛狗官（狗）'],
+    professionsArr: [
+      { value: '铲屎官（猫）', checked: false },
+      { value: '遛狗官（狗）', checked: false }
+    ],
+    sel_professions: [],
+    canServerTimeArr: [
+      { name: 'CSG', value: '全职', checked: false },
+      { name: 'CSG', value: '周末或工作日晚上', checked: false },
+      { name: 'LGG', value: '春节', checked: false }
+    ],
+
+    realName: '',
+    wechatNo: '',
+    gender: 1, //性别
+    residentArea: ['北京市', '北京市', '海淀区'], //所在区域
+    age: 17, //年龄
+    education: 2, //学历
+    serve: '', //担任
+    hasPet: '', //是否养宠物
+    vaccination: '', //疫苗
+    workingStatus: '', //职业
+    canServerTime: '' //服务时间
+  },
+
+  computed: {},
+
+  methods: {
+    generateAge() {
+      let arr = [];
+      for (let i = 1; i <= 100; i++) {
+        arr.push(i);
+      }
+      this.ageArray = arr;
+    },
+    nameChange: function(e) {
+      this.realName = e.$wx.detail.value;
+    },
+    wechatChange: function(e) {
+      this.wechatNo = e.$wx.detail.value;
+    },
+    sexChange: function(e) {
+      this.gender = e.$wx.detail.value;
+    },
+    regionChange: function(e) {
+      this.residentArea = e.$wx.detail.value;
+    },
+    ageChange: function(e) {
+      this.age = e.$wx.detail.value;
+    },
+    //学历
+    educationChange: function(e) {
+      this.education = e.$wx.detail.value;
+    },
+    professionChange: function(e) {
+      console.log(e.$wx.detail.value);
+
+      let selData = e.$wx.detail.value;
+      this.sel_professions = selData;
+      // this.professionsArr.map(item => {
+      //   selData.map(i => {
+      //     if (i === item.value) {
+      //       // console.log(i, item.value, item.checked);
+      //       if (item.checked) {
+      //         item.checked = false;
+      //       } else {
+      //         item.checked = true;
+      //       }
+      //     }
+      //   });
+      // });
+    },
+    //经历
+    experienceChange: function(e) {
+      this.hasPet = e.$wx.detail.value;
+    },
+    //疫苗
+    vaccineChange: function(e) {
+      this.vaccination = e.$wx.detail.value;
+    },
+    //职业
+    workChange: function(e) {
+      this.workingStatus = e.$wx.detail.value;
+    },
+    //服务时间
+    serveTimeChange: function(e) {
+      this.canServerTime = e.$wx.detail.value;
+    },
+    // 添加、修改
+    async addOrUpdate() {
+      const {
+        addressId,
+        realName,
+        province,
+        city,
+        area,
+        detailAddress,
+        phone,
+        wechatNo
+      } = this;
+
+      if (!realName) {
+        return wx.showToast({ title: '请输入联系人姓名', icon: 'none' });
+      }
+      if (!detailAddress) {
+        return wx.showToast({ title: '请输入详细地址', icon: 'none' });
+      }
+      if (!this.verifyPhone(phone)) {
+        return wx.showToast({ title: '请输入正确的手机号', icon: 'none' });
+      }
+      let params = {
+        userId: wx.getStorageSync('openId'),
+        realName,
+        province,
+        city,
+        area,
+        detailAddress,
+        phone,
+        wechatNo
+      };
+      if (addressId) {
+        params.addressId = addressId;
+      }
+      // console.log(params);
+      try {
+        wx.showLoading({ title: '请稍后' });
+        let res = await addOrUpdateAddress(params);
+        const { code, desc, results = {} } = res.data || {};
+        this.addressList = results.address;
+        setTimeout(() => {
+          wx.hideLoading();
+        }, 300);
+        // 失败
+        if (code != 1) {
+          wx.showToast({ title: desc, icon: 'none' });
+          return;
+        }
+        // 成功
+        wx.navigateBack();
+      } catch (error) {
+        wx.showToast({
+          title: `${addressId ? '编辑' : '添加'}地址出错`,
+          icon: 'none'
+        });
+        return -1;
+      }
+    }
+  },
+  onLoad() {
+    this.generateAge();
+  }
+});
+</script>
+<config>
+{
+    navigationBarTitleText: "成为铲屎官",
+    "usingComponents": {}
+}
+</config>
