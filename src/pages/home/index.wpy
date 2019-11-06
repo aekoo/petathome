@@ -29,10 +29,9 @@
     <view class="myPetBox">
       <view class="myPetTitle">我的爱宠</view>
       <view class="myPetList">
-        <image class="myPetImage" mode="aspectFill" src="../../image/default.png"/>
-        <image class="myPetImage" mode="aspectFill" src="../../image/default.png"/>
+        <image class="myPetImage" mode="aspectFill" wx:for="{{myPetList}}" wx:key="unique" src="{{item.avatar}}"/>
       </view>
-      <view class="myPetAdd"></view>
+      <view class="myPetAdd" @tap="goPage"></view>
     </view>
     <!-- info banner -->    
     <swiper class="info-banner" autoplay="true" circular="true">
@@ -58,17 +57,28 @@ import { mapState } from '@wepy/x';
 import store from '@/store';
 import { userLogin } from '@/utils/common';
 import {
-  getBanner,
   getTopScrollingText,
+  getBanner,
+  gainMyPet,
   placeAnOrder
 } from '@/api/index.js';
 
 wepy.page({
   store,
   data: {
+    openId: wx.getStorageSync('openId') || '',
     notice: {},
     topBannerList: [],
+    myPetList: [],
     buttomBannerList: []
+  },
+  watch: {
+    // 监听登录后openId变化
+    '$store.state.openId': function(newFlag, oldFlag) {
+      if (newFlag != oldFlag) {
+        this.getMyPet();
+      }
+    }
   },
 
   computed: {},
@@ -78,6 +88,9 @@ wepy.page({
       if (res.$wx.detail.iv) {
         userLogin(true);
       }
+    },
+    goPage() {
+      wx.navigateTo({ url: '/pages/me/addPet' });
     },
     toWebview(url) {
       wx.navigateTo({ url: `/pages/webview?url=${url}` });
@@ -112,6 +125,18 @@ wepy.page({
         return -1;
       }
     },
+    // 查询我的宠物
+    async getMyPet() {
+      try {
+        let res = await gainMyPet({ userId: this.openId });
+        const { results = {} } = res.data || {};
+        this.myPetList = results;
+      } catch (error) {
+        console.log(error);
+        wx.showToast({ title: '查询我的宠物出错', icon: 'none' });
+        return -1;
+      }
+    },
     async reservation() {
       console.log('aaa');
       let params = {
@@ -138,6 +163,9 @@ wepy.page({
     this.getTopScroll();
     this.getBannerData('top');
     this.getBannerData('button');
+    if (this.openId) {
+      this.getMyPet();
+    }
   },
   onShow() {
     if (typeof this.$wx.getTabBar === 'function' && this.$wx.getTabBar()) {

@@ -45,7 +45,7 @@
             </view>
             <button open-type="contact"></button>
         </view>
-        <view class="userContentLi">
+        <view class="userContentLi" @tap="goPage('joinTeam')">
             <view class="userContentLiIcon"><image src="../../image/join.png" mode="aspectFill"/></view>
             <view class="userContentLiText">我想成为爱宠官</view>
             <view class="userContentLiArrow">

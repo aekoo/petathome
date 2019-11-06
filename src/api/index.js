@@ -79,6 +79,11 @@ export const gainMyPet = (data) => {
   let pathUrl = '/pet/queryMyPet'
   return fetch.get(REQ_URL + pathUrl, data)
 }
+// 加入铲屎官
+export const joinTeam = (data) => {
+  let pathUrl = '/shovel/join'
+  return fetch.post(REQ_URL + pathUrl, data)
+}
 
 
 

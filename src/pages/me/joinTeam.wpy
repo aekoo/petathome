@@ -89,17 +89,13 @@
         </checkbox-group>
       </view>
     </view>
-    <view class="submitBtn" @tap="addOrUpdate">提交</view>
+    <view class="submitBtn" @tap="joinTeam">提交</view>
   </view>
 </template>
 
 <script>
 import wepy from '@wepy/core';
-import {
-  gainAddressDetail,
-  addOrUpdateAddress,
-  deleteAddress
-} from '@/api/index.js';
+import { joinTeam } from '@/api/index.js';
 
 wepy.page({
   data: {
@@ -107,16 +103,14 @@ wepy.page({
     educationArray: ['其他', '中专', '大专', '本科', '研究生', '博士'],
     whetherArr: ['是', '否'],
     workingStatusArr: ['学生', '待业', '有工作想兼职'],
-    // professionsArr: ['铲屎官（猫）', '遛狗官（狗）'],
     professionsArr: [
       { value: '铲屎官（猫）', checked: false },
       { value: '遛狗官（狗）', checked: false }
     ],
-    sel_professions: [],
     canServerTimeArr: [
-      { name: 'CSG', value: '全职', checked: false },
-      { name: 'CSG', value: '周末或工作日晚上', checked: false },
-      { name: 'LGG', value: '春节', checked: false }
+      { value: '全职', checked: false },
+      { value: '周末或工作日晚上', checked: false },
+      { value: '春节', checked: false }
     ],
 
     realName: '',
@@ -162,22 +156,16 @@ wepy.page({
       this.education = e.$wx.detail.value;
     },
     professionChange: function(e) {
-      console.log(e.$wx.detail.value);
-
       let selData = e.$wx.detail.value;
-      this.sel_professions = selData;
-      // this.professionsArr.map(item => {
-      //   selData.map(i => {
-      //     if (i === item.value) {
-      //       // console.log(i, item.value, item.checked);
-      //       if (item.checked) {
-      //         item.checked = false;
-      //       } else {
-      //         item.checked = true;
-      //       }
-      //     }
-      //   });
-      // });
+      this.professionsArr.map(item => {
+        item.checked = false;
+        selData.map(i => {
+          if (i === item.value) {
+            item.checked = true;
+          }
+        });
+      });
+      this.serve = selData.join(',');
     },
     //经历
     experienceChange: function(e) {
@@ -193,47 +181,72 @@ wepy.page({
     },
     //服务时间
     serveTimeChange: function(e) {
-      this.canServerTime = e.$wx.detail.value;
+      let selData = e.$wx.detail.value;
+      this.canServerTimeArr.map(item => {
+        item.checked = false;
+        selData.map(i => {
+          if (i === item.value) {
+            item.checked = true;
+          }
+        });
+      });
+      this.canServerTime = selData.join(',');
     },
+
     // 添加、修改
-    async addOrUpdate() {
+    async joinTeam() {
       const {
-        addressId,
         realName,
-        province,
-        city,
-        area,
-        detailAddress,
-        phone,
-        wechatNo
+        wechatNo,
+        gender,
+        residentArea,
+        age,
+        education,
+        serve,
+        hasPet,
+        vaccination,
+        workingStatus,
+        canServerTime
       } = this;
 
       if (!realName) {
-        return wx.showToast({ title: '请输入联系人姓名', icon: 'none' });
+        return wx.showToast({ title: '请输入你的姓名', icon: 'none' });
       }
-      if (!detailAddress) {
-        return wx.showToast({ title: '请输入详细地址', icon: 'none' });
+      if (!wechatNo) {
+        return wx.showToast({ title: '请输入你的微信号', icon: 'none' });
       }
-      if (!this.verifyPhone(phone)) {
-        return wx.showToast({ title: '请输入正确的手机号', icon: 'none' });
+      if (!serve) {
+        return wx.showToast({ title: '请选择要担任的岗位', icon: 'none' });
+      }
+      if (!hasPet) {
+        return wx.showToast({ title: '请选择是否养过宠物', icon: 'none' });
+      }
+      if (!vaccination) {
+        return wx.showToast({ title: '请选择是否接种过疫苗', icon: 'none' });
+      }
+      if (!workingStatus) {
+        return wx.showToast({ title: '请选择工作状况', icon: 'none' });
+      }
+      if (!canServerTime) {
+        return wx.showToast({ title: '请选择可服务时间', icon: 'none' });
       }
       let params = {
-        userId: wx.getStorageSync('openId'),
         realName,
-        province,
-        city,
-        area,
-        detailAddress,
-        phone,
-        wechatNo
+        wechatNo,
+        gender,
+        residentArea,
+        age,
+        education,
+        serve,
+        hasPet,
+        vaccination,
+        workingStatus,
+        canServerTime
       };
-      if (addressId) {
-        params.addressId = addressId;
-      }
-      // console.log(params);
+      // return console.log(params);
       try {
         wx.showLoading({ title: '请稍后' });
-        let res = await addOrUpdateAddress(params);
+        let res = await joinTeam(params);
         const { code, desc, results = {} } = res.data || {};
         this.addressList = results.address;
         setTimeout(() => {
@@ -245,10 +258,10 @@ wepy.page({
           return;
         }
         // 成功
-        wx.navigateBack();
+        wx.showToast({ title: '提交成功' });
       } catch (error) {
         wx.showToast({
-          title: `${addressId ? '编辑' : '添加'}地址出错`,
+          title: `加入爱宠官出错`,
           icon: 'none'
         });
         return -1;
