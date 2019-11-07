@@ -79,6 +79,22 @@ export const gainMyPet = (data) => {
   let pathUrl = '/pet/queryMyPet'
   return fetch.get(REQ_URL + pathUrl, data)
 }
+// 宠物详情
+export const gainPetDetail = (data) => {
+  let pathUrl = '/pet/queryDetail'
+  return fetch.get(REQ_URL + pathUrl, data)
+}
+// 添加修改宠物信息
+export const addOrUpdatePet = (data) => {
+  let pathUrl = '/pet/addOrUpdate'
+  return fetch.post(REQ_URL + pathUrl, data)
+}
+// 删除宠物
+export const deletePet = (data) => {
+  let pathUrl = '/pet/delete'
+  return fetch.post(REQ_URL + pathUrl, data)
+}
+
 // 加入铲屎官
 export const joinTeam = (data) => {
   let pathUrl = '/shovel/join'

@@ -122,6 +122,78 @@
   }
 }
 
+// 相关证件
+.certificateContainer {
+  margin: 24rpx 32rpx 0;
+  padding: 20rpx 24rpx 40rpx;
+  background: #FFF;
+  border-radius: 16rpx;
+  box-sizing: border-box;
+
+  .certificateTitle {
+    font-size: 30rpx;
+    color: @text-color;
+  }
+
+  .certificateDesc {
+    margin-top: 6rpx;
+    font-size: 22rpx;
+    color: #949494;
+  }
+
+  // 证件列表
+  .certificateList {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+
+    // 证件照片
+    .certificateLi {
+      position: relative;
+      margin-top: 40rpx;
+      margin-right: 32rpx;
+      width: 166rpx;
+      height: 160rpx;
+      border: 2rpx solid #F0F0F0;
+
+      // 删除
+      .deleteCertificate {
+        position: absolute;
+        top: -16rpx;
+        right: -10rpx;
+        width: 30rpx;
+        height: 30rpx;
+      }
+    }
+
+    // 添加
+    .addCertificate {
+      background: #F9F0DD;
+
+      &::before {
+        position: absolute;
+        content: '';
+        top: 50%;
+        left: 50%;
+        transform: translateX(-50%) translateY(-50%);
+        width: 32rpx;
+        height: 4rpx;
+        background: #E2BF51;
+      }
+
+      &::after {
+        position: absolute;
+        content: '';
+        top: 50%;
+        left: 50%;
+        transform: translateX(-50%) translateY(-50%);
+        width: 4rpx;
+        height: 32rpx;
+        background: #E2BF51;
+      }
+    }
+  }
+}
 
 // 确认添加
 .submitBtn {

@@ -15,7 +15,7 @@
         <view class="myPetBox" @tap="goPage('mypet')">
           <view class="myPetTitle">我的爱宠</view>
           <view class="myPetList">
-              <image class="myPetImage" mode="aspectFill" wx:for="{{myPetList}}" wx:key="unique" src="{{item.avatar}}"/>
+              <image class="myPetImage" mode="aspectFill" wx:for="{{myPetList}}" wx:key="unique" src="{{item.avatar||'../../image/default_pet.png'}}"/>
           </view>
           <view class="myPetBoxArrow">
               <image mode="aspectFill" src="../../image/arrow.png"/>
@@ -86,6 +86,7 @@ wepy.page({
     '$store.state.flag': function(newFlag, oldFlag) {
       if (newFlag != oldFlag) {
         this.getUserInfo();
+        this.getMyPet();
       }
     }
   },
@@ -103,7 +104,7 @@ wepy.page({
       try {
         let res = await gainMyPet({ userId: this.openId });
         const { results = {} } = res.data || {};
-        this.myPetList = results;
+        this.myPetList = results.slice(results.length - 3, results.length);
       } catch (error) {
         console.log(error);
         wx.showToast({ title: '查询我的宠物出错', icon: 'none' });

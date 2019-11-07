@@ -4,12 +4,12 @@
     <nodata text="添加您的爱宠，让我们为您的爱宠提供更优质的服务吧" img="../../image/noPet.png" wx:if="{{myPetList.length<1}}"></nodata>
     <view class="petList" wx:else>
       <view class="petCard" wx:for="{{myPetList}}" wx:key="unique">
-        <view class="petAvatar"><image mode="aspectFill" src="{{item.avatar||'../../image/default.png'}}"/></view>
+        <view class="petAvatar"><image mode="aspectFill" src="{{item.avatar||'../../image/default_pet.png'}}"/></view>
         <view class="petName">{{item.nickName}}</view>
         <view class="petVariety">{{KindList[item.kind]}}</view>
         <view class="petActivity">
-          <view class="petEdit"><image mode="aspectFill" src="../../image/edit.png"/></view>
-          <view class="petDelete"><image mode="aspectFill" src="../../image/delete.png"/></view>
+          <view class="petEdit" data-id="{{item.petId}}" @tap="editPet"><image mode="aspectFill" src="../../image/edit.png"/></view>
+          <view class="petDelete" data-id="{{item.petId}}" data-name="{{item.nickName}}" @tap="deleteClick"><image mode="aspectFill" src="../../image/delete.png"/></view>
         </view>
       </view>
     </view>
@@ -19,7 +19,7 @@
 
 <script>
 import wepy from '@wepy/core';
-import { gainPetKinds, gainMyPet } from '@/api/index.js';
+import { gainPetKinds, gainMyPet, deletePet } from '@/api/index.js';
 
 wepy.page({
   data: { KindList: [], myPetList: [] },
@@ -30,6 +30,45 @@ wepy.page({
     // 页面跳转
     goPage() {
       wx.navigateTo({ url: 'addPet' });
+    },
+    editPet(e){
+      const { id } = e.currentTarget.dataset;
+      wx.navigateTo({ url: `addPet?petId=${id}` });
+    },
+    deleteClick(e) {
+      const { id, name } = e.currentTarget.dataset;
+      const _this = this;
+      wx.showModal({
+        title: '提示',
+        content: `确定要删除宠物 ${name} 吗？`,
+        confirmText: '删除',
+        confirmColor: '#DA6262',
+        success: function(sm) {
+          if (sm.confirm) {
+            // console.log('用户点击确定');
+            _this.deletePet(id);
+          } else if (sm.cancel) {
+            // console.log('用户点击取消');
+          }
+        }
+      });
+    },
+    // 删除宠物
+    async deletePet(petId) {
+      try {
+        let res = await deletePet({ petId });
+        const { code, desc, results = {} } = res.data || {};
+        // 失败
+        if (code != 1) {
+          wx.showToast({ title: desc, icon: 'none' });
+          return;
+        }
+        // 成功
+        this.getMyPet();
+      } catch (error) {
+        wx.showToast({ title: '删除宠物出错', icon: 'none' });
+        return -1;
+      }
     },
     // 查询品种
     async getPetKinds() {
@@ -43,7 +82,7 @@ wepy.page({
         });
         this.KindList = kinds;
       } catch (error) {
-        wx.showToast({ title: '获取品种出错', icon: 'none' });
+        wx.showToast({ title: '获取品种列表出错', icon: 'none' });
         return -1;
       }
     },
@@ -55,7 +94,6 @@ wepy.page({
           userId: wx.getStorageSync('openId')
         });
         const { results = {} } = res.data || {};
-        console.log(this.KindList);
         this.myPetList = results;
         setTimeout(() => {
           wx.hideLoading();
@@ -68,11 +106,12 @@ wepy.page({
       }
     }
   },
-  onLoad() {
-    this.getPetKinds();
+  onShow() {
     this.getMyPet();
   },
-  onShow() {}
+  onLoad() {
+    this.getPetKinds();
+  }
 });
 </script>
 <config>

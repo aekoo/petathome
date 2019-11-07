@@ -140,7 +140,6 @@ wepy.page({
         wx.showLoading({ title: '请稍后' });
         let res = await addOrUpdateAddress(params);
         const { code, desc, results = {} } = res.data || {};
-        this.addressList = results.address;
         setTimeout(() => {
           wx.hideLoading();
         }, 300);

@@ -26,3 +26,8 @@ wepy.page({
   }
 });
 </script>
+<config>
+{
+    navigationBarTitleText: "",
+}
+</config>

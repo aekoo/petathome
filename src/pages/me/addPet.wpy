@@ -1,23 +1,23 @@
 <style lang="less" src="./addPet.less"></style>
 <template>
   <view class="container">
-    <view class="addPetAvatar"><image mode="aspectFill" src="{{item.avatar||'../../image/default.png'}}"/></view>
+    <view class="addPetAvatar"><image mode="aspectFill" src="{{avatar||'../../image/default.png'}}"/></view>
     <view class="addPetContainer">
         <view class="addPetRow">
           <view class="addPetTitle">宠物昵称</view>
-          <view class="addPetContent"><input type="text" placeholder="请输入宠物昵称" placeholder-class="placeholderStyle" value="{{realName}}" bindchange="nameChange"></view>
+          <view class="addPetContent"><input type="text" placeholder="请输入宠物昵称" placeholder-class="placeholderStyle" value="{{nickName}}" bindchange="nameChange"></view>
         </view>
         <view class="addPetRow">
           <view class="addPetTitle">种类</view>
-          <picker bindchange="kindChange" value="{{kindIndex}}" range="{{kindArray}}">
-            <view class="picker">{{kindArray[kindIndex]}}</view>
+          <picker bindchange="typeChange" value="{{type}}" range="{{typeArray}}">
+            <view class="picker">{{typeArray[type]}}</view>
           </picker>
           <view class="addPetRowArrow"><image mode="aspectFill" src="../../image/arrow.png"/></view>
         </view>
         <view class="addPetRow">
           <view class="addPetTitle">品种</view>
-          <picker mode="date" value="{{birthday||'1990-01-01'}}" bindchange="birthdayChange">
-            <view class="picker">{{birthday||'1990-01-01'}}</view>
+          <picker bindchange="kindChange" value="{{kindArray[selkind].kinId}}" range="{{kindArray}}" range-key="{{'petName'}}">
+            <view class="picker">{{kindArray[selkind].petName||'请选择'}}</view>
           </picker>
           <view class="addPetRowArrow"><image mode="aspectFill" src="../../image/arrow.png"/></view>
         </view>
@@ -30,42 +30,83 @@
         </view>
         <view class="addPetRow">
           <view class="addPetTitle">生日</view>
-          <picker mode="date" value="{{birthday||'1990-01-01'}}" bindchange="birthdayChange">
-            <view class="picker">{{birthday||'1990-01-01'}}</view>
+          <picker mode="date" value="{{birthday}}" bindchange="birthdayChange">
+            <view class="picker">{{birthday}}</view>
           </picker>
           <view class="addPetRowArrow"><image mode="aspectFill" src="../../image/arrow.png"/></view>
         </view>
         <view class="addPetRow">
           <view class="addPetTitle">已绝育</view>
-          <switch class="addPetSwitch" checked="{{true}}" bindchange="switch1Change" color="#F7E6B2"/>
+          <switch class="addPetSwitch" checked="{{sterilization}}" bindchange="sterilizationChange" color="#F7E6B2"/>
         </view>
         <view class="addPetRow">
           <view class="addPetTitle">已做免疫</view>
-          <switch class="addPetSwitch" checked="{{false}}" bindchange="switch1Change" color="#F7E6B2"/>
+          <switch class="addPetSwitch" checked="{{immunology}}" bindchange="immunologyChange" color="#F7E6B2"/>
         </view>
     </view>
-    <view class="submitBtn" @tap="addOrUpdate">{{addressId ? '确认修改' : '确认添加'}}</view>
+    <!-- 相关证件 -->
+    <view class="certificateContainer">
+      <view class="certificateTitle">宠物相关证件</view>
+      <view class="certificateDesc">选择遛狗服务请上传狗狗免疫记录、狗证</view>
+      <view class="certificateList">
+        <view class="certificateLi">
+          <image class="deleteCertificate" mode="aspectFill" src="../../image/minus.png"/>
+          <image mode="aspectFill" src="../../image/default.png"/>
+        </view>
+        <view class="certificateLi addCertificate" @tap="goPage"></view>
+      </view>
+    </view>
+    <view class="submitBtn" @tap="addOrUpdate">{{petId ? '确认修改' : '确认添加'}}</view>
   </view>
 </template>
 
 <script>
 import wepy from '@wepy/core';
-import { gainPetList } from '@/api/index.js';
+import store from '@/store';
+import { gainPetKinds, gainPetDetail, addOrUpdatePet } from '@/api/index.js';
 
 wepy.page({
   data: {
-    radio: '1',
-    kindArray: ['猫', '狗'],
-    kindIndex: 0,
-    gender: 1
+    selkind: 0, //选择项
+
+    userId: wx.getStorageSync('openId'),
+    petId: '', //宠物id
+    avatar: '', //头像
+    nickName: '', //昵称
+    typeArray: ['猫', '狗'], //种类集合
+    type: 0, //种类
+    kindArray: [], //品种集合
+    kinId: '', //品种
+    gender: 1, //性别
+    birthday: '2010-01-01', //生日
+    sterilization: 0, //绝育
+    immunology: 0, //免疫
+    photo: '' //证件照
   },
 
   computed: {},
 
   methods: {
+    // 昵称
+    nameChange(e) {
+      this.nickName = e.$wx.detail.value;
+    },
     // 种类
+    typeChange(e) {
+      console.log(this.type, e.$wx.detail.value);
+
+      if (this.type != e.$wx.detail.value) {
+        console.log('shaux');
+        
+        this.getPetList();
+      }
+      this.type = e.$wx.detail.value;
+    },
+    // 品种
     kindChange(e) {
-      this.kindIndex = e.$wx.detail.value;
+      let kind = e.$wx.detail.value;
+      this.selkind = kind;
+      this.kinId = this.kindArray[kind].kinId;
     },
     // 选择性别
     sexChange(e) {
@@ -75,25 +116,127 @@ wepy.page({
     birthdayChange(e) {
       this.birthday = e.$wx.detail.value;
     },
-    // 查询地址列表
+    // 绝育
+    sterilizationChange(e) {
+      this.sterilization = e.$wx.detail.value == true ? 1 : 0;
+    },
+    // 免疫
+    immunologyChange(e) {
+      this.immunology = e.$wx.detail.value == true ? 1 : 0;
+    },
+    // 查询品种列表
     async getPetList() {
       try {
         wx.showLoading({ title: '加载中' });
-        let res = await gainPetList({
-          userId: wx.getStorageSync('openId')
-        });
+        let res = await gainPetKinds({ type: this.type });
         const { results = {} } = res.data || {};
-        this.addressList = results.address;
+        this.kindArray = results;
+        this.kinId = this.kindArray[this.selkind].kinId; //初始化选中第一个，获取第一个品种的id
+
         setTimeout(() => {
           wx.hideLoading();
         }, 300);
       } catch (error) {
-        wx.showToast({ title: '获取地址列表出错', icon: 'none' });
+        console.log(error);
+        wx.showToast({ title: '获取品种列表出错', icon: 'none' });
+        return -1;
+      }
+    },
+    //查询爱从详细信息
+    async getPetDetail() {
+      try {
+        wx.showLoading({ title: '加载中' });
+        let res = await gainPetDetail({ petId: this.petId });
+        const { results = {} } = res.data || {};
+
+        this.avatar = results.avatar;
+        this.birthday = results.birthday;
+        this.createTime = results.createTime;
+        this.gender = results.gender;
+        this.immunology = results.immunology;
+        this.kinId = results.kind;
+        this.nickName = results.nickName;
+        this.petId = results.petId;
+        this.sterilization = results.sterilization;
+        this.type = results.type;
+
+        setTimeout(() => {
+          wx.hideLoading();
+        }, 300);
+      } catch (error) {
+        wx.showToast({ title: '获取宠物详情出错', icon: 'none' });
+        return -1;
+      }
+    },
+
+    // 添加、修改
+    async addOrUpdate() {
+      const {
+        petId,
+        avatar, //头像
+        nickName, //昵称
+        type, //种类
+        kinId, //品种
+        gender, //性别
+        birthday, //生日
+        sterilization, //绝育
+        immunology, //免疫
+        photo //证件照
+      } = this;
+
+      if (!nickName) {
+        return wx.showToast({ title: '请输入宠物昵称', icon: 'none' });
+      }
+      let params = {
+        userId: wx.getStorageSync('openId'),
+        avatar,
+        nickName,
+        type,
+        kinId,
+        gender,
+        birthday,
+        sterilization,
+        immunology,
+        photo
+      };
+      if (petId) {
+        params.petId = petId;
+      }
+      // return console.log(params);
+      try {
+        wx.showLoading({ title: '请稍后' });
+        let res = await addOrUpdatePet(params);
+        const { code, desc, results = {} } = res.data || {};
+        setTimeout(() => {
+          wx.hideLoading();
+        }, 300);
+        // 失败
+        if (code != 1) {
+          wx.showToast({ title: desc, icon: 'none' });
+          return;
+        }
+        // 成功
+        store.dispatch('changeFlag'); //更新"首页"、"我的"、我的宠物页面数据
+        wx.navigateBack();
+      } catch (error) {
+        wx.showToast({
+          title: `添加宠物出错`,
+          icon: 'none'
+        });
         return -1;
       }
     }
   },
-  onLoad() {}
+  onLoad(props) {
+    this.getPetList();
+    const { petId } = props;
+    if (petId) {
+      // 如果有带id过来
+      this.petId = petId;
+      wx.setNavigationBarTitle({ title: '编辑爱宠' });
+      this.getPetDetail();
+    }
+  }
 });
 </script>
 <config>

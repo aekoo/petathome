@@ -16,7 +16,7 @@
     </view>
     <!-- top banner -->
     <swiper class="top-banner" indicator-dots="{{topBannerList.length>0}}" indicator-color="#5E5E60" indicator-active-color="#FFF" autoplay="true" circular="true">
-      <swiper-item wx:for="{{topBannerList}}" wx:key="unique">
+      <swiper-item wx:for="{{topBannerList}}" wx:key="unique" data-link="{{item.link}}" @tap="bannerClick">
         <image mode="aspectFill" src="{{item.image}}"/>
       </swiper-item>
     </swiper>
@@ -29,13 +29,13 @@
     <view class="myPetBox">
       <view class="myPetTitle">我的爱宠</view>
       <view class="myPetList">
-        <image class="myPetImage" mode="aspectFill" wx:for="{{myPetList}}" wx:key="unique" src="{{item.avatar}}"/>
+        <image class="myPetImage" mode="aspectFill" wx:for="{{myPetList}}" wx:key="unique" src="{{item.avatar||'../../image/default_pet.png'}}"/>
       </view>
       <view class="myPetAdd" @tap="goPage"></view>
     </view>
     <!-- info banner -->    
     <swiper class="info-banner" autoplay="true" circular="true">
-      <swiper-item wx:for="{{buttomBannerList}}" wx:key="unique">
+      <swiper-item wx:for="{{buttomBannerList}}" wx:key="unique" data-link="{{item.link}}" @tap="bannerClick">
         <view class="swiper-item"></view>
       </swiper-item>
     </swiper>
@@ -78,6 +78,12 @@ wepy.page({
       if (newFlag != oldFlag) {
         this.getMyPet();
       }
+    },
+    //监听flage，更新用户头像等信息
+    '$store.state.flag': function(newFlag, oldFlag) {
+      if (newFlag != oldFlag) {
+        this.getMyPet();
+      }
     }
   },
 
@@ -94,6 +100,10 @@ wepy.page({
     },
     toWebview(url) {
       wx.navigateTo({ url: `/pages/webview?url=${url}` });
+    },
+    bannerClick(e) {
+      const { link } = e.currentTarget.dataset;
+      this.toWebview(link);
     },
     // 查询通告
     async getTopScroll(position) {
@@ -130,7 +140,7 @@ wepy.page({
       try {
         let res = await gainMyPet({ userId: this.openId });
         const { results = {} } = res.data || {};
-        this.myPetList = results;
+        this.myPetList = results.slice(results.length - 3, results.length);
       } catch (error) {
         console.log(error);
         wx.showToast({ title: '查询我的宠物出错', icon: 'none' });

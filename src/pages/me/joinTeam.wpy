@@ -51,7 +51,7 @@
         <checkbox-group class="checkbox-group" bindchange="professionChange">
           <label class="label_option {{item.checked?'checked':''}}" wx:for="{{professionsArr}}" wx:key="unique">
             <checkbox value="{{item.value}}" checked="{{item.checked}}"></checkbox>
-            <text class="label_text">{{item.value}}</text>
+            <text class="label_text">{{item.name}}</text>
           </label>
         </checkbox-group>
       </view>
@@ -104,8 +104,8 @@ wepy.page({
     whetherArr: ['是', '否'],
     workingStatusArr: ['学生', '待业', '有工作想兼职'],
     professionsArr: [
-      { value: '铲屎官（猫）', checked: false },
-      { value: '遛狗官（狗）', checked: false }
+      { name: '铲屎官（猫）', value: 0, checked: false },
+      { name: '遛狗官（狗）', value: 1, checked: false }
     ],
     canServerTimeArr: [
       { value: '全职', checked: false },
@@ -160,12 +160,16 @@ wepy.page({
       this.professionsArr.map(item => {
         item.checked = false;
         selData.map(i => {
-          if (i === item.value) {
+          if (i == item.value) {
             item.checked = true;
           }
         });
       });
-      this.serve = selData.join(',');
+      if (selData.length > 1) {
+        this.serve = 2;
+      } else {
+        this.serve = selData.join(',');
+      }
     },
     //经历
     experienceChange: function(e) {
@@ -235,7 +239,7 @@ wepy.page({
         wechatNo,
         gender,
         residentArea,
-        age,
+        age: age + 1,
         education,
         serve,
         hasPet,
