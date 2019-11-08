@@ -1,0 +1,32 @@
+<style lang="less" src="./place.less"></style>
+<template>
+  <view class="container">
+    <view class="addressBox">
+烧豆腐
+    </view>
+  </view>
+</template>
+
+<script>
+import wepy from '@wepy/core';
+import { gainAddressList } from '@/api/index.js';
+
+wepy.page({
+  data: {},
+
+  computed: {},
+
+  methods: {
+    // 页面跳转
+    goPage() {
+      wx.navigateTo({ url: 'add' });
+    }
+  },
+  onShow() {}
+});
+</script>
+<config>
+{
+    navigationBarTitleText: "预约上门",
+}
+</config>

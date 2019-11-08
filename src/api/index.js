@@ -49,6 +49,21 @@ export const placeAnOrder = (data) => {
   let pathUrl = '/order/placeAnOrder'
   return fetch.post(REQ_URL + pathUrl, data)
 }
+// 申请退款
+export const refundOrder = (data) => {
+  let pathUrl = '/order/refund'
+  return fetch.post(REQ_URL + pathUrl, data)
+}
+// 取消订单
+export const cancelOrder = (data) => {
+  let pathUrl = '/order/cancel'
+  return fetch.post(REQ_URL + pathUrl, data)
+}
+// 订单支付
+export const payOrder = (data) => {
+  let pathUrl = '/order/pay'
+  return fetch.post(REQ_URL + pathUrl, data)
+}
 
 
 

@@ -4,7 +4,7 @@
     <van-tabs sticky="true" swipeable animated="true" class="orderBox" border="false" line-width="36" active="{{ active }}" bind:change="onChange">
       <van-tab v-for="(item,i) in tabNames" v-bind:key="i" title="{{item}}">
           <nodata text="你还没订单，快去下单吧" img="../../image/noOrders.png" wx:if="{{dataList.length<1}}"></nodata>
-          <block wx:else>
+          <scroll-view wx:else scroll-y="true" style="height:{{scrollHeight}}px">
           <view class="orderCard" wx:for="{{dataList}}" wx:key="unique">
             <view class="order-title">
               <text>上门{{item.serverType==1?'遛狗':'喂猫'}}</text>
@@ -32,15 +32,18 @@
             </view>
             <view class="order-action">
               <view class="order-price">总价<text class="price">{{item.totalMoney}}</text></view>
-              <view class="order-operate goPay" wx:if="{{item.payStatus==0}}">去支付</view>
-              <view class="order-operate cancelOrder" wx:if="{{item.payStatus==0}}">取消订单</view>
-              <view class="order-operate" wx:if="{{item.payStatus==1&&item.serverStatus!=2}}">待服务</view>
-              <view class="order-operate goEvaluate" wx:if="{{item.payStatus==1&&item.serverStatus==2&&item.evaluationStatus==0}}">去评价</view>
+              <view data-orderno="{{item.orderNo}}" class="order-operate goPay" wx:if="{{item.payStatus==0}}">去支付</view>
+              <view data-orderno="{{item.orderNo}}" class="order-operate cancelOrder" wx:if="{{item.payStatus==0}}" @tap="cancelOrderClick">取消订单</view>
+              <view data-orderno="{{item.orderNo}}" class="order-operate cancelOrder" wx:if="{{item.payStatus==1&&item.serverStatus==0}}" @tap="refundOrderClick">申请退款</view>
+              <view class="order-operate" wx:if="{{item.payStatus==1&&item.serverStatus!=2}}">{{item.serverStatus==1?'进行中':'待服务'}}</view>
+              <view data-orderno="{{item.orderNo}}" class="order-operate goEvaluate" wx:if="{{item.payStatus==1&&item.serverStatus==2&&item.evaluationStatus==0}}">去评价</view>
               <view class="order-operate haveEvaluate" wx:if="{{item.payStatus==1&&item.serverStatus==2&&item.evaluationStatus==1}}">已评价</view>
+              <view class="order-operate" wx:if="{{item.payStatus==2}}">退款中</view>
+              <view class="order-operate" wx:if="{{item.payStatus==3}}">退款成功</view>
               <view class="order-operate" wx:if="{{item.payStatus==4}}">已取消</view>
             </view>
           </view>
-          </block>
+          </scroll-view>
       </van-tab>
     </van-tabs>
   </view>
@@ -51,11 +54,13 @@ import wepy from '@wepy/core';
 import eventHub from '@/common/eventHub';
 import { mapState } from '@wepy/x';
 import store from '@/store';
-import { getOrders } from '@/api/index.js';
+import { getOrders, payOrder, refundOrder, cancelOrder } from '@/api/index.js';
 
 wepy.page({
   store,
   data: {
+    windowHeight: 0,
+    scrollHeight: 0,
     tabId: 0,
     tabNames: ['全部订单', '待支付', '进行中', '已完成'],
     openId: wx.getStorageSync('openId') || '',
@@ -72,11 +77,107 @@ wepy.page({
   computed: {},
 
   methods: {
+    //计算滚动可视区高度
+    calculate: function() {
+      let that = this;
+      // 取出页面高度 windowHeight
+      wx.getSystemInfo({
+        success: function(res) {
+          that.windowHeight = res.windowHeight;
+          that.scrollHeight = res.windowHeight - 94; //由于下面createSelectorQuery执行有问题,需等待微信官方解决，故这里预估减去94px,若下面代码生效会重新赋值给scrollHeight
+        }
+      });
+
+      // 根据文档，先创建一个SelectorQuery对象实例
+      let query = wx.createSelectorQuery().in(this);
+      // 然后逐个取出vanTabs和tabBar的节点信息
+      // 选择器的语法与jQuery语法相同
+      query.select('.van-tabs').boundingClientRect();
+      query.select('.tab-bar').boundingClientRect();
+
+      // 执行上面所指定的请求，结果会按照顺序存放于一个数组中，在callback的第一个参数中返回
+      query.exec(res => {
+        // 分别取出vanTabs和tabBar的高度
+        let vanTabsHeight = res[0].height;
+        let tabBarHeight = res[1].height;
+
+        const { windowHeight } = this;
+        let scrollHeight = windowHeight - vanTabsHeight - tabBarHeight;
+        this.scrollHeight = scrollHeight;
+      });
+    },
+
     onChange(event) {
       const { index, title } = event.$wx.detail;
       console.log(`切换到标签 ${title}`);
       this.tabId = index;
       this.getListData(index);
+    },
+    cancelOrderClick(e) {
+      this.confirmPopup(1, e);
+    },
+    refundOrderClick(e) {
+      this.confirmPopup(2, e);
+    },
+    // 确认弹窗
+    confirmPopup(type, e) {
+      const { orderno } = e.currentTarget.dataset;
+      const _this = this;
+      wx.showModal({
+        title: '提示',
+        content: type == 1 ? '确定要取消该订单吗？' : '确定要申请退款吗？',
+        confirmColor: '#DA6262',
+        success: function(sm) {
+          if (sm.confirm) {
+            // console.log('用户点击确定');
+            type == 1 ? _this.cancelOrder(orderno) : _this.refundOrder(orderno);
+          } else if (sm.cancel) {
+            // console.log('用户点击取消');
+          }
+        }
+      });
+    },
+    // 取消订单
+    async cancelOrder(orderNo) {
+      try {
+        let res = await cancelOrder({ orderNo });
+        const { code, desc, results = {} } = res.data || {};
+        // 失败
+        if (code != 1) {
+          wx.showToast({ title: desc, icon: 'none' });
+          return;
+        }
+        // 成功--直接修改本地数据，避免再次请求刷新页面
+        this.dataList.find(item => {
+          if ((item.orderNo = orderno)) {
+            item.payStatus = 4;
+          }
+        });
+      } catch (error) {
+        wx.showToast({ title: '取消订单出错', icon: 'none' });
+        return -1;
+      }
+    },
+    // 申请退款
+    async refundOrder(orderNo) {
+      try {
+        let res = await refundOrder({ orderNo });
+        const { code, desc, results = {} } = res.data || {};
+        // 失败
+        if (code != 1) {
+          wx.showToast({ title: desc, icon: 'none' });
+          return;
+        }
+        // 成功--直接修改本地数据，避免再次请求刷新页面
+        this.dataList.find(item => {
+          if ((item.orderNo = orderno)) {
+            item.payStatus = 2;
+          }
+        });
+      } catch (error) {
+        wx.showToast({ title: '申请退款出错', icon: 'none' });
+        return -1;
+      }
     },
     // 查询订单
     async getListData() {
@@ -103,12 +204,16 @@ wepy.page({
     if (typeof this.$wx.getTabBar === 'function' && this.$wx.getTabBar()) {
       this.$wx.getTabBar().setData({ selected: 2 });
     }
+  },
+  onLoad() {
+    this.calculate();
   }
 });
 </script>
 <config>
 {
     navigationBarTitleText: "我的订单",
+    disableScroll: true,
     usingComponents: {
       nodata: '~@/components/nodata/index',
       "van-tab": "~@/components/vant-weapp/tab/index",

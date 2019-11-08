@@ -19,12 +19,17 @@
   .van-tabs__line {
     background: #F7E6B2; //框架暴露的属性会先默认颜色再变回设定颜色，所以在这里改
   }
+
   //订单卡片
   .orderCard {
     margin: 24rpx 32rpx 0;
     padding: 24rpx;
     background: #FFF;
     border-radius: 16rpx;
+
+    &:last-child {
+      margin: 24rpx 32rpx 80rpx;
+    }
 
     // 订单类型-标题
     .order-title {
