@@ -6,7 +6,7 @@
       <view class="petCard" wx:for="{{myPetList}}" wx:key="unique">
         <view class="petAvatar"><image mode="aspectFill" src="{{item.avatar||'../../image/default_pet.png'}}"/></view>
         <view class="petName">{{item.nickName}}</view>
-        <view class="petVariety">{{KindList[item.kind]}}</view>
+        <view class="petVariety">{{KindList[item.kindId]}}</view>
         <view class="petActivity">
           <view class="petEdit" data-id="{{item.petId}}" @tap="editPet"><image mode="aspectFill" src="../../image/edit.png"/></view>
           <view class="petDelete" data-id="{{item.petId}}" data-name="{{item.nickName}}" @tap="deleteClick"><image mode="aspectFill" src="../../image/delete.png"/></view>
@@ -31,7 +31,7 @@ wepy.page({
     goPage() {
       wx.navigateTo({ url: 'addPet' });
     },
-    editPet(e){
+    editPet(e) {
       const { id } = e.currentTarget.dataset;
       wx.navigateTo({ url: `addPet?petId=${id}` });
     },
@@ -77,8 +77,8 @@ wepy.page({
         const { results = {} } = res.data || {};
         let kinds = {};
         results.map(item => {
-          let { kinId, petName } = item;
-          kinds[kinId] = petName;
+          let { kindId, petName } = item;
+          kinds[kindId] = petName;
         });
         this.KindList = kinds;
       } catch (error) {

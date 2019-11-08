@@ -1,7 +1,7 @@
 <style lang="less" src="./addPet.less"></style>
 <template>
   <view class="container">
-    <view class="addPetAvatar" @tap="showMenu"><image mode="aspectFill" src="{{avatar||'../../image/default_pet.png'}}"/></view>
+    <view class="addPetAvatar"><image mode="aspectFill" src="{{avatar||'../../image/default.png'}}"/></view>
     <view class="addPetContainer">
         <view class="addPetRow">
           <view class="addPetTitle">宠物昵称</view>
@@ -16,8 +16,8 @@
         </view>
         <view class="addPetRow">
           <view class="addPetTitle">品种</view>
-          <picker bindchange="kindChange" value="{{kindArray[selkind].kinId}}" range="{{kindArray}}" range-key="{{'petName'}}">
-            <view class="picker">{{kindArray[selkind].petName||'请选择'}}</view>
+          <picker bindchange="kindChange" value="{{kindArray[selkindId].kindId}}" range="{{kindArray}}" range-key="{{'petName'}}">
+            <view class="picker">{{kindArray[selkindId].petName||'请选择'}}</view>
           </picker>
           <view class="addPetRowArrow"><image mode="aspectFill" src="../../image/arrow.png"/></view>
         </view>
@@ -67,7 +67,7 @@ import { gainPetKinds, gainPetDetail, addOrUpdatePet } from '@/api/index.js';
 
 wepy.page({
   data: {
-    selkind: 0, //选择项
+    selkindId: 0, //选择项
 
     userId: wx.getStorageSync('openId'),
     petId: '', //宠物id
@@ -76,7 +76,7 @@ wepy.page({
     typeArray: ['猫', '狗'], //种类集合
     type: 0, //种类
     kindArray: [], //品种集合
-    kinId: '', //品种
+    kindId: '', //品种
     gender: 1, //性别
     birthday: '2010-01-01', //生日
     sterilization: 0, //绝育
@@ -93,17 +93,20 @@ wepy.page({
     },
     // 种类
     typeChange(e) {
+      console.log(this.type, e.$wx.detail.value);
+
+      if (this.type != e.$wx.detail.value) {
+        console.log('shaux');
+
+        this.getPetList();
+      }
       this.type = e.$wx.detail.value;
-      // if (this.type != e.$wx.detail.value) {
-      this.selkind = 0;
-      this.getPetList();
-      // }
     },
     // 品种
     kindChange(e) {
       let kind = e.$wx.detail.value;
-      this.selkind = kind;
-      this.kinId = this.kindArray[kind].kinId;
+      this.selkindId = kind;
+      this.kindId = this.kindArray[kind].kindId;
     },
     // 选择性别
     sexChange(e) {
@@ -121,72 +124,6 @@ wepy.page({
     immunologyChange(e) {
       this.immunology = e.$wx.detail.value == true ? 1 : 0;
     },
-
-    // 选择图片来源
-    showMenu() {
-      const _this = this;
-      wx.showActionSheet({
-        itemList: ['拍照', '从相册中选择'],
-        success(res) {
-          console.log(res.tapIndex);
-          let sourceType = 'camera';
-          if (res.tapIndex == 1) {
-            sourceType = 'album';
-          }
-          wx.chooseImage({
-            count: 1,
-            sizeType: ['original', 'compressed'],
-            sourceType: [sourceType],
-            success: function(res) {
-              // console.log(res);
-              const tempFilePaths = res.tempFilePaths;
-
-              _this.uploadAvatar(tempFilePaths[0]); //先上传图片，获取图片url
-            }
-          });
-        }
-      });
-    },
-    //上传文件、头像
-    async uploadAvatar(avatarUrl) {
-      // try {
-      //   let res = await uploadFile({
-      //     type: 0,
-      //     file: avatarUrl
-      //   });
-      //   // console.log(res);
-      //   const { code, results = {} } = JSON.parse(res.data) || {};
-      //   if (code == 1) {
-      //     this.updateAvatar(results.imageUrl); //获取图片url,更新头像
-      //   }
-      // } catch (error) {
-      //   wx.showToast({ title: '上传头像出错了', icon: 'none' });
-      //   return -1;
-      // }
-    },
-    // 更新头像
-    async updateAvatar(avatarUrl) {
-      try {
-        wx.showLoading({ title: '头像上传中', mask: true });
-        let res = await updateAvatar({
-          userId: wx.getStorageSync('openId'),
-          avatarUrl
-        });
-        // console.log(res);
-        const { code } = res.data || {};
-        if (code == 1) {
-          this.getUserInfo(); //更新当前页面数据
-          store.dispatch('changeFlag'); //更新"我的"页面数据
-        }
-        setTimeout(() => {
-          wx.hideLoading();
-        }, 300);
-      } catch (error) {
-        wx.showToast({ title: '更新头像出错了', icon: 'none' });
-        return -1;
-      }
-    },
-
     // 查询品种列表
     async getPetList() {
       try {
@@ -194,9 +131,7 @@ wepy.page({
         let res = await gainPetKinds({ type: this.type });
         const { results = {} } = res.data || {};
         this.kindArray = results;
-        if (this.kindArray.length > 0) {
-          this.kinId = results[this.selkind].kinId; //初始化选中第一个，获取第一个品种的id
-        }
+        this.kindId = this.kindArray[this.selkindId].kindId; //初始化选中第一个，获取第一个品种的id
 
         setTimeout(() => {
           wx.hideLoading();
@@ -216,19 +151,20 @@ wepy.page({
 
         this.avatar = results.avatar;
         this.birthday = results.birthday;
+        this.createTime = results.createTime;
         this.gender = results.gender;
         this.immunology = results.immunology;
-        this.kinId = results.kind;
+        this.kindId = results.kindId;
         this.nickName = results.nickName;
         this.petId = results.petId;
         this.sterilization = results.sterilization;
         this.type = results.type;
 
-        //选中对应的品种
-        let selkind = this.kindArray.findIndex(
-          item => item.kinId == results.kind
+        let selkindId = this.kindArray.findIndex(
+          item => item.kindId == results.kindId
         );
-        this.selkind = selkind > -1 ? selkind : 0;
+        console.log(selkindId);
+        this.selkindId = selkindId;
 
         setTimeout(() => {
           wx.hideLoading();
@@ -246,7 +182,7 @@ wepy.page({
         avatar, //头像
         nickName, //昵称
         type, //种类
-        kinId, //品种
+        kindId, //品种
         gender, //性别
         birthday, //生日
         sterilization, //绝育
@@ -262,7 +198,7 @@ wepy.page({
         avatar,
         nickName,
         type,
-        kinId,
+        kindId,
         gender,
         birthday,
         sterilization,
