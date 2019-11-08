@@ -5,7 +5,7 @@
     <view class="addPetContainer">
         <view class="addPetRow">
           <view class="addPetTitle">宠物昵称</view>
-          <view class="addPetContent"><input type="text" placeholder="请输入宠物昵称" placeholder-class="placeholderStyle" value="{{nickName}}" bindchange="nameChange"></view>
+          <view class="addPetContent"><input type="text" maxlength="10" placeholder="请输入宠物昵称" placeholder-class="placeholderStyle" value="{{nickName}}" bindchange="nameChange"></view>
         </view>
         <view class="addPetRow">
           <view class="addPetTitle">种类</view>

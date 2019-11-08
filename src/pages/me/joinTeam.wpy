@@ -7,11 +7,11 @@
     <view class="joinTeamContainer">
       <view class="joinTeamRow">
         <view class="joinTeamTitle">姓名</view>
-        <view class="joinTeamContent"><input type="text" placeholder="请输入姓名" placeholder-class="placeholderStyle" value="{{realName}}" bindchange="nameChange"></view>
+        <view class="joinTeamContent"><input type="text" maxlength="10" placeholder="请输入姓名" placeholder-class="placeholderStyle" value="{{realName}}" bindchange="nameChange"></view>
       </view>
       <view class="joinTeamRow">
         <view class="joinTeamTitle">微信号</view>
-        <view class="joinTeamContent"><input type="text" placeholder="请输入微信号" placeholder-class="placeholderStyle" value="{{wechatNo}}" bindchange="wechatChange"></view>
+        <view class="joinTeamContent"><input type="text" maxlength="20" placeholder="请输入微信号" placeholder-class="placeholderStyle" value="{{wechatNo}}" bindchange="wechatChange"></view>
       </view>
       <view class="joinTeamRow">
         <view class="joinTeamTitle">性别</view>

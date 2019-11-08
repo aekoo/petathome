@@ -10,7 +10,7 @@
       </view>
       <view class="personalLi" >
         <view class="personalTitle">昵称</view>
-        <view class="personalInput"><input type="text" placeholder="未设置昵称" placeholder-class="placeholderStyle" value="{{userInfo.nickName}}" bindchange="dataChange"></view>
+        <view class="personalInput"><input type="text" maxlength="10" placeholder="未设置昵称" placeholder-class="placeholderStyle" value="{{userInfo.nickName}}" bindchange="dataChange"></view>
       </view>
       <view class="personalLi" >
         <view class="personalTitle">性别</view>
