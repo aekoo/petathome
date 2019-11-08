@@ -89,15 +89,15 @@ wepy.page({
     // 查询我的宠物
     async getMyPet() {
       try {
-        wx.showLoading({ title: '加载中' });
+        // wx.showLoading({ title: '加载中' });
         let res = await gainMyPet({
           userId: wx.getStorageSync('openId')
         });
         const { results = {} } = res.data || {};
         this.myPetList = results;
-        setTimeout(() => {
-          wx.hideLoading();
-        }, 500);
+        // setTimeout(() => {
+        //   wx.hideLoading();
+        // }, 500);
       } catch (error) {
         console.log(error);
 

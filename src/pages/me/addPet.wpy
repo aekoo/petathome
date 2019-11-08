@@ -1,7 +1,7 @@
 <style lang="less" src="./addPet.less"></style>
 <template>
   <view class="container">
-    <view class="addPetAvatar"><image mode="aspectFill" src="{{avatar||'../../image/default.png'}}"/></view>
+    <view class="addPetAvatar" @tap="uploadAvatar"><image mode="aspectFill" src="{{avatar||'../../image/default_pet.png'}}"/></view>
     <view class="addPetContainer">
         <view class="addPetRow">
           <view class="addPetTitle">宠物昵称</view>
@@ -49,11 +49,11 @@
       <view class="certificateTitle">宠物相关证件</view>
       <view class="certificateDesc">选择遛狗服务请上传狗狗免疫记录、狗证</view>
       <view class="certificateList">
-        <view class="certificateLi">
-          <image class="deleteCertificate" mode="aspectFill" src="../../image/minus.png"/>
-          <image mode="aspectFill" src="../../image/default.png"/>
+        <view class="certificateLi" wx:for="{{photo}}" wx:key="unique">
+          <image class="deleteCertificate" mode="aspectFill" src="../../image/minus.png" data-img="{{item}}" @tap="delFile"/>
+          <image mode="aspectFill" src="{{item}}"/>
         </view>
-        <view class="certificateLi addCertificate" @tap="goPage"></view>
+        <view class="certificateLi addCertificate" @tap="uploadFile"></view>
       </view>
     </view>
     <view class="submitBtn" @tap="addOrUpdate">{{petId ? '确认修改' : '确认添加'}}</view>
@@ -63,11 +63,16 @@
 <script>
 import wepy from '@wepy/core';
 import store from '@/store';
-import { gainPetKinds, gainPetDetail, addOrUpdatePet } from '@/api/index.js';
+import {
+  uploadFile,
+  gainPetKinds,
+  gainPetDetail,
+  addOrUpdatePet
+} from '@/api/index.js';
 
 wepy.page({
   data: {
-    selkindId: 0, //选择项
+    selkindId: '', //选择项
 
     userId: wx.getStorageSync('openId'),
     petId: '', //宠物id
@@ -81,7 +86,7 @@ wepy.page({
     birthday: '2010-01-01', //生日
     sterilization: 0, //绝育
     immunology: 0, //免疫
-    photo: '' //证件照
+    photo: [] //证件照
   },
 
   computed: {},
@@ -93,14 +98,11 @@ wepy.page({
     },
     // 种类
     typeChange(e) {
-      console.log(this.type, e.$wx.detail.value);
-
-      if (this.type != e.$wx.detail.value) {
-        console.log('shaux');
-
-        this.getPetList();
-      }
       this.type = e.$wx.detail.value;
+      // if (this.type != e.$wx.detail.value) {
+      this.selkind = 0;
+      this.getPetList();
+      // }
     },
     // 品种
     kindChange(e) {
@@ -124,6 +126,67 @@ wepy.page({
     immunologyChange(e) {
       this.immunology = e.$wx.detail.value == true ? 1 : 0;
     },
+
+    //删除宠物证件
+    delFile(e) {
+      const { img } = e.currentTarget.dataset;
+      this.photo.splice(this.photo.findIndex(item => item == img), 1);
+    },
+    uploadAvatar() {
+      this.showMenu(3);
+    },
+    uploadFile() {
+      this.showMenu(1);
+    },
+    // 选择图片来源
+    showMenu(type) {
+      const _this = this;
+      wx.showActionSheet({
+        itemList: ['拍照', '从相册中选择'],
+        success(res) {
+          console.log(res.tapIndex);
+          let sourceType = 'camera';
+          if (res.tapIndex == 1) {
+            sourceType = 'album';
+          }
+          wx.chooseImage({
+            count: 1,
+            sizeType: ['original', 'compressed'],
+            sourceType: [sourceType],
+            success: function(res) {
+              // console.log(res);
+              const tempFilePaths = res.tempFilePaths;
+              _this.uploadAvatarAndFile(type, tempFilePaths[0]); //先上传图片，获取图片url
+            }
+          });
+        }
+      });
+    },
+    //上传文件、头像
+    async uploadAvatarAndFile(type, avatarUrl) {
+      try {
+        let res = await uploadFile({
+          type,
+          file: avatarUrl
+        });
+        // console.log(res);
+        const { code, results = {} } = JSON.parse(res.data) || {};
+        if (code == 1) {
+          if (type == 3) {
+            //宠物头像
+            this.avatar = results.imageUrl; //获取图片url,更新头像
+          } else if (type == 1) {
+            //宠物证件照
+            this.photo.push(results.imageUrl);
+          }
+        }
+      } catch (error) {
+        console.log(error);
+        wx.showToast({ title: '上传图片出错了', icon: 'none' });
+        return -1;
+      }
+    },
+
     // 查询品种列表
     async getPetList() {
       try {
@@ -131,7 +194,10 @@ wepy.page({
         let res = await gainPetKinds({ type: this.type });
         const { results = {} } = res.data || {};
         this.kindArray = results;
-        this.kindId = this.kindArray[this.selkindId].kindId; //初始化选中第一个，获取第一个品种的id
+
+        if (this.kindArray.length > 0 && this.selkindId) {
+          this.kindId = this.kindArray[this.selkindId].kindId; //初始化选中第一个，获取第一个品种的id
+        }
 
         setTimeout(() => {
           wx.hideLoading();
@@ -159,14 +225,15 @@ wepy.page({
         this.petId = results.petId;
         this.sterilization = results.sterilization;
         this.type = results.type;
-
-        let selkindId = this.kindArray.findIndex(
-          item => item.kindId == results.kindId
-        );
-        console.log(selkindId);
-        this.selkindId = selkindId;
+        this.photo = results.photo ? results.photo.split(',') : [];
 
         setTimeout(() => {
+          //选中对应的品种
+          let selkindId = this.kindArray.findIndex(
+            item => item.kindId == results.kindId
+          );
+          this.selkindId = selkindId > -1 ? selkindId : '';
+
           wx.hideLoading();
         }, 300);
       } catch (error) {
@@ -203,7 +270,7 @@ wepy.page({
         birthday,
         sterilization,
         immunology,
-        photo
+        photo: photo.join(',')
       };
       if (petId) {
         params.petId = petId;
@@ -225,10 +292,8 @@ wepy.page({
         store.dispatch('changeFlag'); //更新"首页"、"我的"、我的宠物页面数据
         wx.navigateBack();
       } catch (error) {
-        wx.showToast({
-          title: `添加宠物出错`,
-          icon: 'none'
-        });
+        console.log(error);
+        wx.showToast({ title: '添加宠物出错', icon: 'none' });
         return -1;
       }
     }

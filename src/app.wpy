@@ -35,11 +35,11 @@ wepy.app({
 <config>
 {
     pages: [
-      'pages/me/mypet',
       'pages/home/index',
       'pages/service/index',
       'pages/orders/index',
       'pages/me/index',
+      'pages/me/mypet',
       'pages/me/addPet',
       'pages/me/personal',
       'pages/me/joinTeam',
