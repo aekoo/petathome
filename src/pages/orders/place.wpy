@@ -4,12 +4,15 @@
     <view class="addressBox">
 烧豆腐
     </view>
+    <van-submit-bar price="{{ 3050 }}" button-text="提交订单" bind:submit="onClickButton" tip="{{ true }}" >
+      <view slot="tip">您的收货地址不支持同城送, <text>修改地址</text></view>
+    </van-submit-bar>
   </view>
 </template>
 
 <script>
 import wepy from '@wepy/core';
-import { gainAddressList } from '@/api/index.js';
+import { placeAnOrder } from '@/api/index.js';
 
 wepy.page({
   data: {},
@@ -20,6 +23,27 @@ wepy.page({
     // 页面跳转
     goPage() {
       wx.navigateTo({ url: 'add' });
+    },
+    async reservation() {
+      console.log('aaa');
+      let params = {
+        userId: 'ojE985QmUgZZopp6sP5MTjgIaws4',
+        addressId: 0,
+        keyHandover: 0,
+        payMoney: 199,
+        petIds: 0,
+        serverType: 0
+      };
+
+      try {
+        wx.showLoading({ title: '正在提交预约' });
+        let res = await placeAnOrder(params);
+        console.log(res);
+        wx.hideLoading();
+      } catch (error) {
+        wx.showToast({ title: '请求服务失败', icon: 'none' });
+        return -1;
+      }
     }
   },
   onShow() {}
@@ -28,5 +52,8 @@ wepy.page({
 <config>
 {
     navigationBarTitleText: "预约上门",
+    usingComponents: {
+      "van-submit-bar": "~@/components/vant-weapp/submit-bar/index"
+    }
 }
 </config>

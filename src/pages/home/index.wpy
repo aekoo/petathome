@@ -22,8 +22,8 @@
     </swiper>
     <!-- 预约 -->
     <view class="feed-pet-box">
-      <view class="feed-pet" @tap="reservation"><image mode="aspectFill" src="../../image/feed-dog.png"/></view>
-      <view class="feed-pet"><image mode="aspectFill" src="../../image/feed-cat.png"/></view>
+      <view class="feed-pet" @tap="goPage('/pages/orders/place?type=0')"><image mode="aspectFill" src="../../image/feed-dog.png"/></view>
+      <view class="feed-pet" @tap="goPage('/pages/orders/place?type=1')"><image mode="aspectFill" src="../../image/feed-cat.png"/></view>
     </view>
     <!-- 我的爱宠 -->
     <view class="myPetBox">
@@ -31,7 +31,7 @@
       <view class="myPetList">
         <image class="myPetImage" mode="aspectFill" wx:for="{{myPetList}}" wx:key="unique" src="{{item.avatar||'../../image/default_pet.png'}}"/>
       </view>
-      <view class="myPetAdd" @tap="goPage"></view>
+      <view class="myPetAdd" @tap="goPage('/pages/me/addPet')"></view>
     </view>
     <!-- info banner -->    
     <swiper class="info-banner" autoplay="true" circular="true">
@@ -60,7 +60,6 @@ import {
   getTopScrollingText,
   getBanner,
   gainMyPet,
-  placeAnOrder
 } from '@/api/index.js';
 
 wepy.page({
@@ -95,8 +94,8 @@ wepy.page({
         userLogin(true);
       }
     },
-    goPage() {
-      wx.navigateTo({ url: '/pages/me/addPet' });
+    goPage(url) {
+      wx.navigateTo({ url });
     },
     toWebview(url) {
       wx.navigateTo({ url: `/pages/webview?url=${url}` });
@@ -147,27 +146,6 @@ wepy.page({
         return -1;
       }
     },
-    async reservation() {
-      console.log('aaa');
-      let params = {
-        userId: 'ojE985QmUgZZopp6sP5MTjgIaws4',
-        addressId: 0,
-        keyHandover: 0,
-        payMoney: 199,
-        petIds: 0,
-        serverType: 0
-      };
-
-      try {
-        wx.showLoading({ title: '正在提交预约' });
-        let res = await placeAnOrder(params);
-        console.log(res);
-        wx.hideLoading();
-      } catch (error) {
-        wx.showToast({ title: '请求服务失败', icon: 'none' });
-        return -1;
-      }
-    }
   },
   onLoad() {
     this.getTopScroll();
