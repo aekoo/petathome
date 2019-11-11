@@ -66,6 +66,22 @@ export const payOrder = (data) => {
 }
 
 
+// 高级服务
+export const queryAdvancedService = (data) => {
+  let pathUrl = '/config/queryAdvancedService'
+  return fetch.get(REQ_URL + pathUrl, data)
+}
+// 钥匙交接
+export const queryKeysList = (data) => {
+  let pathUrl = '/config/queryKeysList'
+  return fetch.get(REQ_URL + pathUrl, data)
+}
+// 宠物数量
+export const queryPetNumberList = (data) => {
+  let pathUrl = '/config/queryPetNumberList'
+  return fetch.get(REQ_URL + pathUrl, data)
+}
+
 
 
 // 个人信息
@@ -83,6 +99,8 @@ export const updateAvatar = (data) => {
   let pathUrl = '/user/updateAvatar'
   return fetch.post(REQ_URL + pathUrl, data)
 }
+
+
 
 // 查询品种
 export const gainPetKinds = (data) => {
@@ -109,6 +127,8 @@ export const deletePet = (data) => {
   let pathUrl = '/pet/delete'
   return fetch.post(REQ_URL + pathUrl, data)
 }
+
+
 
 // 加入铲屎官
 export const joinTeam = (data) => {

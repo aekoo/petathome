@@ -1,28 +1,170 @@
 <style lang="less" src="./place.less"></style>
 <template>
   <view class="container">
-    <view class="addressBox">
-烧豆腐
+    <view class="addressCard">
+      <view class="progress"></view>
+      <view class="location"><image mode="aspectFill" src="../../image/location.png"/></view>
+      <view class="addressContent">
+        <view class="linkman"><text class="name">啸啸</text><text class="phone">18672886886</text></view>
+        <view class="contactAddress">什么地址什么地址什么地址什么地址什么地址什么地址什么地址</view>
+      </view>
+      <view class="addressArrow"><image mode="aspectFill" src="../../image/arrow.png"/></view>
     </view>
-    <van-submit-bar price="{{ 3050 }}" button-text="提交订单" bind:submit="onClickButton" tip="{{ true }}" >
-      <view slot="tip">您的收货地址不支持同城送, <text>修改地址</text></view>
-    </van-submit-bar>
+    <view class="serveInfoCard">
+      <view class="cardTitle">服务信息</view>
+      <view class="serveInfoRow">
+        <view class="serveInfoTitle">服务日期</view>
+        <picker mode="date" value="{{'2019-11-11'}}" bindchange="ageChange">
+          <view class="picker">{{'2019-11-11'}}</view>
+        </picker>
+        <view class="serveInfoArrow"><image mode="aspectFill" src="../../image/arrow.png"/></view>
+      </view>
+      <view class="serveInfoRow">
+        <view class="serveInfoTitle">服务时段</view>
+        <picker value="{{timeFrame}}" range="{{timeFrameArr}}" bindchange="timeFrameChange">
+          <view class="picker">{{timeFrameArr[timeFrame]}}</view>
+        </picker>
+        <view class="serveInfoArrow"><image mode="aspectFill" src="../../image/arrow.png"/></view>
+      </view>
+      <view class="serveInfoRow">
+        <view class="serveInfoTitle">服务时长</view>
+        <radio-group class="radio-group" bindchange="durationChange">
+          <label class="label_option {{duration==idx?'checked':''}}" wx:for="{{durationArr}}" wx:for-index="idx" wx:key="unique">
+            <radio value="{{idx}}" checked="{{duration==idx}}"></radio><text class="label_text">{{item}}</text>
+          </label>
+        </radio-group>
+      </view>
+      <view class="serveInfoRow">
+        <view class="serveInfoTitle">宠物数量</view>
+        <radio-group class="radio-group" bindchange="petAmountChange">
+          <label class="label_option {{petAmount==idx?'checked':''}}" wx:for="{{petAmountArr}}" wx:for-index="idx" wx:key="unique">
+            <radio value="{{idx}}" checked="{{petAmount==idx}}"></radio><text class="label_text">{{item}}</text>
+          </label>
+        </radio-group>
+      </view>
+    </view>
+    <view class="advancedOptions">
+      <view class="advancedTitle">
+        <view class="advancedTitle-left">高级选择</view>
+        <view class="advancedTitle-right" @tap="openSheet">添加选择</view>
+      </view>
+      <view class="advancedList">
+        <view class="advancedRow">给猫砂盆加砂  ¥20</view>
+        <view class="advancedRow">租赁摄像头  ¥20 ×2</view>
+      </view>
+    </view>
+    <view class="myPet">
+      <view class="cardTitle">我的宠物</view>
+      <view class="cardDesc">宠物信息能帮我们为您的宠物做更细致的服务哦</view>
+      <view class="petList">
+        <view class="petRow">
+          <image class="petImage" mode="aspectFill" src="../../image/default_pet.png"/>
+          <view class="petName">水电费</view>
+        </view>
+        <view class="addPet" @tap="goPage('/pages/me/addPet')"></view>
+      </view>
+      <view class="remark"><textarea auto-height="true" cursor-spacing="20" placeholder-class="placeholderStyle-textarea" placeholder="填写备注，比如宠物的习惯和需要注意的事项等，或者其他需要告诉小爱的" /></view>
+    </view>
+    <view class="submitOrderBox">
+      <view class="submitOrderPrice"><text>合计 ：</text><text class="price">¥85</text></view>
+      <view class="submitOrderButton">立即下单</view>
+    </view>
+    <view class="advancedServerSheet {{sheetShow? 'openSheet':''}}">
+      <view class="sheetNavigation">
+        <view class="sheetCancel" @tap="closeSheet">取消</view>
+        <view class="sheetOk" @tap="sheetOk">确定</view>
+      </view>
+      <view class="sheetAdvancedList">
+        <radio-group class="sheetAdvancedRow" bindchange="radioChange">
+          <radio value="{{name}}" checked="{{true}}" color="#76B372"></radio>
+          <text class="advancedContext">换整盆猫砂 （+10元）</text>
+        </radio-group>
+        <radio-group class="sheetAdvancedRow" bindchange="radioChange">
+          <radio value="{{name}}" checked="{{false}}" color="#76B372"></radio>
+          <text class="advancedContext">换整盆猫砂 （+10元）</text>
+        </radio-group>
+        <radio-group class="sheetAdvancedRow" bindchange="radioChange">
+          <radio value="{{name}}" checked="{{false}}" color="#76B372"></radio>
+          <text class="advancedContext">换整盆猫砂 （+10元）</text>
+        </radio-group>
+      </view>
+
+    </view>
+    <view class="modal" wx:if="{{sheetShow}}"></view>
   </view>
 </template>
 
 <script>
 import wepy from '@wepy/core';
-import { placeAnOrder } from '@/api/index.js';
+import { queryAdvancedService, placeAnOrder } from '@/api/index.js';
 
 wepy.page({
-  data: {},
+  data: {
+    sheetShow: false,
+    type: 0,
+    timeFrameArr: [
+      '上午 08:00-10:00',
+      '上午 10:00-12:00',
+      '中午 12:00-14:00',
+      '下午 14:00-16:00',
+      '下午 16:00-18:00',
+      '晚上 18:00-20:00',
+      '晚上 20:00-22:00'
+    ],
+    timeFrame: 0,
+    durationArr: ['30分钟', '60分钟'],
+    duration: 0,
+    petAmountArr: ['1-2只', '3-5只', '5-7只'],
+    petAmount: 0,
+    advancedList: []
+  },
 
   computed: {},
 
   methods: {
     // 页面跳转
-    goPage() {
-      wx.navigateTo({ url: 'add' });
+    goPage(url) {
+      wx.navigateTo({ url });
+    },
+
+    timeFrameChange(e) {
+      this.timeFrame = e.$wx.detail.value;
+    },
+    durationChange(e) {
+      this.duration = e.$wx.detail.value;
+    },
+    petAmountChange(e) {
+      this.petAmount = e.$wx.detail.value;
+    },
+
+    //打开高级选项层
+    openSheet() {
+      this.sheetShow = true;
+    },
+    //关闭高级选项层
+    closeSheet() {
+      this.sheetShow = false;
+    },
+    //确认高级选项
+    sheetOk() {
+      this.sheetShow = false;
+    },
+    // 查询高级服务列表
+    async getAdvancedService() {
+      try {
+        // wx.showLoading({ title: '加载中' });
+        let res = await queryAdvancedService({ classification: this.type });
+        const { results = {} } = res.data || {};
+        this.advancedList = results;
+
+        // setTimeout(() => {
+        //   wx.hideLoading();
+        // }, 300);
+      } catch (error) {
+        console.log(error);
+        wx.showToast({ title: '获取高级服务列表出错', icon: 'none' });
+        return -1;
+      }
     },
     async reservation() {
       console.log('aaa');
@@ -46,14 +188,17 @@ wepy.page({
       }
     }
   },
-  onShow() {}
+  onShow() {},
+  onLoad(props) {
+    const { type } = props;
+    this.type = type || 0;
+    this.getAdvancedService();
+  }
 });
 </script>
 <config>
 {
     navigationBarTitleText: "预约上门",
-    usingComponents: {
-      "van-submit-bar": "~@/components/vant-weapp/submit-bar/index"
-    }
+    usingComponents: {}
 }
 </config>
