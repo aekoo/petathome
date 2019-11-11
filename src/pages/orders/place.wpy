@@ -69,39 +69,57 @@
       <view class="submitOrderPrice"><text>合计 ：</text><text class="price">¥85</text></view>
       <view class="submitOrderButton">立即下单</view>
     </view>
-    <view class="advancedServerSheet {{sheetShow? 'openSheet':''}}">
+    <!-- 地址选择 -->
+    <view class="addressSheet {{addressSheetShow? 'openSheet':''}}">
+      <view class="addressSheetNavigation">
+        <view class="addressSheetTitle">服务地址</view>
+        <view class="addressSheetClose" @tap="closeSheet"><image class="petImage" mode="aspectFill" src="../../image/close.png"/></view>
+      </view>
+      <view class="addaAdress"><image class="addaAdressImg" mode="aspectFill" src="../../image/add.png"/><text>新增地址</text></view>
+      <view class="addressList">
+        <view class="addressRow" wx:for="{{addressList}}" wx:key="unique">
+          <view class="lable"><radio class="radio" value="0" checked="{{item.whetherDefault}}" color="#76B372"/></view>
+          <view class="addressContent">
+            <view class="linkman"><text class="name">{{item.realName}}</text><text class="phone">{{item.phone}}</text></view>
+            <view class="contactAddress">{{item.province}}{{item.city}}{{item.area}}{{item.detailAddress}}</view>
+          </view>
+        </view>
+      </view>
+    </view>
+    <!-- 高级服务选择 -->
+    <view class="advancedServerSheet {{advancedSheetShow? 'openSheet':''}}">
       <view class="sheetNavigation">
         <view class="sheetCancel" @tap="closeSheet">取消</view>
         <view class="sheetOk" @tap="sheetOk">确定</view>
       </view>
       <view class="sheetAdvancedList">
-        <radio-group class="sheetAdvancedRow" bindchange="radioChange">
-          <radio value="{{name}}" checked="{{true}}" color="#76B372"></radio>
-          <text class="advancedContext">换整盆猫砂 （+10元）</text>
-        </radio-group>
-        <radio-group class="sheetAdvancedRow" bindchange="radioChange">
-          <radio value="{{name}}" checked="{{false}}" color="#76B372"></radio>
-          <text class="advancedContext">换整盆猫砂 （+10元）</text>
-        </radio-group>
-        <radio-group class="sheetAdvancedRow" bindchange="radioChange">
-          <radio value="{{name}}" checked="{{false}}" color="#76B372"></radio>
-          <text class="advancedContext">换整盆猫砂 （+10元）</text>
-        </radio-group>
+        <checkbox-group class="sheetAdvancedRow" bindchange="radioChange" data-serverid="{{item.serverId}}" wx:for="{{advancedList}}" wx:for-index="idx" wx:key="unique">
+          <checkbox  checked="{{item.checked}}" color="#76B372"></checkbox>
+          <icon class="icon" type="success" size="20" wx:if="{{item.checked}}"/>
+          <label class="advancedIcon" wx:else></label>
+          <text class="advancedContext">{{item.serverName}} （+{{item.showPrice}}元）</text>
+        </checkbox-group>
       </view>
 
     </view>
-    <view class="modal" wx:if="{{sheetShow}}"></view>
+    <view class="modal" wx:if="{{addressSheetShow || advancedSheetShow}}"></view>
   </view>
 </template>
 
 <script>
 import wepy from '@wepy/core';
-import { queryAdvancedService, placeAnOrder } from '@/api/index.js';
+import {
+  gainAddressList,
+  queryAdvancedService,
+  placeAnOrder
+} from '@/api/index.js';
 
 wepy.page({
   data: {
-    sheetShow: false,
+    addressSheetShow: true,
+    advancedSheetShow: false,
     type: 0,
+    addressList: [],
     timeFrameArr: [
       '上午 08:00-10:00',
       '上午 10:00-12:00',
@@ -139,15 +157,38 @@ wepy.page({
 
     //打开高级选项层
     openSheet() {
-      this.sheetShow = true;
+      this.advancedSheetShow = true;
     },
-    //关闭高级选项层
+    //关闭选项层
     closeSheet() {
-      this.sheetShow = false;
+      this.addressSheetShow = false;
+      this.advancedSheetShow = false;
     },
     //确认高级选项
     sheetOk() {
-      this.sheetShow = false;
+      this.advancedSheetShow = false;
+    },
+    radioChange(e) {
+      const { serverid } = e.currentTarget.dataset;
+      console.log(serverid);
+    },
+
+    // 查询地址列表
+    async getAddressList() {
+      try {
+        wx.showLoading({ title: '加载中' });
+        let res = await gainAddressList({
+          userId: wx.getStorageSync('openId')
+        });
+        const { results = {} } = res.data || {};
+        this.addressList = results.address;
+        setTimeout(() => {
+          wx.hideLoading();
+        }, 300);
+      } catch (error) {
+        wx.showToast({ title: '获取地址列表出错', icon: 'none' });
+        return -1;
+      }
     },
     // 查询高级服务列表
     async getAdvancedService() {
@@ -192,6 +233,7 @@ wepy.page({
   onLoad(props) {
     const { type } = props;
     this.type = type || 0;
+    this.getAddressList();
     this.getAdvancedService();
   }
 });
