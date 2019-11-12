@@ -5,8 +5,8 @@
       <view class="progress"></view>
       <view class="location"><image mode="aspectFill" src="../../image/location.png"/></view>
       <view class="addressContent">
-        <view class="linkman"><text class="name">啸啸</text><text class="phone">18672886886</text></view>
-        <view class="contactAddress">什么地址什么地址什么地址什么地址什么地址什么地址什么地址</view>
+        <view class="linkman"><text class="name">{{selAddress.realName}}</text><text class="phone">{{selAddress.phone}}</text></view>
+        <view class="contactAddress">{{selAddress.province}}{{selAddress.city}}{{selAddress.area}}{{selAddress.detailAddress}}</view>
       </view>
       <view class="addressArrow"><image mode="aspectFill" src="../../image/arrow.png"/></view>
     </view>
@@ -127,6 +127,7 @@ wepy.page({
     advancedSheetShow: false,
     type: 0,
     addressList: [],
+    selAddress: [],
     timeFrameArr: [
       '上午 08:00-10:00',
       '上午 10:00-12:00',
@@ -189,6 +190,14 @@ wepy.page({
         });
         const { results = {} } = res.data || {};
         this.addressList = results.address;
+        // 查找默认地址
+        let addressIndex = results.address.findIndex(
+          item => item.whetherDefault == 1
+        );
+        if (addressIndex !== -1) {
+          //将默认地址显示设为服务地址
+          this.selAddress = this.addressList[addressIndex];
+        }
         setTimeout(() => {
           wx.hideLoading();
         }, 300);
