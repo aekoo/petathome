@@ -3,6 +3,10 @@ import store from '@/store';
 import { getUserId } from '../api/index.js'
 // 引入SDK核心类
 import QQMapWX from './qqmap-wx-jssdk.min.js'
+// 实例化腾讯地图API核心类
+const qqmapsdk = new QQMapWX({
+  key: 'RDTBZ-62MCI-F3KG2-5Z5HQ-TVC52-GZB3F' // 必填
+});
 
 export const toastSelf = (title, duration) => {
   wx.showToast({
@@ -12,10 +16,6 @@ export const toastSelf = (title, duration) => {
   })
 }
 export async function location() {
-  // 实例化腾讯地图API核心类
-  const qqmapsdk = new QQMapWX({
-    key: 'RDTBZ-62MCI-F3KG2-5Z5HQ-TVC52-GZB3F' // 必填
-  });
   wx.getLocation({
     type: 'wgs84',
     success(res) {
@@ -27,6 +27,7 @@ export async function location() {
         },
         success: function (addressRes) {
           let locationInfo = addressRes.result.ad_info;
+          store.dispatch('setStoreData', { key: 'homeCity', value: locationInfo.city });
           store.dispatch('setStoreData', { key: 'locationInfo', value: locationInfo });
         }
       })

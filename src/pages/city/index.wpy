@@ -1,0 +1,66 @@
+<style lang="less" src="./index.less"></style>
+<template>
+  <view class="cityContainer">
+    <list-html data="{{city}}" my-city="北京" binddetail="binddetail" config="{{config}}"></list-html>
+  </view>
+</template>
+
+<script>
+import wepy from '@wepy/core';
+import store from '@/store';
+import { evaluation } from '@/api/index.js';
+import City from '@/utils/city.js';
+/**
+ *
+ * 城市选择
+ *
+ **/
+wepy.page({
+  data: {
+    city: City,
+    config: {
+      horizontal: false, // 第一个选项是否横排显示（一般第一个数据选项为 热门城市，常用城市之类 ，开启看需求）
+      animation: false, // 过渡动画是否开启
+      search: false, // 是否开启搜索
+      searchHeight: 45, // 搜索条高度
+      suctionTop: true // 是否开启标题吸顶
+    }
+  },
+
+  computed: {},
+
+  methods: {
+    binddetail(e) {
+      console.log(e.$wx.detail);
+      let { name } = e.$wx.detail;
+      // 返回 例 :{name: "北京", key: "B", test: "testValue"}
+      if (name) {
+        store.dispatch('setStoreData', {
+          key: 'homeCity',
+          value: name
+        });
+        // （手动选择的只有城市,没有省，区,故此处不能用locationInfo,单独使用homeCity）
+        wx.navigateBack();
+      }
+    }
+  },
+  onLoad() {
+    // wx.showLoading({
+    //   title: '数据加载中...'
+    // });
+    // // 模拟服务器请求异步加载数据
+    // setTimeout(() => {
+    //   this.city = City;
+    //   wx.hideLoading();
+    // }, 1e3);
+  }
+});
+</script>
+<config>
+{
+    navigationBarTitleText: "切换城市",
+    usingComponents: {
+      "list-html": "~@/components/wx-index-list/wx-index-list",
+    }
+}
+</config>

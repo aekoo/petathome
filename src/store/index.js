@@ -3,6 +3,7 @@ import Vuex from '@wepy/x';
 export default new Vuex.Store({
   state: {
     openId: '',
+    homeCity: '',
     locationInfo: {},
     flag: 0
   },

@@ -36,6 +36,7 @@ wepy.app({
 {
     pages: [
       'pages/home/index',
+      'pages/city/index',
       'pages/service/index',
       'pages/orders/index',
       'pages/orders/place',

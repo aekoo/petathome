@@ -9,7 +9,7 @@
       <view class="van-notice-icon" slot="left-icon"><image mode="aspectFill" src="{{notice.icon||'../../image/bell.png'}}"/></view>
     </van-notice-bar>
     <view class="location">
-      <view class="location-box">
+      <view class="location-box" @tap="goPage('/pages/city/index')">
         <image mode="aspectFill" class="location-icon" src="../../image/location.png"/>
         <text class="location-name">{{locationName}}</text>
       </view>
@@ -76,10 +76,10 @@ wepy.page({
         location();
       }
     },
-    // 监听定位变化
-    '$store.state.locationInfo': function(newFlag, oldFlag) {
+    // 监听位置变化
+    '$store.state.homeCity': function(newFlag, oldFlag) {
       if (newFlag != oldFlag) {
-        this.locationName = newFlag.city;
+        this.locationName = newFlag;
       }
     },
     //监听flage，更新用户头像等信息
