@@ -1,0 +1,33 @@
+<style lang="less" src="./success.less"></style>
+<template>
+  <view class="successBox">
+    <view class="successIcon"><icon type="success" size="70" color="#76B372"/></view>
+    <view class="successTitle">提交成功</view>
+    <view class="successDesc">我们会尽快完成审核并通知您哦</view>
+  </view>
+</template>
+
+<script>
+import wepy from '@wepy/core';
+
+wepy.page({
+  data: {},
+
+  computed: {},
+
+  methods: {
+    // 返回我的页面
+    goback() {
+      wx.navigateBack({
+        delta: 2
+      });
+    }
+  },
+  onLoad() {}
+});
+</script>
+<config>
+{
+    navigationBarTitleText: "",
+}
+</config>

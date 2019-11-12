@@ -42,6 +42,13 @@
           </label>
         </radio-group>
       </view>
+      <view class="serveInfoRow">
+        <view class="serveInfoTitle">钥匙交接</view>
+        <picker value="{{timeFrame}}" range="{{timeFrameArr}}" bindchange="timeFrameChange">
+          <view class="picker">{{timeFrameArr[timeFrame]}}</view>
+        </picker>
+        <view class="serveInfoArrow"><image mode="aspectFill" src="../../image/arrow.png"/></view>
+      </view>
     </view>
     <view class="advancedOptions">
       <view class="advancedTitle">

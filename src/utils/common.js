@@ -1,6 +1,8 @@
 import wepy from '@wepy/core';
 import store from '@/store';
 import { getUserId } from '../api/index.js'
+// 引入SDK核心类
+import QQMapWX from './qqmap-wx-jssdk.min.js'
 
 export const toastSelf = (title, duration) => {
   wx.showToast({
@@ -8,6 +10,28 @@ export const toastSelf = (title, duration) => {
     icon: 'none',
     duration: duration
   })
+}
+export async function location() {
+  // 实例化腾讯地图API核心类
+  const qqmapsdk = new QQMapWX({
+    key: 'RDTBZ-62MCI-F3KG2-5Z5HQ-TVC52-GZB3F' // 必填
+  });
+  wx.getLocation({
+    type: 'wgs84',
+    success(res) {
+      //2、根据坐标获取当前位置名称，显示在顶部:腾讯地图逆地址解析
+      qqmapsdk.reverseGeocoder({
+        location: {
+          latitude: res.latitude,
+          longitude: res.longitude
+        },
+        success: function (addressRes) {
+          let locationInfo = addressRes.result.ad_info;
+          store.dispatch('setStoreData', { key: 'locationInfo', value: locationInfo });
+        }
+      })
+    }
+  });
 }
 
 export async function userLogin(flag) {

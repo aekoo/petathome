@@ -35,15 +35,18 @@ wepy.app({
 <config>
 {
     pages: [
-      'pages/orders/place',
       'pages/home/index',
       'pages/service/index',
       'pages/orders/index',
+      'pages/orders/place',
+      'pages/orders/reason',
+      'pages/orders/rate',
       'pages/me/index',
       'pages/me/mypet',
       'pages/me/addPet',
       'pages/me/personal',
       'pages/me/joinTeam',
+      'pages/me/success',
       'pages/address/index',
       'pages/address/add',
       'pages/webview',
@@ -53,6 +56,11 @@ wepy.app({
       navigationBarBackgroundColor: '#fff',
       navigationBarTitleText: 'WeChat',
       navigationBarTextStyle: 'black'
+    },
+    "permission": {
+      "scope.userLocation": {
+        "desc": "您的位置信息有助于小程序服务信息的展示"
+      }
     },
     "tabBar": {
       "custom": true,

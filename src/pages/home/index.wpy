@@ -11,7 +11,7 @@
     <view class="location">
       <view class="location-box">
         <image mode="aspectFill" class="location-icon" src="../../image/location.png"/>
-        <text class="location-name">北京市</text>
+        <text class="location-name">{{locationName}}</text>
       </view>
     </view>
     <!-- top banner -->
@@ -55,16 +55,13 @@ import wepy from '@wepy/core';
 import eventHub from '@/common/eventHub';
 import { mapState } from '@wepy/x';
 import store from '@/store';
-import { userLogin } from '@/utils/common';
-import {
-  getTopScrollingText,
-  getBanner,
-  gainMyPet,
-} from '@/api/index.js';
+import { userLogin, location } from '@/utils/common';
+import { getTopScrollingText, getBanner, gainMyPet } from '@/api/index.js';
 
 wepy.page({
   store,
   data: {
+    locationName: '北京市',
     openId: wx.getStorageSync('openId') || '',
     notice: {},
     topBannerList: [],
@@ -76,6 +73,13 @@ wepy.page({
     '$store.state.openId': function(newFlag, oldFlag) {
       if (newFlag != oldFlag) {
         this.getMyPet();
+        location();
+      }
+    },
+    // 监听定位变化
+    '$store.state.locationInfo': function(newFlag, oldFlag) {
+      if (newFlag != oldFlag) {
+        this.locationName = newFlag.city;
       }
     },
     //监听flage，更新用户头像等信息
@@ -145,7 +149,7 @@ wepy.page({
         wx.showToast({ title: '查询我的宠物出错', icon: 'none' });
         return -1;
       }
-    },
+    }
   },
   onLoad() {
     this.getTopScroll();
@@ -153,6 +157,7 @@ wepy.page({
     this.getBannerData('button');
     if (this.openId) {
       this.getMyPet();
+      location();
     }
   },
   onShow() {

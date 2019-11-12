@@ -1,0 +1,130 @@
+<style lang="less" src="./reason.less"></style>
+<template>
+  <view class="reasonContainer">
+    <van-notify id="van-notify" />
+    <radio-group class="reasonList" bindchange="radioChange">
+      <label class="reasonRow" wx:for="{{reasonList}}" wx:for-index="idx" wx:key="unique">
+        <text class="reasonContext">{{item}}</text>
+        <radio class="reasonRadio" value="{{idx}}" checked="{{idx==selReason}}" color="#76B372"></radio>
+        <view class="remark" wx:if="{{idx==3}}"><textarea bindfocus="textareaFocus" bindblur="bindTextAreaBlur" auto-height="true" cursor-spacing="20" placeholder-class="placeholderStyle-textarea" placeholder="" /></view>
+      </label>
+    </radio-group>
+    <view class="submitBtn" wx:if="{{selReason==null}}">确认</view>
+    <view class="submitBtn btnColor" @tap="submitButton" wx:else>确认</view>
+  </view>
+</template>
+
+<script>
+import wepy from '@wepy/core';
+import Notify from '@/components/vant-weapp/notify/notify';
+import { refundOrder, cancelOrder } from '@/api/index.js';
+
+/**
+ * 当前页面只用到了取消订单
+ *
+ * 申请退款已写好，随时可以启用
+ *
+ * 启用请移步订单页面，参考取消订单
+ *
+ */
+wepy.page({
+  data: {
+    orderNo: '',
+    reasonList: [
+      '计划有变',
+      '我要改变服务',
+      '服务满足不了我的需求',
+      '其他原因'
+    ],
+    selReason: null,
+    remark: ''
+  },
+
+  computed: {},
+
+  methods: {
+    radioChange(e) {
+      this.selReason = e.$wx.detail.value;
+      console.log(e.$wx.detail.value);
+    },
+    textareaFocus() {
+      this.selReason = 3;
+    },
+    bindTextAreaBlur: function(e) {
+      this.remark = e.$wx.detail.value;
+    },
+    submitButton() {
+      if (this.type == 1) {
+        this.cancelOrder();
+      } else if (this.type == 1) {
+        this.refundOrder();
+      }
+    },
+    // 取消订单
+    async cancelOrder() {
+      if (this.selReason == 3 && this.remark == '') {
+        Notify({ type: 'warning', message: '请输入取消原因', duration: 2000 });
+        return;
+      }
+      try {
+        let res = await cancelOrder({
+          orderNo: this.orderNo,
+          cancelReason: this.reasonList[this.selReason]
+        });
+        const { code, desc, results = {} } = res.data || {};
+        // 失败
+        if (code != 1) {
+          wx.showToast({ title: desc, icon: 'none' });
+          return;
+        }
+        // 成功
+        Notify({ type: 'primary', message: '订单已取消', duration: 2000 });
+        setTimeout(() => wx.navigateBack(), 2000);
+      } catch (error) {
+        wx.showToast({ title: '取消订单出错', icon: 'none' });
+        return -1;
+      }
+    },
+    // 申请退款
+    async refundOrder() {
+      try {
+        let res = await refundOrder({
+          openId: this.openId,
+          orderNo: this.orderNo
+        });
+        const { code, desc, results = {} } = res.data || {};
+        // 失败
+        if (code != 1) {
+          wx.showToast({ title: desc, icon: 'none' });
+          return;
+        }
+        // 成功
+        Notify({ type: 'primary', message: '申请退款成功', duration: 2000 });
+        setTimeout(() => wx.navigateBack(), 2000);
+      } catch (error) {
+        wx.showToast({ title: '申请退款出错', icon: 'none' });
+        return -1;
+      }
+    }
+  },
+  onLoad(props) {
+    const { type = 1, orderno = '' } = props;
+    this.orderNo = orderno;
+    this.type = type;
+
+    let title = '取消订单';
+    if (type == 2) {
+      title = '申请退款';
+    }
+    wx.setNavigationBarTitle({ title });
+  }
+});
+</script>
+<config>
+{
+    navigationBarTitleText: "取消订单",
+    usingComponents: {
+      "van-notify": "~@/components/vant-weapp/notify/index"
+    }
+}
+</config>

@@ -1,0 +1,54 @@
+@import '../../app.less';
+
+page {
+  background: #FFF;
+}
+
+.rateContainer {
+  padding: 32rpx;
+  border-top: 2rpx solid #F0F0F0;
+
+  .rateTitle {
+    margin: 20rpx 0;
+    height: 48rpx;
+    font-size: 34rpx;
+    color: @text-color;
+  }
+
+  .remark {
+    padding: 8rpx;
+    min-height: 208rpx;
+    border: 2rpx solid #F0F0F0;
+    font-size: 30rpx;
+    color: @low-text-color;
+
+    textarea {
+      width: 100%;
+      min-height: 208rpx;
+    }
+  }
+
+  // 提交
+  .submitBtn {
+    margin: 48rpx 0;
+    height: 92rpx;
+    line-height: 92rpx;
+    text-align: center;
+    font-size: 34rpx;
+    color: #FFF;
+    background: #C9C9C9;
+    border-radius: 16rpx;
+    overflow: auto;
+
+
+  }
+
+  .btnColor {
+    color: @text-color;
+    background: @button-color;
+
+    &:active {
+      opacity: .6;
+    }
+  }
+}

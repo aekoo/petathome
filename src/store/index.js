@@ -3,10 +3,11 @@ import Vuex from '@wepy/x';
 export default new Vuex.Store({
   state: {
     openId: '',
+    locationInfo: {},
     flag: 0
   },
   mutations: {
-    //登录
+    //登录、定位
     changeData(state, { key, value }) {
       state[key] = value;
     },

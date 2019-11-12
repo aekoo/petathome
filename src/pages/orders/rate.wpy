@@ -1,0 +1,73 @@
+<style lang="less" src="./rate.less"></style>
+<template>
+  <view class="rateContainer">
+    <view class="rateTitle">评分</view>
+    <van-rate value="{{ star }}" bind:change="onChange" />
+    <view class="rateTitle">评价内容</view>
+    <view class="remark"><textarea bindblur="bindTextAreaBlur" auto-height="true" cursor-spacing="20" placeholder-class="placeholderStyle-textarea" placeholder="请输入评价内容" /></view>
+    
+    <view class="submitBtn" wx:if="{{!star}}">提交</view>
+    <view class="submitBtn btnColor" @tap="submitRate" wx:else>提交</view>
+  </view>
+</template>
+
+<script>
+import wepy from '@wepy/core';
+import { evaluation } from '@/api/index.js';
+/**
+ *
+ * 评分页
+ *
+ **/
+wepy.page({
+  data: {
+    orderNo: '',
+    star: 0,
+    content: ''
+  },
+
+  computed: {},
+
+  methods: {
+    onChange(event) {
+      this.star = event.$wx.detail;
+    },
+    bindTextAreaBlur: function(e) {
+      this.content = e.$wx.detail.value;
+    },
+    // 提交
+    async submitRate() {
+      try {
+        let res = await evaluation({
+          orderNo: this.orderNo,
+          star: this.star,
+          content: this.content
+        });
+        const { code, desc, results = {} } = res.data || {};
+        // 失败
+        if (code != 1) {
+          wx.showToast({ title: desc, icon: 'none' });
+          return;
+        }
+        // 成功
+        wx.showToast({ title: '提交成功' });
+        setTimeout(() => wx.navigateBack(), 2000);
+      } catch (error) {
+        wx.showToast({ title: '订单评价出错', icon: 'none' });
+        return -1;
+      }
+    }
+  },
+  onLoad(props) {
+    this.orderNo = props.orderno || '';
+  }
+});
+</script>
+<config>
+{
+    navigationBarTitleText: "订单评价",
+    usingComponents: {
+      "van-rate": "~@/components/vant-weapp/rate/index",
+    }
+}
+</config>

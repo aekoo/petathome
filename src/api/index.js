@@ -64,6 +64,11 @@ export const payOrder = (data) => {
   let pathUrl = '/order/pay'
   return fetch.post(REQ_URL + pathUrl, data)
 }
+// 订单评价
+export const evaluation = (data) => {
+  let pathUrl = '/order/evaluation'
+  return fetch.post(REQ_URL + pathUrl, data)
+}
 
 
 // 高级服务

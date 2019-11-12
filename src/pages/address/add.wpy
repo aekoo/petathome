@@ -42,6 +42,7 @@
 
 <script>
 import wepy from '@wepy/core';
+import store from '@/store';
 import {
   gainAddressDetail,
   addOrUpdateAddress,
@@ -49,6 +50,7 @@ import {
 } from '@/api/index.js';
 
 wepy.page({
+  store,
   data: {
     addressId: '',
     realName: '',
@@ -224,6 +226,14 @@ wepy.page({
   },
   onLoad(props) {
     // console.log(props);
+    const { province, city, district } = store.state.locationInfo;
+    if (province) {
+      this.region = [province, city, district];
+      this.province = province;
+      this.city = city;
+      this.area = district;
+    }
+
     const { addressId } = props;
     if (addressId) {
       // 如果有带id过来

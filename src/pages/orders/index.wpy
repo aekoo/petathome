@@ -36,7 +36,7 @@
               <view data-orderno="{{item.orderNo}}" class="order-operate cancelOrder" wx:if="{{item.payStatus==0}}" @tap="cancelOrderClick">取消订单</view>
               <view data-orderno="{{item.orderNo}}" class="order-operate cancelOrder" wx:if="{{item.payStatus==1&&item.serverStatus==0}}" @tap="refundOrderClick">申请退款</view>
               <view class="order-operate" wx:if="{{item.payStatus==1&&item.serverStatus!=2}}">{{item.serverStatus==1?'进行中':'待服务'}}</view>
-              <view data-orderno="{{item.orderNo}}" class="order-operate goEvaluate" wx:if="{{item.payStatus==1&&item.serverStatus==2&&item.evaluationStatus==0}}">去评价</view>
+              <view data-orderno="{{item.orderNo}}" class="order-operate goEvaluate" wx:if="{{item.payStatus==1&&item.serverStatus==2&&item.evaluationStatus==0}}" @tap="goRatePage">去评价</view>
               <view class="order-operate haveEvaluate" wx:if="{{item.payStatus==1&&item.serverStatus==2&&item.evaluationStatus==1}}">已评价</view>
               <view class="order-operate" wx:if="{{item.payStatus==2}}">退款中</view>
               <view class="order-operate" wx:if="{{item.payStatus==3}}">退款成功</view>
@@ -113,9 +113,18 @@ wepy.page({
       this.tabId = index;
       this.getListData(index);
     },
-    cancelOrderClick(e) {
-      this.confirmPopup(1, e);
+    // 用户点击去评价
+    goRatePage(e) {
+      const { orderno } = e.currentTarget.dataset;
+      wx.navigateTo({ url: 'rate?orderno=' + orderno });
     },
+    // 用户点击取消订单按钮
+    cancelOrderClick(e) {
+      // this.confirmPopup(1, e);
+      const { orderno } = e.currentTarget.dataset;
+      wx.navigateTo({ url: 'reason?type=1&orderno=' + orderno });
+    },
+    // 用户点击退款按钮
     refundOrderClick(e) {
       this.confirmPopup(2, e);
     },
@@ -161,7 +170,7 @@ wepy.page({
     // 申请退款
     async refundOrder(orderNo) {
       try {
-        let res = await refundOrder({ orderNo });
+        let res = await refundOrder({ openId: this.openId, orderNo });
         const { code, desc, results = {} } = res.data || {};
         // 失败
         if (code != 1) {
