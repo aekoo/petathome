@@ -1,6 +1,7 @@
 <style lang="less" src="./index.less"></style>
 <template>
   <view class="container">
+    <button class="author" open-type="getUserInfo"  bindgetuserinfo="onGotUserInfo" v-if="!openId"></button>
     <!-- <view class="notice-bar" v-if="notice.text">
       <view class="notice-bar-icon"><image src="{{notice.icon||'../../image/bell.png'}}"/></view>
       <view class="notice-bar-text" bindtap="textclick">{{notice.text}}</view>

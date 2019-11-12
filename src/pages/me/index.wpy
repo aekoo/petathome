@@ -9,7 +9,7 @@
             </view>
             <view class="userHeaderBox">
               <view class="userHeaderName">{{userInfo.nickName}}</view>
-              <view class="userHeaderPhone">{{userInfo.phone}}</view>
+              <!-- <view class="userHeaderPhone">{{userInfo.phone}}</view> -->
             </view>
         </view>
         <view class="myPetBox" @tap="goPage('mypet')">
