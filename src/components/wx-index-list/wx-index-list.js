@@ -10,7 +10,7 @@ Component({
         data: {
             type: Object,
             value: {},
-            observer: function(newVal, oldVal) {
+            observer: function (newVal, oldVal) {
                 this.resetRight(newVal);
             }
         },
@@ -38,7 +38,7 @@ Component({
         search: {
             type: String,
             value: "",
-            observer: function(newVal, oldVal) {
+            observer: function (newVal, oldVal) {
                 console.log(newVal)
                 this.value = newVal;
                 this.searchMt();
@@ -73,18 +73,22 @@ Component({
          */
         resetRight(data) {
             let rightArr = []
-            // if (this.data.myCity) {
-            //     this.data.data.unshift({
-            //         title: '我的定位',
-            //         type: 'me',
-            //         item: [{
-            //             name: '点击获取我的位置',
-            //             key: '我的定位'
-            //         }]
-            //     })
-            // }
+            if (this.data.myCity) {
+                this.data.data.unshift({
+                    title: '当前定位',
+                    type: 'me',
+                    item: [{
+                        name: '获取当前位置',
+                        key: '当前定位'
+                    }]
+                })
+            }
             for (let i in data) {
-                rightArr.push(data[i].title.substr(0, 1));
+                if (i == 0) {
+                    rightArr.push('#');
+                } else {
+                    rightArr.push(data[i].title.substr(0, 1));
+                }
             }
             this.setData({
                 list: data,
@@ -212,10 +216,10 @@ Component({
          * 获取节点信息
          */
         queryMultipleNodes() {
-          let self = this 
+            let self = this
             const query = wx.createSelectorQuery().in(this);
             query.selectAll('.fixed-title-hock').boundingClientRect((res) => {
-                res.forEach(function(rect) {
+                res.forEach(function (rect) {
                     rect.top // 节点的上边界坐标
                 })
             }).exec((e) => {
@@ -223,7 +227,7 @@ Component({
                 e[0].forEach((rect) => {
                     let num = 0
                     if (rect.top !== 0) {
-                      num = rect.top - (self.data.config.search ? self.data.config.searchHeight : 0)
+                        num = rect.top - (self.data.config.search ? self.data.config.searchHeight : 0)
                     }
                     arr.push(num)
                 })

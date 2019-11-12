@@ -1,7 +1,7 @@
 <style lang="less" src="./index.less"></style>
 <template>
   <view class="cityContainer">
-    <list-html data="{{city}}" my-city="北京" binddetail="binddetail" config="{{config}}"></list-html>
+    <list-html data="{{city}}" my-city binddetail="binddetail" config="{{config}}"></list-html>
   </view>
 </template>
 
