@@ -130,7 +130,7 @@ wepy.page({
     // 查询个人信息
     async getUserInfo() {
       try {
-        // wx.showLoading({ title: '加载中' });
+        // wx.showLoading({ title: '数据加载中...' });
         let res = await gainUserInfo({ userId: wx.getStorageSync('openId') });
         const { results = {} } = res.data || {};
         this.userInfo = results;

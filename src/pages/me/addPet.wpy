@@ -190,7 +190,7 @@ wepy.page({
     // 查询品种列表
     async getPetList() {
       try {
-        wx.showLoading({ title: '加载中' });
+        wx.showLoading({ title: '数据加载中...' });
         let res = await gainPetKinds({ type: this.type });
         const { results = {} } = res.data || {};
         this.kindArray = results;
@@ -211,7 +211,7 @@ wepy.page({
     //查询爱从详细信息
     async getPetDetail() {
       try {
-        wx.showLoading({ title: '加载中' });
+        wx.showLoading({ title: '数据加载中...' });
         let res = await gainPetDetail({ petId: this.petId });
         const { results = {} } = res.data || {};
 

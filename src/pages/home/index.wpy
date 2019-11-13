@@ -73,6 +73,7 @@ wepy.page({
     // 监听登录后openId变化
     '$store.state.openId': function(newFlag, oldFlag) {
       if (newFlag != oldFlag) {
+        this.openId = newFlag;
         this.getMyPet();
         location();
       }
@@ -112,7 +113,7 @@ wepy.page({
     // 查询通告
     async getTopScroll(position) {
       try {
-        // wx.showLoading({ title: '加载中' });
+        // wx.showLoading({ title: '数据加载中...' });
         let res = await getTopScrollingText({ position });
         const { results = [] } = res.data || {};
         // console.log(results);
@@ -125,7 +126,7 @@ wepy.page({
     // 查询banner
     async getBannerData(position) {
       try {
-        // wx.showLoading({ title: '加载中' });
+        // wx.showLoading({ title: '数据加载中...' });
         let res = await getBanner({ position });
         const { results = [] } = res.data || {};
         // console.log(results);

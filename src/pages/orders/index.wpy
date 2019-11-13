@@ -199,7 +199,7 @@ wepy.page({
     async goPay(e) {
       const { orderno } = e.currentTarget.dataset;
       try {
-        wx.showLoading({ title: '加载中' });
+        wx.showLoading({ title: '数据加载中...' });
         let res = await payOrder({ orderNo });
         const { code, desc, results = {} } = res.data || {};
         console.log(res);
@@ -219,7 +219,7 @@ wepy.page({
     // 查询订单
     async getListData() {
       try {
-        wx.showLoading({ title: '加载中' });
+        wx.showLoading({ title: '数据加载中...' });
         let res = await getOrders({
           openId: this.openId,
           status: this.tabId
