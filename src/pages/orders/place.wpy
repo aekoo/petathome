@@ -124,9 +124,9 @@
           <view class="advancedIcon" wx:else></view>
           <text class="advancedContext">{{item.serverName}} （+{{item.showPrice}}元）</text>
           <view class="advancedDouble">
-            <image class="minus" mode="aspectFill" src="../../image/minus{{item.multiple>1?'-s':''}}.png" data-index="{{idx}}" @tap="minusClick"/>
+            <image class="minus" mode="aspectFill" src="../../image/minus{{item.multiple>1?'-s':''}}.png" data-index="{{idx}}" catchtap="minusClick"/>
             <text class="multiple">{{item.multiple}}</text>
-            <image class="plus" mode="aspectFill" src="../../image/plus{{item.multiple<10?'-s':''}}.png" data-index="{{idx}}" @tap="plusClick"/>
+            <image class="plus" mode="aspectFill" src="../../image/plus{{item.multiple<10?'-s':''}}.png" data-index="{{idx}}" catchtap="plusClick"/>
           </view>
         </label>
       </checkbox-group>
