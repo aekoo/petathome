@@ -2,6 +2,7 @@ import fetch from '@/utils/fetch'
 
 const PRODUCTION_URL = 'https://petinhome.net/api' // 线上环境
 const DEV_URL = 'https://petinhome.net/api' // 测试环境
+// const DEV_URL = 'http://10.0.51.79:8000/api' // 测试环境
 
 let envVersion = __wxConfig.envVersion, baseUrl = '';
 console.log(envVersion);

@@ -292,6 +292,9 @@
         .petName {
           font-size: 24rpx;
           color: @text-color;
+          overflow: hidden;
+          white-space: nowrap;
+          text-overflow: ellipsis;
         }
       }
 
@@ -340,6 +343,12 @@
       textarea {
         width: 100%;
         min-height: 208rpx;
+      }
+      .replacerPlaceholder{
+        min-height: 208rpx;
+        line-height: 24rpx;
+        font-size: 32rpx;
+        color: #C9C9C9;
       }
     }
   }

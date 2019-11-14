@@ -35,7 +35,7 @@
         <view class="serveInfoTitle">服务时长</view>
         <radio-group class="radio-group" bindchange="durationChange">
           <label class="label_option {{duration==idx?'checked':''}}" wx:for="{{durationArr}}" wx:for-index="idx" wx:key="unique">
-            <radio value="{{idx}}" checked="{{duration==idx}}"></radio><text class="label_text">{{item}}</text>
+            <radio value="{{idx}}" checked="{{duration==idx}}"></radio><text class="label_text">{{item}}分钟</text>
           </label>
         </radio-group>
       </view>
@@ -82,19 +82,23 @@
         </block>
         <view class="addPet" @tap="openSheetPet"></view>
       </view>
-      <view class="remark">
+      <view class="remark" @tap="textareaFocus">
         <textarea
-          wx:if="{{!addressSheetShow && !advancedSheetShow && !petSheetShow}}"
+          wx:if="{{remarkFocus}}"
+          focus="{{remarkFocus}}"
+          bindblur="bindTextAreaBlur"
+          value="{{remark}}"
           auto-height="true"
           cursor-spacing="20"
           placeholder-class="placeholderStyle-textarea"
           placeholder="填写备注，比如宠物的习惯和需要注意的事项等，或者其他需要告诉小爱的"
          />
+         <text class="{{remark.length<1?'replacerPlaceholder':''}}" wx:else>{{remark.length>0?remark:'填写备注，比如宠物的习惯和需要注意的事项等，或者其他需要告诉小爱的'}}</text>
       </view>
     </view>
     <view class="submitOrderBox">
       <view class="submitOrderPrice"><text>合计 ：</text><text class="price">¥85</text></view>
-      <view class="submitOrderButton">立即下单</view>
+      <view class="submitOrderButton" catchtap="placeAnOrder">立即下单</view>
     </view>
     <!-- 地址选择 -->
     <view class="addressSheet {{addressSheetShow? 'openSheet':''}}">
@@ -168,6 +172,7 @@ import {
 
 wepy.page({
   data: {
+    remarkFocus: false, //显示备注输入框
     addressSheetShow: false, //地址选项
     advancedSheetShow: false, //高级选项
     petSheetShow: false, //高级选项
@@ -181,17 +186,17 @@ wepy.page({
     serveDateShow: '',
     // 服务时段
     timeFrameArr: [
-      '上午 08:00-10:00',
-      '上午 10:00-12:00',
-      '中午 12:00-14:00',
-      '下午 14:00-16:00',
-      '下午 16:00-18:00',
-      '晚上 18:00-20:00',
-      '晚上 20:00-22:00'
+      '08:00-10:00',
+      '10:00-12:00',
+      '12:00-14:00',
+      '14:00-16:00',
+      '16:00-18:00',
+      '18:00-20:00',
+      '20:00-22:00'
     ],
     timeFrame: null,
     // 服务时长
-    durationArr: ['30分钟', '60分钟'],
+    durationArr: ['30', '60'],
     duration: 0,
     // 宠物数量
     petAmountList: [],
@@ -204,7 +209,8 @@ wepy.page({
     selAdvancedList: [],
     // 我的宠物
     myPetList: [],
-    selPetList: []
+    selPetList: [],
+    remark: ''
   },
 
   computed: {},
@@ -344,6 +350,14 @@ wepy.page({
       wx.setStorageSync('selPetList', this.selPetList);
       this.closeSheet();
     },
+    // 备注
+    textareaFocus() {
+      this.remarkFocus = true;
+    },
+    bindTextAreaBlur(e) {
+      this.remarkFocus = false;
+      this.remark = e.$wx.detail.value;
+    },
 
     // 查询地址列表
     async getAddressList() {
@@ -428,25 +442,44 @@ wepy.page({
         return -1;
       }
     },
-    async reservation() {
-      let params = {
-        userId: 'ojE985QmUgZZopp6sP5MTjgIaws4',
-        addressId: 0,
-        keyHandover: 0,
-        payMoney: 199,
-        petIds: 0,
-        serverType: 0
-      };
+    // 提交订单
+    async placeAnOrder() {
+      let petIds = [];
+      this.selPetList.map(item => {
+        if (item.checked) {
+          petIds.push(item.petId);
+        }
+      });
+      let advancedList = this.selAdvancedList.filter(item => item.checked);
 
+      let params = {
+        payMoney: 1,
+        userId: wx.getStorageSync('openId'),
+        serverType: this.type,
+        addressId: this.addressList[this.selAddressIndex].addressId, //地址 id
+        serverDate: this.serveDateArr.join(','), //服务日期 string
+        serverPeriod: this.timeFrameArr[this.timeFrame], //服务时段 string
+        serverDuration: this.durationArr[this.duration], //服务时长 string
+        petNumber: this.petAmountList[this.petAmount].goodsId, //宠物数量 id string
+        keyHandover: this.keysList[this.selKey].dictId, //钥匙交接 id
+        advancedService: JSON.stringify(advancedList), //高级服务 string
+        petIds: petIds.join(','), //我的宠物 string
+        remark: this.remark //string
+      };
+      console.log(params);
+      // dcda85d022fa4d8b8d80d69493b0c826
       try {
-        wx.showLoading({ title: '正在提交预约' });
+        wx.showLoading({ title: '正在提交预约...' });
         let res = await placeAnOrder(params);
-        wx.hideLoading();
+        setTimeout(() => wx.hideLoading(), 300);
       } catch (error) {
-        wx.showToast({ title: '请求服务失败', icon: 'none' });
+        wx.showToast({ title: '提交订单失败', icon: 'none' });
         return -1;
       }
     }
+  },
+  onPageScroll() {
+    this.remarkFocus = false;
   },
   onUnload() {
     this.clearSrorage();

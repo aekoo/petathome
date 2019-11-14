@@ -14,7 +14,10 @@
             <view class="select-item" wx:if="{{item.serverItemList}}">
               <text class="select-item-name">高级选择：</text>
               <text class="select-item-value">
-                <text  wx:for="{{item.serverItemList}}" wx:for-item="server" wx:key="unique">{{server.serverName}}、</text>
+                <text wx:for="{{item.serverItemList}}" wx:for-item="server" wx:key="unique">
+                  <text wx:if="{{server.num>1}}">{{server.serverName}}x{{server.num}}{{server==item.serverItemList.length-1?'、':''}}</text>
+                  <text wx:else>{{server.serverName}}{{server==item.serverItemList.length-1?'、':''}}</text>
+                </text>
               </text>
             </view>
             <view class="select-item">
@@ -33,11 +36,11 @@
             </view>
             <view class="order-action">
               <view class="order-price">总价<text class="price">{{item.totalMoney}}</text></view>
-              <view data-orderno="{{item.orderNo}}" class="order-operate goPay" wx:if="{{item.payStatus==0}}">去支付</view>
-              <view data-orderno="{{item.orderNo}}" class="order-operate cancelOrder" wx:if="{{item.payStatus==0}}" @tap="cancelOrderClick">取消订单</view>
-              <view data-orderno="{{item.orderNo}}" class="order-operate cancelOrder" wx:if="{{item.payStatus==1&&item.serverStatus==0}}" @tap="refundOrderClick">申请退款</view>
+              <view data-orderno="{{item.orderNo}}" class="order-operate goPay" wx:if="{{item.payStatus==0}}" catchtap="goPay">去支付</view>
+              <view data-orderno="{{item.orderNo}}" class="order-operate cancelOrder" wx:if="{{item.payStatus==0}}" catchtap="cancelOrderClick">取消订单</view>
+              <view data-orderno="{{item.orderNo}}" class="order-operate cancelOrder" wx:if="{{item.payStatus==1&&item.serverStatus==0}}" catchtap="refundOrderClick">申请退款</view>
               <view class="order-operate" wx:if="{{item.payStatus==1&&item.serverStatus!=2}}">{{item.serverStatus==1?'进行中':'待服务'}}</view>
-              <view data-orderno="{{item.orderNo}}" class="order-operate goEvaluate" wx:if="{{item.payStatus==1&&item.serverStatus==2&&item.evaluationStatus==0}}" @tap="goRatePage">去评价</view>
+              <view data-orderno="{{item.orderNo}}" class="order-operate goEvaluate" wx:if="{{item.payStatus==1&&item.serverStatus==2&&item.evaluationStatus==0}}" catchtap="goRatePage">去评价</view>
               <view class="order-operate haveEvaluate" wx:if="{{item.payStatus==1&&item.serverStatus==2&&item.evaluationStatus==1}}">已评价</view>
               <view class="order-operate" wx:if="{{item.payStatus==2}}">退款中</view>
               <view class="order-operate" wx:if="{{item.payStatus==3}}">退款成功</view>
@@ -55,6 +58,7 @@ import wepy from '@wepy/core';
 import eventHub from '@/common/eventHub';
 import { mapState } from '@wepy/x';
 import store from '@/store';
+import { userLogin } from '@/utils/common';
 import { getOrders, payOrder, refundOrder, cancelOrder } from '@/api/index.js';
 
 wepy.page({
@@ -199,20 +203,33 @@ wepy.page({
     async goPay(e) {
       const { orderno } = e.currentTarget.dataset;
       try {
-        wx.showLoading({ title: '数据加载中...' });
-        let res = await payOrder({ orderNo });
+        wx.showLoading({ title: '请求支付中...' });
+        let res = await payOrder({ orderNo: orderno });
         const { code, desc, results = {} } = res.data || {};
-        console.log(res);
-        setTimeout(() =>{wx.hideLoading()}, 300);
+        setTimeout(() => wx.hideLoading(), 300);
         // 失败
         if (code != 1) {
           wx.showToast({ title: desc, icon: 'none' });
           return;
         }
+        let { nonceStr, prepayId, sign, signType, timeStamp } = results;
         // 成功
-
+        wx.requestPayment({
+          timeStamp,
+          nonceStr,
+          signType,
+          paySign: sign,
+          package: prepayId,
+          success: function(res) {
+            console.log(res);
+          },
+          fail: function(res) {
+            console.log(res);
+          }
+        });
       } catch (error) {
-        wx.showToast({ title: '申请退款出错', icon: 'none' });
+        console.log(error);
+        wx.showToast({ title: '微信下单出错', icon: 'none' });
         return -1;
       }
     },
@@ -224,7 +241,7 @@ wepy.page({
           openId: this.openId,
           status: this.tabId
         });
-        setTimeout(() =>{wx.hideLoading()}, 300);
+        setTimeout(() => wx.hideLoading(), 300);
         const { results = [] } = res.data || {};
         console.log(results);
         this.dataList = results;
