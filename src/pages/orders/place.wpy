@@ -17,9 +17,11 @@
       <view class="cardTitle">服务信息</view>
       <view class="serveInfoRow">
         <view class="serveInfoTitle">服务日期</view>
-        <picker mode="date" value="{{'2019-11-11'}}" bindchange="ageChange">
-          <view class="picker">{{'2019-11-11'}}</view>
-        </picker>
+        <view class="picker {{serveDateArr.length>3?'serveDate':''}}" @tap="goPage('/pages/calendar/index')">
+          <text wx:if="{{serveDateArr.length<1}}">{{'请选择'}}</text>
+          <text wx:elif="{{serveDateArr.length>5}}">{{serveDateShow}}等{{serveDateArr.length}}天</text>
+          <text wx:else>{{serveDateShow}}</text>
+        </view>
         <view class="serveInfoArrow"><image mode="aspectFill" src="../../image/arrow.png"/></view>
       </view>
       <view class="serveInfoRow">
@@ -175,6 +177,8 @@ wepy.page({
     selAddressIndex: null,
     selAddress: [],
     // 服务日期
+    serveDateArr: [],
+    serveDateShow: '',
     // 服务时段
     timeFrameArr: [
       '上午 08:00-10:00',
@@ -206,6 +210,13 @@ wepy.page({
   computed: {},
 
   methods: {
+    // 清除缓存数据
+    clearSrorage() {
+      wx.removeStorageSync('selAdvancedList');
+      wx.removeStorageSync('selPetList');
+      wx.removeStorageSync('shortTime');
+      wx.removeStorageSync('selDateArr');
+    },
     // 页面跳转
     goPage(url) {
       wx.navigateTo({ url });
@@ -278,7 +289,7 @@ wepy.page({
     //取消高级选项
     advancedSheetCancel() {
       const selAdvancedList = wx.getStorageSync('selAdvancedList');
-      if (selPetList) {
+      if (selAdvancedList) {
         // 之前有点过确定，还原到上次选中
         this.advancedList = selAdvancedList.filter(item => item.serverId);
       } else {
@@ -437,14 +448,23 @@ wepy.page({
       }
     }
   },
-  onHide() {
-    wx.removeStorageSync('selPetList');
+  onUnload() {
+    this.clearSrorage();
   },
   onShow() {
     this.getAddressList();
+    const selDateArr = wx.getStorageSync('selDateArr'); //获取选择的日期
+    if (selDateArr) {
+      this.serveDateArr = selDateArr; //变更选择的日期
+      let showDate = selDateArr.map(item => {
+        const YTD = item.split('-');
+        return `${YTD[1]}月${YTD[2]}日`;
+      });
+      this.serveDateShow = showDate.slice(0, 5).join('、'); //界面显示用的日期
+    }
   },
   onLoad(props) {
-    wx.removeStorageSync('selPetList');
+    this.clearSrorage();
     const { type } = props;
     this.type = type || 0;
     this.getAdvancedService();

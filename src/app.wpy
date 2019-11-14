@@ -35,9 +35,7 @@ wepy.app({
 <config>
 {
     pages: [
-      'pages/calendar/index',
       'pages/home/index',
-      'pages/city/index',
       'pages/service/index',
       'pages/orders/index',
       'pages/orders/place',
@@ -51,6 +49,8 @@ wepy.app({
       'pages/me/success',
       'pages/address/index',
       'pages/address/add',
+      'pages/city/index',
+      'pages/calendar/index',
       'pages/webview',
     ],
     window: {

@@ -1,0 +1,259 @@
+<style lang="less" src="./index.less"></style>
+<template>
+  <block>
+    <view class="tips">日期可多选</view>
+    <scroll-view scroll-y class="scroll-view">
+      <view class="calendar">
+        <view class="year_month">
+          <text class="year">{{thisYear}}年</text>
+          <text class="month">{{thisMonth}}月</text>
+        </view>
+        <view class="week">
+          <text class="saturday">日</text>
+          <text>一</text>
+          <text>二</text>
+          <text>三</text>
+          <text>四</text>
+          <text>五</text>
+          <text class="sunday">六</text>
+        </view>
+        <block wx:for="{{thisMonthArr}}" wx:key="index">
+        <view class="week">
+            <text class="saturday {{item[0]['isToday'] == true ? 'now' : ''}} {{item[0]['date'] < today ? 'disabled' : ''}} {{item[0]['state']==true?'selected':''}}" data-month="thisMonth" data-date="{{item[0]['date'] < today ? '' :item[0]['date']}}" data-key="{{index}}" data-keyitem="0" bindtap="select_date">{{item[0]['date']}}</text>
+            <text class="{{item[1]['isToday'] == true ? 'now' : ''}} {{item[1]['date'] < today ? 'disabled' : ''}} {{item[1]['state']==true?'selected':''}}" data-month="thisMonth" data-date="{{item[1]['date'] < today ? '' :item[0]['date']}}" data-key="{{index}}" data-keyitem="1" bindtap="select_date">{{item[1]['date']}}</text>
+            <text class="{{item[2]['isToday'] == true ? 'now' : ''}} {{item[2]['date'] < today ? 'disabled' : ''}} {{item[2]['state']==true?'selected':''}}" data-month="thisMonth" data-date="{{item[2]['date'] < today ? '' :item[0]['date']}}" data-key="{{index}}" data-keyitem="2" bindtap="select_date">{{item[2]['date']}}</text>
+            <text class="{{item[3]['isToday'] == true ? 'now' : ''}} {{item[3]['date'] < today ? 'disabled' : ''}} {{item[3]['state']==true?'selected':''}}" data-month="thisMonth" data-date="{{item[3]['date'] < today ? '' :item[0]['date']}}" data-key="{{index}}" data-keyitem="3" bindtap="select_date">{{item[3]['date']}}</text>
+            <text class="{{item[4]['isToday'] == true ? 'now' : ''}} {{item[4]['date'] < today ? 'disabled' : ''}} {{item[4]['state']==true?'selected':''}}" data-month="thisMonth" data-date="{{item[4]['date'] < today ? '' :item[0]['date']}}" data-key="{{index}}" data-keyitem="4" bindtap="select_date">{{item[4]['date']}}</text>
+            <text class="{{item[5]['isToday'] == true ? 'now' : ''}} {{item[5]['date'] < today ? 'disabled' : ''}} {{item[5]['state']==true?'selected':''}}" data-month="thisMonth" data-date="{{item[5]['date'] < today ? '' :item[0]['date']}}" data-key="{{index}}" data-keyitem="5" bindtap="select_date">{{item[5]['date']}}</text>
+            <text class="sunday {{item[6]['isToday'] == true ? 'now' : ''}} {{item[6]['date'] < today ? 'disabled' : ''}} {{item[6]['state']==true?'selected':''}}" data-month="thisMonth" data-date="{{item[6]['date'] < today ? '' :item[0]['date']}}" data-key="{{index}}" data-keyitem="6" bindtap="select_date">{{item[6]['date']}}</text> 
+        </view>
+        </block>
+      </view>
+
+      <view class="calendar">
+        <view class="year_month">
+          <text class="year">{{nextYear}}年</text>
+          <text class="month">{{nextMonth}}月</text>
+        </view>
+        <view class="week">
+          <text class="saturday">日</text>
+          <text>一</text>
+          <text>二</text>
+          <text>三</text>
+          <text>四</text>
+          <text>五</text>
+          <text class="sunday">六</text>
+        </view>
+        <block wx:for="{{nextMonthArr}}" wx:key="index">
+        <view class="week">
+            <text class="saturday {{item[0]['state']==true?'selected':''}}" data-date="{{item[0]['date']}}" data-key="{{index}}" data-keyitem="0" bindtap="select_date">{{item[0]['date']}}</text>
+            <text class="{{item[1]['state']==true?'selected':''}}" data-date="{{item[1]['date']}}" data-key="{{index}}" data-keyitem="1" bindtap="select_date">{{item[1]['date']}}</text>
+            <text class="{{item[2]['state']==true?'selected':''}}" data-date="{{item[2]['date']}}" data-key="{{index}}" data-keyitem="2" bindtap="select_date">{{item[2]['date']}}</text>
+            <text class="{{item[3]['state']==true?'selected':''}}" data-date="{{item[3]['date']}}" data-key="{{index}}" data-keyitem="3" bindtap="select_date">{{item[3]['date']}}</text>
+            <text class="{{item[4]['state']==true?'selected':''}}" data-date="{{item[4]['date']}}" data-key="{{index}}" data-keyitem="4" bindtap="select_date">{{item[4]['date']}}</text>
+            <text class="{{item[5]['state']==true?'selected':''}}" data-date="{{item[5]['date']}}" data-key="{{index}}" data-keyitem="5" bindtap="select_date">{{item[5]['date']}}</text>
+            <text class="sunday {{item[6]['state']==true?'selected':''}}" data-date="{{item[6]['date']}}" data-key="{{index}}" data-keyitem="6" bindtap="select_date">{{item[6]['date']}}</text> 
+        </view>
+        </block>
+      </view>
+
+    </scroll-view>
+    <view class="submitButton" bindtap="confirmSelect">确定</view>
+  </block>
+</template>
+
+<script>
+import wepy from '@wepy/core';
+
+wepy.page({
+  data: {
+    thisYear: '',
+    thisMonth: '',
+    thisMonthArr: [],
+    today: new Date().getDate(),
+    nextYear: '',
+    nextMonth: '',
+    nextMonthArr: []
+  },
+  computed: {},
+
+  methods: {
+    select_date: function(e) {
+      //如果点击项为空百项目，不继续执行
+      var date = e.currentTarget.dataset.date;
+      if (date == '' || date <= 0) {
+        return;
+      }
+      var index = e.currentTarget.dataset.key;
+      var item = e.currentTarget.dataset.keyitem;
+      var month = e.currentTarget.dataset.month;
+      if (month == 'thisMonth') {
+        var that = this.thisMonthArr;
+      } else {
+        var that = this.nextMonthArr;
+      }
+      //切换选中状态
+      if (that[index][item].state == true) {
+        that[index][item].state = false;
+      } else if (that[index][item].state == false) {
+        that[index][item].state = true;
+      }
+      //console.log(that);
+      //根据月份设置数据
+      if (month == 'thisMonth') {
+        this.thisMonthArr = that;
+      } else {
+        this.nextMonthArr = that;
+      }
+    },
+
+    //根据指定年月获得当月天数
+    mGetDate(year, month) {
+      var d = new Date(year, month, 0);
+      return d.getDate();
+    },
+    //根据指定年月获得当月日历数组
+    getDateArr(date) {
+      //根据指定年月
+      //var myDate = new Date();
+      var myDate = date;
+      var thisYear = myDate.getFullYear(); //获取完整的年份
+      var thisMonth = myDate.getMonth() + 1; //获取当前月份(0-11,0代表1月)
+      var firstDay = new Date(thisYear + ',' + thisMonth + ',01').getDay(); //本月第一天星期几,0表示星期天
+      var nowDay = myDate.getDate(); // 今天是几号
+      var monthNum = this.mGetDate(thisYear, thisMonth); //本月多少天
+
+      var monthArray = [];
+      var week = 1; //第一周
+      var oneDay = '';
+      var isToday = false;
+      monthArray[week] = new Array(); //声明本周的二维数组
+
+      //循环当月的每一天
+      for (var k = 1; k <= monthNum; k++) {
+        isToday = false;
+        //组装当前日期
+        oneDay = thisYear + ',' + thisMonth + ',' + k;
+        var witchDay = new Date(oneDay).getDay(); //当前是星期几
+        //如果当期循环日期为今天
+        if (k == nowDay) {
+          isToday = true;
+        }
+        //如果是第一周
+        if (week == 1) {
+          //判断当前日期是否是本月第一天
+          if (k == 1) {
+            //第一天之前的日期补为空
+            for (var a = 0; a < firstDay; a++) {
+              monthArray[week][a] = {
+                date: '',
+                isToday: isToday,
+                state: false
+              };
+            }
+          }
+        }
+        monthArray[week][witchDay] = {
+          date: k,
+          isToday: isToday,
+          state: false
+        };
+
+        //如果已经是周六，切换到下一周
+        if (witchDay == 6) {
+          week++;
+          monthArray[week] = new Array(); //声明本周的二维数组
+        }
+      }
+      monthArray.splice(0, 1); //删除下标为0的空元素
+      //console.log(monthArray);
+      return monthArray;
+    },
+    // 确认提交选项
+    confirmSelect() {
+      const {
+        thisYear,
+        thisMonth,
+        thisMonthArr,
+        nextYear,
+        nextMonth,
+        nextMonthArr
+      } = this;
+      let selDateArr = [];
+      // 第一个月
+      for (const week of thisMonthArr) {
+        for (const day of week) {
+          if (day.state) {
+            selDateArr.push(`${thisYear}-${thisMonth}-${day.date}`);
+          }
+        }
+      }
+      // 第二个月
+      for (const week of nextMonthArr) {
+        for (const day of week) {
+          if (day.state) {
+            selDateArr.push(`${nextYear}-${nextMonth}-${day.date}`);
+          }
+        }
+      }
+      // const pages = getCurrentPages();
+      // const prevPage = pages[pages.length - 2]; //上一个页面
+      // prevPage.data.serveDateArr = selDateArr;
+      wx.setStorageSync('selDateArr', selDateArr);
+      wx.setStorageSync('shortTime', {
+        thisYear,
+        thisMonth,
+        thisMonthArr,
+        nextYear,
+        nextMonth,
+        nextMonthArr
+      });
+
+      wx.navigateBack();
+    }
+  },
+  //页面卸载
+  onUnload() {},
+  onLoad() {
+    const shortTime = wx.getStorageSync('shortTime');
+    // 如果临时存储中有，说明用户还没有提交订单，需要回显上次勾选的日期
+    if (shortTime) {
+      const {
+        thisYear,
+        thisMonth,
+        thisMonthArr,
+        nextYear,
+        nextMonth,
+        nextMonthArr
+      } = shortTime;
+      this.thisYear = thisYear;
+      this.thisMonth = thisMonth;
+      this.nextYear = nextYear;
+      this.nextMonth = nextMonth;
+      this.thisMonthArr = thisMonthArr;
+      this.nextMonthArr = nextMonthArr;
+    } else {
+      //初始化日历数据
+      var nextM_start = new Date(
+        new Date(new Date().toLocaleDateString()).setMonth(
+          new Date().getMonth() + 1
+        )
+      ); //下一个月
+      var thisMonthArr = this.getDateArr(new Date());
+      var nextMonthArr = this.getDateArr(nextM_start);
+      this.thisYear = new Date().getFullYear();
+      this.thisMonth = new Date().getMonth() + 1;
+      this.nextYear = nextM_start.getFullYear();
+      this.nextMonth = nextM_start.getMonth() + 1;
+      this.thisMonthArr = thisMonthArr;
+      this.nextMonthArr = nextMonthArr;
+    }
+  }
+});
+</script>
+<config>
+{
+  "navigationBarTitleText": "选择日期",
+  "usingComponents": {}
+}
+</config>
