@@ -201,6 +201,7 @@ wepy.page({
     },
     // 去支付（微信下单）
     async goPay(e) {
+      const _this = this;
       const { orderno } = e.currentTarget.dataset;
       try {
         wx.showLoading({ title: '请求支付中...' });
@@ -223,7 +224,7 @@ wepy.page({
           success: function(res) {
             console.log(res);
             wx.showToast({ title: '订单支付成功' });
-            this.getListData();
+            _this.getListData();
           },
           fail: function(res) {
             console.log(res);

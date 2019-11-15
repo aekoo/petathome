@@ -439,6 +439,7 @@ wepy.page({
           return Notify({ type: 'danger', message: desc });
         }
         Notify({ type: 'primary', message: '预约成功，请在30分钟内完成支付' });
+        this.goPay(results);
       } catch (error) {
         wx.showToast({ title: '提交订单失败', icon: 'none' });
         return -1;
@@ -446,6 +447,7 @@ wepy.page({
     },
     // 去支付（微信下单）
     async goPay(orderno) {
+      const _this = this;
       try {
         wx.showLoading({ title: '请求支付中...' });
         let res = await payOrder({ orderNo: orderno });
@@ -467,7 +469,7 @@ wepy.page({
           success: function(res) {
             console.log(res);
             wx.showToast({ title: '订单支付成功' });
-            this.getListData();
+            _this.goPage('/pages/orders/index');
           },
           fail: function(res) {
             console.log(res);
