@@ -1,6 +1,7 @@
 <style lang="less" src="./place.less"></style>
 <template>
   <view class="container">
+    <van-notify id="van-notify" />
     <view class="addressCard">
       <view class="progress"></view>
       <view class="noAddress" @tap="goPage('/pages/address/add')" wx:if="{{selAddress.length<1}}"><image mode="aspectFill" src="../../image/add.png"/><text>新增地址</text></view>
@@ -161,13 +162,15 @@
 
 <script>
 import wepy from '@wepy/core';
+import Notify from '@/components/vant-weapp/notify/notify';
 import {
   gainMyPet,
   gainAddressList,
   queryAdvancedService,
   queryPetNumberList,
   queryKeysList,
-  placeAnOrder
+  placeAnOrder,
+  payOrder
 } from '@/api/index.js';
 
 wepy.page({
@@ -364,6 +367,27 @@ wepy.page({
     },
     // 提交订单
     async placeAnOrder() {
+      let {
+        selAddressIndex,
+        serveDateArr,
+        timeFrame,
+        duration,
+        petAmount,
+        selKey
+      } = this;
+      if (!selAddressIndex) {
+        return Notify({ type: 'warning', message: '请选择或添加收货地址' });
+      }
+      if (serveDateArr.length < 1) {
+        return Notify({ type: 'warning', message: '请选择服务日期' });
+      }
+      if (!petAmount && petAmount != 0) {
+        return Notify({ type: 'warning', message: '请选择宠物数量' });
+      }
+      if (!selKey) {
+        return Notify({ type: 'warning', message: '请选择钥匙交接方式' });
+      }
+
       let petIds = [];
       this.myPetList.map(item => {
         if (item.checked) {
@@ -373,27 +397,89 @@ wepy.page({
       let advancedList = this.advancedList.filter(item => item.checked);
 
       let params = {
+        // 共用参数
         payMoney: this.payMoney,
         userId: wx.getStorageSync('openId'),
         serverType: this.type,
         addressId: this.addressList[this.selAddressIndex].addressId, //地址 id
         serverDate: this.serveDateArr.join(','), //服务日期 string
-        serverPeriod: this.timeFrameArr[this.timeFrame], //服务时段 string
-        serverDuration: this.durationArr[this.duration], //服务时长 string
         petNumber: this.petAmountList[this.petAmount].goodsId, //宠物数量 id string
         keyHandover: this.keysList[this.selKey].dictId, //钥匙交接 id
-        advancedService: JSON.stringify(advancedList), //高级服务 string
         petIds: petIds.join(','), //我的宠物 string
         remark: this.remark //string
       };
+      if (this.type == 0) {
+        // 喂猫
+        params = {
+          ...params,
+          advancedService: JSON.stringify(advancedList) //高级服务 string
+        };
+      } else if (this.type == 1) {
+        // 遛狗
+        if (!timeFrame) {
+          return Notify({ type: 'warning', message: '请选择服务时段' });
+        }
+        if (!duration) {
+          return Notify({ type: 'warning', message: '请选择服务时长' });
+        }
+        params = {
+          ...params,
+          serverPeriod: this.timeFrameArr[this.timeFrame], //服务时段 string
+          serverDuration: this.durationArr[this.duration] //服务时长 string
+        };
+      }
       console.log(params);
-      // dcda85d022fa4d8b8d80d69493b0c826
       try {
-        wx.showLoading({ title: '正在提交预约...' });
+        wx.showLoading({ title: '正在提交...' });
         let res = await placeAnOrder(params);
+        const { code, desc, results } = res.data || {};
         setTimeout(() => wx.hideLoading(), 300);
+        // 失败
+        if (code != 1) {
+          return Notify({ type: 'danger', message: desc });
+        }
+        Notify({ type: 'primary', message: '预约成功，请在30分钟内完成支付' });
       } catch (error) {
         wx.showToast({ title: '提交订单失败', icon: 'none' });
+        return -1;
+      }
+    },
+    // 去支付（微信下单）
+    async goPay(orderno) {
+      try {
+        wx.showLoading({ title: '请求支付中...' });
+        let res = await payOrder({ orderNo: orderno });
+        const { code, desc, results = {} } = res.data || {};
+        setTimeout(() => wx.hideLoading(), 300);
+        // 失败
+        if (code != 1) {
+          wx.showToast({ title: desc, icon: 'none' });
+          return;
+        }
+        let { nonceStr, prepayId, sign, signType, timeStamp } = results;
+        // 成功
+        wx.requestPayment({
+          timeStamp: timeStamp.toString(),
+          nonceStr,
+          signType,
+          paySign: sign,
+          package: prepayId,
+          success: function(res) {
+            console.log(res);
+            wx.showToast({ title: '订单支付成功' });
+            this.getListData();
+          },
+          fail: function(res) {
+            console.log(res);
+            const { errMsg } = res;
+            if (errMsg.indexOf('cancel') == -1) {
+              wx.showToast({ title: errMsg, icon: 'erroe' });
+            }
+          }
+        });
+      } catch (error) {
+        console.log(error);
+        wx.showToast({ title: '微信下单出错', icon: 'none' });
         return -1;
       }
     },
@@ -412,7 +498,7 @@ wepy.page({
             advancedPrice += item.showPrice * item.multiple;
           }
         });
-        this.payMoney = serveDays * (petNumPrice + advancedPrice);
+        this.payMoney = (serveDays * petNumPrice + advancedPrice).toFixed(2);
       } else if (this.type == 1) {
         /** 遛狗
          * 服务日期 * 宠物数量 * 服务时长
@@ -542,6 +628,8 @@ wepy.page({
 <config>
 {
     navigationBarTitleText: "预约上门",
-    usingComponents: {}
+    usingComponents: {
+      "van-notify": "~@/components/vant-weapp/notify/index"
+    }
 }
 </config>

@@ -16,7 +16,7 @@ VantComponent({
         },
         duration: {
             type: Number,
-            value: 3000
+            value: 2000
         },
         zIndex: {
             type: Number,

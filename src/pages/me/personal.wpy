@@ -148,7 +148,7 @@ wepy.page({
         console.log(res);
         if (res.data.code != 1) {
           // return wx.showToast({ title: '更新失败', icon: 'none' });
-          Notify({ type: 'danger', message: '更新失败', duration: 2000 });
+          Notify({ type: 'danger', message: '更新失败' });
           return;
         }
 
@@ -156,7 +156,7 @@ wepy.page({
           wx.hideLoading();
           store.dispatch('changeFlag'); //更新"我的"页面数据
           // wx.showToast({ title: '更新成功', icon: 'none' });
-          Notify({ type: 'primary', message: '更新成功', duration: 2000 });
+          Notify({ type: 'primary', message: '更新成功' });
         }, 300);
       } catch (error) {
         console.log(error);

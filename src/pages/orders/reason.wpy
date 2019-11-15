@@ -63,7 +63,7 @@ wepy.page({
     // 取消订单
     async cancelOrder() {
       if (this.selReason == 3 && this.remark == '') {
-        Notify({ type: 'warning', message: '请输入取消原因', duration: 2000 });
+        Notify({ type: 'warning', message: '请输入取消原因' });
         return;
       }
       try {
@@ -78,7 +78,7 @@ wepy.page({
           return;
         }
         // 成功
-        Notify({ type: 'primary', message: '订单已取消', duration: 2000 });
+        Notify({ type: 'primary', message: '订单已取消' });
         setTimeout(() => wx.navigateBack(), 2000);
       } catch (error) {
         wx.showToast({ title: '取消订单出错', icon: 'none' });
@@ -99,7 +99,7 @@ wepy.page({
           return;
         }
         // 成功
-        Notify({ type: 'primary', message: '申请退款成功', duration: 2000 });
+        Notify({ type: 'primary', message: '申请退款成功' });
         setTimeout(() => wx.navigateBack(), 2000);
       } catch (error) {
         wx.showToast({ title: '申请退款出错', icon: 'none' });

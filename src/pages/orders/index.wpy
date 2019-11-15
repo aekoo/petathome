@@ -29,7 +29,7 @@
                 <text class="select-item-name">上门日期 </text>
                 <text class="select-item-value">{{item.serverDate}}</text>
               </view>
-              <view class="select-item">
+              <view class="select-item" wx:if="{{item.serverType==1}}">
                 <text class="select-item-name">服务时间 </text>
                 <text class="select-item-value">{{item.serverPeriod}}</text>
               </view>
@@ -215,16 +215,22 @@ wepy.page({
         let { nonceStr, prepayId, sign, signType, timeStamp } = results;
         // 成功
         wx.requestPayment({
-          timeStamp,
+          timeStamp: timeStamp.toString(),
           nonceStr,
           signType,
           paySign: sign,
           package: prepayId,
           success: function(res) {
             console.log(res);
+            wx.showToast({ title: '订单支付成功' });
+            this.getListData();
           },
           fail: function(res) {
             console.log(res);
+            const { errMsg } = res;
+            if (errMsg.indexOf('cancel') == -1) {
+              wx.showToast({ title: errMsg, icon: 'erroe' });
+            }
           }
         });
       } catch (error) {

@@ -4,7 +4,7 @@ const defaultOptions = {
     type: 'danger',
     message: '',
     background: '',
-    duration: 3000,
+    duration: 2000,
     zIndex: 110,
     color: WHITE,
     safeAreaInsetTop: false,
