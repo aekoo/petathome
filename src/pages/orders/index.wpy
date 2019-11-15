@@ -169,7 +169,7 @@ wepy.page({
         }
         // 成功--直接修改本地数据，避免再次请求刷新页面
         this.dataList.find(item => {
-          if ((item.orderNo = orderno)) {
+          if ((item.orderNo = orderNo)) {
             item.payStatus = 4;
           }
         });
@@ -181,7 +181,7 @@ wepy.page({
     // 申请退款
     async refundOrder(orderNo) {
       try {
-        let res = await refundOrder({ openId: this.openId, orderNo });
+        let res = await refundOrder({ userId: this.openId, orderNo });
         const { code, desc, results = {} } = res.data || {};
         // 失败
         if (code != 1) {
@@ -190,11 +190,12 @@ wepy.page({
         }
         // 成功--直接修改本地数据，避免再次请求刷新页面
         this.dataList.find(item => {
-          if ((item.orderNo = orderno)) {
+          if ((item.orderNo = orderNo)) {
             item.payStatus = 2;
           }
         });
       } catch (error) {
+        console.log(error);
         wx.showToast({ title: '申请退款出错', icon: 'none' });
         return -1;
       }
@@ -230,7 +231,7 @@ wepy.page({
             console.log(res);
             const { errMsg } = res;
             if (errMsg.indexOf('cancel') == -1) {
-              wx.showToast({ title: errMsg, icon: 'erroe' });
+              wx.showToast({ title: errMsg, icon: 'error' });
             }
           }
         });
@@ -250,7 +251,6 @@ wepy.page({
         });
         setTimeout(() => wx.hideLoading(), 300);
         const { results = [] } = res.data || {};
-        console.log(results);
         this.dataList = results;
       } catch (error) {
         wx.showToast({ title: '出错了', icon: 'none' });

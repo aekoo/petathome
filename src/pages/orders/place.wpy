@@ -398,7 +398,7 @@ wepy.page({
 
       let params = {
         // 共用参数
-        payMoney: this.payMoney,
+        payMoney: 0.01,
         userId: wx.getStorageSync('openId'),
         serverType: this.type,
         addressId: this.addressList[this.selAddressIndex].addressId, //地址 id
@@ -447,7 +447,6 @@ wepy.page({
     },
     // 去支付（微信下单）
     async goPay(orderno) {
-      const _this = this;
       try {
         wx.showLoading({ title: '请求支付中...' });
         let res = await payOrder({ orderNo: orderno });
@@ -469,14 +468,18 @@ wepy.page({
           success: function(res) {
             console.log(res);
             wx.showToast({ title: '订单支付成功' });
-            _this.goPage('/pages/orders/index');
           },
           fail: function(res) {
             console.log(res);
             const { errMsg } = res;
             if (errMsg.indexOf('cancel') == -1) {
-              wx.showToast({ title: errMsg, icon: 'erroe' });
+              wx.showToast({ title: errMsg, icon: 'error' });
             }
+            wx.redirectTo({ url: '/pages/orders/index' });
+            wepy.wx.redirectTo({ url: '/pages/orders/index' });
+          },
+          complete: function() {
+            wx.redirectTo({ url: '/pages/orders/index' });
           }
         });
       } catch (error) {
