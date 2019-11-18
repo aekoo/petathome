@@ -131,6 +131,7 @@ wepy.page({
     }
   },
   onLoad() {
+    this.openId = wx.getStorageSync('openId');
     if (this.openId) {
       this.getUserInfo();
       this.getMyPet();

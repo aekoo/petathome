@@ -75,7 +75,9 @@ wepy.page({
   watch: {
     // 监听openId变化
     '$store.state.openId': function(newFlag, oldFlag) {
-      this.openId = wx.getStorageSync('openId') || '';
+      if (newFlag != oldFlag) {
+        this.getListData();
+      }
     }
   },
 
@@ -259,6 +261,7 @@ wepy.page({
     }
   },
   onShow() {
+    this.openId = wx.getStorageSync('openId');
     this.getListData();
     if (typeof this.$wx.getTabBar === 'function' && this.$wx.getTabBar()) {
       this.$wx.getTabBar().setData({ selected: 2 });
