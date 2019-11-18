@@ -49,7 +49,7 @@
       <view class="certificateTitle">宠物相关证件</view>
       <view class="certificateDesc">选择遛狗服务请上传狗狗免疫记录、狗证</view>
       <view class="certificateList">
-        <view class="certificateLi" wx:for="{{photo}}" wx:key="unique">
+        <view class="certificateLi" wx:for="{{photo}}" wx:key="unique" @tap="preView">
           <image class="deleteCertificate" mode="aspectFill" src="../../image/minus.png" data-img="{{item}}" @tap="delFile"/>
           <image mode="aspectFill" src="{{item}}"/>
         </view>
@@ -127,6 +127,12 @@ wepy.page({
       this.immunology = e.$wx.detail.value == true ? 1 : 0;
     },
 
+    //放大查看宠物证件
+    preView() {
+      wx.previewImage({
+        urls: this.photo
+      });
+    },
     //删除宠物证件
     delFile(e) {
       const { img } = e.currentTarget.dataset;
