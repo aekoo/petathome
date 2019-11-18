@@ -98,11 +98,11 @@ wepy.page({
     },
     // 种类
     typeChange(e) {
-      this.type = e.$wx.detail.value;
-      // if (this.type != e.$wx.detail.value) {
-      this.selkind = 0;
-      this.getPetList();
-      // }
+      if (this.type != e.$wx.detail.value) {
+        this.type = e.$wx.detail.value;
+        this.selkind = 0;
+        this.getPetList();
+      }
     },
     // 品种
     kindChange(e) {
