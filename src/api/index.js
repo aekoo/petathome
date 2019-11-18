@@ -87,6 +87,11 @@ export const queryPetNumberList = (data) => {
   let pathUrl = '/config/queryPetNumberList'
   return fetch.get(REQ_URL + pathUrl, data)
 }
+// 宠物数量--狗专用
+export const queryDogPetNumber = (data) => {
+  let pathUrl = '/config/queryDogPetNumber'
+  return fetch.get(REQ_URL + pathUrl, data)
+}
 
 
 

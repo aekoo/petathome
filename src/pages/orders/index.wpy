@@ -169,7 +169,7 @@ wepy.page({
         }
         // 成功--直接修改本地数据，避免再次请求刷新页面
         this.dataList.find(item => {
-          if ((item.orderNo = orderNo)) {
+          if (item.orderNo == orderNo) {
             item.payStatus = 4;
           }
         });
@@ -190,7 +190,7 @@ wepy.page({
         }
         // 成功--直接修改本地数据，避免再次请求刷新页面
         this.dataList.find(item => {
-          if ((item.orderNo = orderNo)) {
+          if (item.orderNo == orderNo) {
             item.payStatus = 2;
           }
         });

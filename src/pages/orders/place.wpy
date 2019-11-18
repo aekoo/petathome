@@ -40,11 +40,11 @@
           </label>
         </radio-group>
       </view>
-      <view class="serveInfoRow">
+      <view class="serveInfoRow {{petAmountList.length>4?'multiRow':''}}">
         <view class="serveInfoTitle">宠物数量</view>
         <radio-group class="radio-group" bindchange="petAmountChange">
           <label class="label_option {{petAmount==idx?'checked':''}}" wx:for="{{petAmountList}}" wx:for-index="idx" wx:key="unique">
-            <radio value="{{idx}}" checked="{{petAmount==idx}}"></radio><text class="label_text">{{item.goodsName}}</text>
+            <radio value="{{idx}}" checked="{{petAmount==idx}}"></radio><text class="label_text">{{type==1?item.numberName:item.goodsName}}</text>
           </label>
         </radio-group>
       </view>
@@ -168,6 +168,7 @@ import {
   gainAddressList,
   queryAdvancedService,
   queryPetNumberList,
+  queryDogPetNumber,
   queryKeysList,
   placeAnOrder,
   payOrder
@@ -375,7 +376,7 @@ wepy.page({
         petAmount,
         selKey
       } = this;
-      if (!selAddressIndex) {
+      if (!selAddressIndex && selAddressIndex != 0) {
         return Notify({ type: 'warning', message: '请选择或添加收货地址' });
       }
       if (serveDateArr.length < 1) {
@@ -449,7 +450,9 @@ wepy.page({
     async goPay(orderno) {
       try {
         wx.showLoading({ title: '请求支付中...' });
-        let res = await payOrder({ orderNo: orderno });
+        let res = await payOrder({
+          orderNo: orderno
+        });
         const { code, desc, results = {} } = res.data || {};
         setTimeout(() => wx.hideLoading(), 300);
         // 失败
@@ -467,19 +470,24 @@ wepy.page({
           package: prepayId,
           success: function(res) {
             console.log(res);
-            wx.showToast({ title: '订单支付成功' });
+            Notify({
+              type: 'primary',
+              message: '订单支付成功，请前往订单列表查看'
+            });
           },
           fail: function(res) {
             console.log(res);
             const { errMsg } = res;
             if (errMsg.indexOf('cancel') == -1) {
-              wx.showToast({ title: errMsg, icon: 'error' });
+              return wx.showToast({ title: errMsg, icon: 'error' });
             }
-            wx.redirectTo({ url: '/pages/orders/index' });
-            wepy.wx.redirectTo({ url: '/pages/orders/index' });
+            Notify({
+              type: 'warning',
+              message: '支付未完成，请前往订单列表查看'
+            });
           },
           complete: function() {
-            wx.redirectTo({ url: '/pages/orders/index' });
+            setTimeout(() => wx.navigateBack(), 2000);
           }
         });
       } catch (error) {
@@ -509,17 +517,15 @@ wepy.page({
          * 服务日期 * 宠物数量 * 服务时长
          **/
         let serveDays = this.serveDateArr.length; //服务天数
-        const petNumPrice = this.petAmountList[this.petAmount].showPrice; //宠物数量选项对应价格
-        // const durationPrice = this.durationArr[this.duration]; //服务时长对应价格
-        const durationPrice = 30;
-        this.payMoney = serveDays * (petNumPrice + durationPrice);
+        let { serviceDurations } = this.petAmountList[this.petAmount];
+        const price = serviceDurations[this.duration].price; //宠物数量选项+服务时长 对应价格
+        this.payMoney = serveDays * price;
       }
     },
 
     // 查询地址列表
     async getAddressList() {
       try {
-        wx.showLoading({ title: '数据加载中...' });
         let res = await gainAddressList({
           userId: wx.getStorageSync('openId')
         });
@@ -534,9 +540,6 @@ wepy.page({
           this.selAddressIndex = addressIndex;
           this.selAddress = this.addressList[addressIndex];
         }
-        setTimeout(() => {
-          wx.hideLoading();
-        }, 300);
       } catch (error) {
         wx.showToast({ title: '获取地址列表出错', icon: 'none' });
         return -1;
@@ -548,6 +551,23 @@ wepy.page({
         let res = await queryPetNumberList({ classification: this.type });
         const { results = {} } = res.data || {};
         this.petAmountList = results;
+      } catch (error) {
+        wx.showToast({ title: '获取宠物数量选项出错', icon: 'none' });
+        return -1;
+      }
+    },
+    // 查询狗的数量列表
+    async getDogPetNumber() {
+      try {
+        let res = await queryDogPetNumber();
+        const { results = {} } = res.data || {};
+        this.petAmountList = results;
+        let { serviceDurations = [] } = results[0];
+        let durationArr = [];
+        serviceDurations.map(item => {
+          durationArr.push(item.durationName);
+        });
+        this.durationArr = durationArr;
       } catch (error) {
         wx.showToast({ title: '获取宠物数量选项出错', icon: 'none' });
         return -1;
@@ -584,6 +604,7 @@ wepy.page({
     // 查询我的宠物
     async getMyPet() {
       try {
+        wx.showLoading({ title: '数据加载中...' });
         let res = await gainMyPet({
           userId: wx.getStorageSync('openId'),
           type: this.type
@@ -593,6 +614,7 @@ wepy.page({
           item.checked = false; //给每个宠物设置未选中
         });
         this.myPetList = results; //列表勾选使用
+        setTimeout(() => wx.hideLoading(), 300);
       } catch (error) {
         console.log(error);
         wx.showToast({ title: '查询我的宠物出错', icon: 'none' });
@@ -623,8 +645,12 @@ wepy.page({
     this.clearSrorage();
     const { type } = props;
     this.type = type || 0;
-    this.getAdvancedService();
-    this.getPetAmountList();
+    if (type == 0) {
+      this.getAdvancedService();
+      this.getPetAmountList();
+    } else if (type == 1) {
+      this.getDogPetNumber();
+    }
     this.getKeyList();
     this.getMyPet();
   }

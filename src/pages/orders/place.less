@@ -124,6 +124,15 @@
       box-sizing: border-box;
       align-items: center;
 
+      // 多行
+      &.multiRow {
+        height: 216rpx;
+
+        .serveInfoTitle {
+          min-width: 166rpx;
+        }
+      }
+
       &:last-child {
         border: none;
       }
@@ -344,7 +353,8 @@
         width: 100%;
         min-height: 208rpx;
       }
-      .replacerPlaceholder{
+
+      .replacerPlaceholder {
         min-height: 208rpx;
         line-height: 24rpx;
         font-size: 32rpx;
