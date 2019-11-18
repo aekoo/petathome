@@ -145,7 +145,10 @@ wepy.page({
       try {
         let res = await gainMyPet({ userId: this.openId });
         const { results = {} } = res.data || {};
-        this.myPetList = results.slice(results.length - 3, results.length);
+        this.myPetList =
+          results.length < 4
+            ? results
+            : results.slice(results.length - 3, results.length);
       } catch (error) {
         console.log(error);
         wx.showToast({ title: '查询我的宠物出错', icon: 'none' });

@@ -19,6 +19,7 @@
 
 <script>
 import wepy from '@wepy/core';
+import store from '@/store';
 import { gainPetKinds, gainMyPet, deletePet } from '@/api/index.js';
 
 wepy.page({
@@ -65,6 +66,7 @@ wepy.page({
         }
         // 成功
         this.getMyPet();
+        store.dispatch('changeFlag'); //更新"首页"、"我的"、我的宠物页面数据
       } catch (error) {
         wx.showToast({ title: '删除宠物出错', icon: 'none' });
         return -1;
