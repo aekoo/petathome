@@ -16,7 +16,7 @@
       </view>
     </view>
     <!-- top banner -->
-    <swiper class="top-banner" indicator-dots="{{topBannerList.length>0}}" indicator-color="#5E5E60" indicator-active-color="#FFF" autoplay="true" circular="true">
+    <swiper class="top-banner" indicator-dots="{{topBannerList.length>1}}" indicator-color="#5E5E60" indicator-active-color="#FFF" autoplay="true" circular="true" wx:if="{{topBannerList.length>0}}">
       <swiper-item wx:for="{{topBannerList}}" wx:key="unique" data-link="{{item.link}}" @tap="bannerClick">
         <image mode="aspectFill" src="{{item.image}}"/>
       </swiper-item>
@@ -30,23 +30,17 @@
     <view class="myPetBox">
       <view class="myPetTitle">我的爱宠</view>
       <view class="myPetList">
-        <image class="myPetImage" mode="aspectFill" wx:for="{{myPetList}}" wx:key="unique" src="{{item.avatar||'../../image/default_pet.png'}}"/>
+        <image class="myPetImage" mode="aspectFill" data-id="{{item.petId}}" @tap="editPet" wx:for="{{myPetList}}" wx:key="unique" src="{{item.avatar||'../../image/default_pet.png'}}"/>
       </view>
+      <view class="myPetMore" @tap="goPage('/pages/me/mypet')" wx:if="{{myPetMore}}"></view>
       <view class="myPetAdd" @tap="goPage('/pages/me/addPet')"></view>
     </view>
     <!-- info banner -->    
-    <swiper class="info-banner" autoplay="true" circular="true">
+    <swiper class="info-banner" autoplay="true" circular="true" wx:if="{{bannerClick.length>0}}">
       <swiper-item wx:for="{{buttomBannerList}}" wx:key="unique" data-link="{{item.link}}" @tap="bannerClick">
         <view class="swiper-item"></view>
       </swiper-item>
     </swiper>
-    
-
-    <!-- <panel>
-        <button open-type="getUserInfo"  @getuserinfo="onGotUserInfo">
-            <view>微信登录</view>
-        </button>
-    </panel> -->
     <!--toast /-->
   </view>
 </template>
@@ -67,6 +61,7 @@ wepy.page({
     notice: {},
     topBannerList: [],
     myPetList: [],
+    myPetMore: false,
     buttomBannerList: []
   },
   watch: {
@@ -102,6 +97,10 @@ wepy.page({
     },
     goPage(url) {
       wx.navigateTo({ url });
+    },
+    editPet(e) {
+      const { id } = e.currentTarget.dataset;
+      wx.navigateTo({ url: `/pages/me/addPet?petId=${id}` });
     },
     toWebview(url) {
       wx.navigateTo({ url: `/pages/webview?url=${url}` });
@@ -145,10 +144,13 @@ wepy.page({
       try {
         let res = await gainMyPet({ userId: this.openId });
         const { results = {} } = res.data || {};
-        this.myPetList =
-          results.length < 4
-            ? results
-            : results.slice(results.length - 3, results.length);
+        if (results.length < 4) {
+          this.myPetList = results;
+          this.myPetMore = false;
+        } else {
+          this.myPetList = results.slice(0, 2);
+          this.myPetMore = true;
+        }
       } catch (error) {
         console.log(error);
         wx.showToast({ title: '查询我的宠物出错', icon: 'none' });

@@ -2,7 +2,7 @@
 <template>
   <view class="container">
     <button class="author" open-type="getUserInfo"  bindgetuserinfo="onGotUserInfo" v-if="!openId"></button>
-    <van-tabs sticky="true" swipeable animated="true" class="orderBox" border="false" line-width="36" active="{{ active }}" bind:change="onChange">
+    <van-tabs sticky="true" swipeable="true" animated="true" class="orderBox" border="false" line-width="36" active="{{ active }}" bind:change="onChange">
       <van-tab v-for="(item,i) in tabNames" v-bind:key="i" title="{{item}}">
           <nodata text="你还没订单，快去下单吧" img="../../image/noOrders.png" wx:if="{{dataList.length<1}}"></nodata>
           <scroll-view wx:else scroll-y="true" style="height:{{scrollHeight}}px">

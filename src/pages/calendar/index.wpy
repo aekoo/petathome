@@ -58,7 +58,9 @@
       </view>
 
     </scroll-view>
-    <view class="submitButton" bindtap="confirmSelect">确定</view>
+    <view class="submitBox">
+      <view class="submitButton" bindtap="confirmSelect">确定</view>
+    </view>
   </block>
 </template>
 
@@ -73,7 +75,8 @@ wepy.page({
     today: new Date().getDate(),
     nextYear: '',
     nextMonth: '',
-    nextMonthArr: []
+    nextMonthArr: [],
+    selDateArr: []
   },
   computed: {},
 
@@ -105,6 +108,7 @@ wepy.page({
       } else {
         this.nextMonthArr = that;
       }
+      this.saveSelDateArr();
     },
 
     //根据指定年月获得当月天数
@@ -133,7 +137,7 @@ wepy.page({
       for (var k = 1; k <= monthNum; k++) {
         isToday = false;
         //组装当前日期
-        oneDay = thisYear + ',' + thisMonth + ',' + k;
+        oneDay = thisYear + '/' + thisMonth + '/' + k;
         var witchDay = new Date(oneDay).getDay(); //当前是星期几
         //如果当期循环日期为今天
         if (k == nowDay) {
@@ -169,8 +173,25 @@ wepy.page({
       //console.log(monthArray);
       return monthArray;
     },
-    // 确认提交选项
-    confirmSelect() {
+    //检查日期间隔
+    examineInterval(data) {
+      if (data.length < 2) return;
+      for (const i in data) {
+        const day = 1000 * 24 * 3600;
+        const j = +i + 1;
+        const oneDay = new Date(data[i]).getTime();
+        const twoDay = new Date(data[j]).getTime();
+        const interval = (twoDay - oneDay) / day;
+        if (interval > 2) {
+          wx.showToast({
+            title: '为了宠物健康，不建议上门间隔超过两天哦',
+            icon: 'none'
+          });
+        }
+      }
+    },
+    //保存选中日期，随时准备提交
+    saveSelDateArr() {
       const {
         thisYear,
         thisMonth,
@@ -183,7 +204,7 @@ wepy.page({
       // 第一个月
       for (const week of thisMonthArr) {
         for (const day of week) {
-          if (day.state) {
+          if (day && day.state) {
             selDateArr.push(`${thisYear}-${thisMonth}-${day.date}`);
           }
         }
@@ -191,15 +212,28 @@ wepy.page({
       // 第二个月
       for (const week of nextMonthArr) {
         for (const day of week) {
-          if (day.state) {
+          if (day && day.state) {
             selDateArr.push(`${nextYear}-${nextMonth}-${day.date}`);
           }
         }
       }
+      this.selDateArr = selDateArr;
+      this.examineInterval(selDateArr);
+    },
+    // 确认提交选项
+    confirmSelect() {
+      const {
+        thisYear,
+        thisMonth,
+        thisMonthArr,
+        nextYear,
+        nextMonth,
+        nextMonthArr
+      } = this;
       // const pages = getCurrentPages();
       // const prevPage = pages[pages.length - 2]; //上一个页面
       // prevPage.data.serveDateArr = selDateArr;
-      wx.setStorageSync('selDateArr', selDateArr);
+      wx.setStorageSync('selDateArr', this.selDateArr);
       wx.setStorageSync('shortTime', {
         thisYear,
         thisMonth,

@@ -75,6 +75,10 @@ page {
         height: 92rpx;
         border: 2rpx solid #F0F0F0;
         border-radius: 50%;
+        
+        &:last-child {
+          margin-right: 0;
+        }
       }
     }
 
@@ -92,6 +96,40 @@ page {
         display: block;
       }
     }
+  }
+}
+
+.myPetMore {
+  position: relative;
+  margin: auto 68rpx auto 0;
+  width: 8rpx;
+  height: 8rpx;
+  background: #E2BF51;
+  border: 42rpx solid #FFF;
+  border-radius: 50%;
+
+  &::before {
+    position: absolute;
+    content: '';
+    top: 50%;
+    left: -200%;
+    transform: translateY(-50%);
+    width: 8rpx;
+    height: 8rpx;
+    background: #E2BF51;
+    border-radius: 50%;
+  }
+
+  &::after {
+    position: absolute;
+    content: '';
+    top: 50%;
+    left: 200%;
+    transform: translateY(-50%);
+    width: 8rpx;
+    height: 8rpx;
+    background: #E2BF51;
+    border-radius: 50%;
   }
 }
 

@@ -15,8 +15,9 @@
         <view class="myPetBox" @tap="goPage('mypet')">
           <view class="myPetTitle">我的爱宠</view>
           <view class="myPetList">
-              <image class="myPetImage" mode="aspectFill" wx:for="{{myPetList}}" wx:key="unique" src="{{item.avatar||'../../image/default_pet.png'}}"/>
+              <image class="myPetImage" mode="aspectFill" data-id="{{item.petId}}" catchtap="editPet" wx:for="{{myPetList}}" wx:key="unique" src="{{item.avatar||'../../image/default_pet.png'}}"/>
           </view>
+          <view class="myPetMore" wx:if="{{myPetMore}}"></view>
           <view class="myPetBoxArrow">
               <image mode="aspectFill" src="../../image/arrow.png"/>
           </view>
@@ -72,7 +73,8 @@ wepy.page({
       avatarUrl: '../../image/default.png',
       nickName: '请先登陆'
     },
-    myPetList: []
+    myPetList: [],
+    myPetMore: false,
   },
   watch: {
     // 监听登录后openId变化
@@ -99,15 +101,22 @@ wepy.page({
         userLogin(true);
       }
     },
+    editPet(e) {
+      const { id } = e.currentTarget.dataset;
+      wx.navigateTo({ url: `addPet?petId=${id}` });
+    },
     // 查询我的宠物
     async getMyPet() {
       try {
         let res = await gainMyPet({ userId: this.openId });
         const { results = {} } = res.data || {};
-        this.myPetList =
-          results.length < 4
-            ? results
-            : results.slice(results.length - 3, results.length);
+        if (results.length < 4) {
+          this.myPetList = results;
+          this.myPetMore = false;
+        } else {
+          this.myPetList = results.slice(0, 3);
+          this.myPetMore = true;
+        }
       } catch (error) {
         console.log(error);
         wx.showToast({ title: '查询我的宠物出错', icon: 'none' });

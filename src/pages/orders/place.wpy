@@ -98,7 +98,10 @@
       </view>
     </view>
     <view class="submitOrderBox">
-      <view class="submitOrderPrice"><text>合计 ：</text><text class="price">¥{{payMoney}}</text></view>
+      <view class="submitOrderLeft">
+        <view class="submitOrderPrice"><text>合计 ：</text><text class="price">¥{{payMoney}}</text></view>
+        <view class="priceDescribe" wx:if="{{priceDescribe}}">{{priceDescribe}}</view>
+      </view>
       <view class="submitOrderButton" catchtap="placeAnOrder">立即下单</view>
     </view>
     <!-- 地址选择 -->
@@ -181,7 +184,8 @@ wepy.page({
     advancedSheetShow: false, //高级选项
     petSheetShow: false, //高级选项
     type: 0, //预约服务类型 0:喂猫 1:遛狗
-    payMoney: 0,
+    payMoney: '0.00',
+    priceDescribe: '',
     // 地址
     addressList: [],
     selAddressIndex: null,
@@ -498,12 +502,12 @@ wepy.page({
     },
     //计算总价
     calculatePrice() {
-      if (this.type == 0) {
+      let serveDays = this.serveDateArr.length; //服务天数
+      if (this.type == 0 && serveDays > 0) {
         /** 喂猫
          * 服务日期 * 宠物数量 * （高级选项*数量）
          **/
-        let serveDays = this.serveDateArr.length; //服务天数
-        serveDays = serveDays > 1 ? serveDays : 1;
+
         const petNumPrice = this.petAmountList[this.petAmount].showPrice || 1; //宠物数量选项对应价格
         let advancedPrice = 0; //高级服务总价
         this.advancedList.map(item => {
@@ -512,14 +516,30 @@ wepy.page({
           }
         });
         this.payMoney = (serveDays * petNumPrice + advancedPrice).toFixed(2);
+
+        const goodsName = this.petAmountList[this.petAmount].goodsName || ''; //宠物数量
+        let priceDescribe = '';
+        if (advancedPrice > 0) {
+          priceDescribe = `=(${petNumPrice}元/${goodsName})x${serveDays}天+高级选择(${advancedPrice}元)`;
+        } else {
+          priceDescribe = `=(${petNumPrice}元/${goodsName})x${serveDays}天`;
+        }
+        this.priceDescribe = priceDescribe;
       } else if (this.type == 1) {
         /** 遛狗
          * 服务日期 * 宠物数量 * 服务时长
          **/
-        let serveDays = this.serveDateArr.length; //服务天数
         let { serviceDurations } = this.petAmountList[this.petAmount];
         const price = serviceDurations[this.duration].price; //宠物数量选项+服务时长 对应价格
         this.payMoney = serveDays * price;
+
+        const numberName = this.petAmountList[this.petAmount].numberName || ''; //宠物数量
+        const durationName = serviceDurations[this.duration].durationName; //服务时长
+        let priceDescribe = `=(${price}元/${numberName}-${durationName}分钟)x${serveDays}天`;
+        this.priceDescribe = priceDescribe;
+      } else {
+        this.payMoney = '0.00';
+        this.priceDescribe = '';
       }
     },
 
