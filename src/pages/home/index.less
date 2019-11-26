@@ -139,6 +139,27 @@ page {
     height: 324rpx;
     border-radius: 12rpx;
   }
+
+  // 暂停服务
+  .close {
+    position: relative;
+
+
+    &::after {
+      position: absolute;
+      content: "暂停服务";
+      top: 0;
+      left: 0;
+      width: 328rpx;
+      height: 324rpx;
+      line-height: 324rpx;
+      text-align: center;
+      color: #FFF;
+      background: #000;
+      border-radius: 12rpx;
+      opacity: .6;
+    }
+  }
 }
 
 //我的爱宠
@@ -165,6 +186,7 @@ page {
       margin-left: 24rpx;
       width: 92rpx;
       height: 92rpx;
+      background: #FFF;
       border-radius: 50%;
     }
   }

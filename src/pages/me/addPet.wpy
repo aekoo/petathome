@@ -1,7 +1,7 @@
 <style lang="less" src="./addPet.less"></style>
 <template>
   <view class="container">
-    <view class="addPetAvatar" @tap="uploadAvatar"><image mode="aspectFill" src="{{avatar||'../../image/default_pet.png'}}"/></view>
+    <view class="addPetAvatar" @tap="uploadAvatar"><image mode="aspectFill" src="{{avatar}}" wx:if="{{avatar}}"/><text wx:else>上传头像</text></view>
     <view class="addPetContainer">
         <view class="addPetRow">
           <view class="addPetTitle">宠物昵称</view>

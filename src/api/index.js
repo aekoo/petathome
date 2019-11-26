@@ -36,6 +36,11 @@ export const getTopScrollingText = (data) => {
   let pathUrl = '/banner/queryTopScrollingText'
   return fetch.get(REQ_URL + pathUrl, data)
 }
+// 预约服务状态
+export const getServerAvailable = (data) => {
+  let pathUrl = '/config/queryServerAvailable'
+  return fetch.get(REQ_URL + pathUrl, data)
+}
 
 
 

@@ -23,8 +23,13 @@
     </swiper>
     <!-- 预约 -->
     <view class="feed-pet-box">
-      <view class="feed-pet" @tap="goPage('/pages/orders/place?type=0')"><image mode="aspectFill" src="../../image/feed-dog.png"/></view>
-      <view class="feed-pet" @tap="goPage('/pages/orders/place?type=1')"><image mode="aspectFill" src="../../image/feed-cat.png"/></view>
+      <!-- <block wx:for="{{serviceList}}" wx:key="unique">
+        <view class="feed-pet" wx:if="{{item.status==1}}" @tap="goPage(`/pages/orders/place?type=${item.type}`)"><image mode="aspectFill" src="../../image/feed-{{item.type == 1 ? 'dog' : 'cat'}}.png"/></view>
+        <view class="feed-pet close" wx:else><image mode="aspectFill" src="../../image/feed-{{item.type == 1 ? 'dog' : 'cat'}}.png"/></view>
+      </block> -->
+      <block wx:for="{{serviceList}}" wx:key="unique">
+        <view class="feed-pet" data-close="{{item.status}}" data-type="{{item.type}}" @tap="subscribe"><image mode="aspectFill" src="../../image/feed-{{item.type == 1 ? 'dog' : 'cat'}}.png"/></view>
+      </block>
     </view>
     <!-- 我的爱宠 -->
     <view class="myPetBox">
@@ -51,7 +56,12 @@ import eventHub from '@/common/eventHub';
 import { mapState } from '@wepy/x';
 import store from '@/store';
 import { userLogin, location } from '@/utils/common';
-import { getTopScrollingText, getBanner, gainMyPet } from '@/api/index.js';
+import {
+  getTopScrollingText,
+  getBanner,
+  getServerAvailable,
+  gainMyPet
+} from '@/api/index.js';
 
 wepy.page({
   store,
@@ -62,7 +72,8 @@ wepy.page({
     topBannerList: [],
     myPetList: [],
     myPetMore: false,
-    buttomBannerList: []
+    buttomBannerList: [],
+    serviceList: []
   },
   watch: {
     // 监听登录后openId变化
@@ -97,6 +108,13 @@ wepy.page({
     },
     goPage(url) {
       wx.navigateTo({ url });
+    },
+    subscribe(e) {
+      const { close, type } = e.currentTarget.dataset;
+      if (close == 0) {
+        return wx.showToast({ title: '现在不可以预约哦~', icon: 'none' });
+      }
+      wx.navigateTo({ url: `/pages/orders/place?type=${type}` });
     },
     editPet(e) {
       const { id } = e.currentTarget.dataset;
@@ -154,6 +172,18 @@ wepy.page({
       } catch (error) {
         console.log(error);
         wx.showToast({ title: '查询我的宠物出错', icon: 'none' });
+        return -1;
+      }
+    },
+    // 查询预约服务状态
+    async getMyPet() {
+      try {
+        let res = await getServerAvailable();
+        const { results = {} } = res.data || {};
+        this.serviceList = results;
+      } catch (error) {
+        console.log(error);
+        wx.showToast({ title: '查询服务状态出错', icon: 'none' });
         return -1;
       }
     }
