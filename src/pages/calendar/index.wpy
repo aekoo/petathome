@@ -30,10 +30,10 @@
         </block>
       </view>
 
-      <view class="calendar">
+      <view class="calendar" wx:for="{{calendar}}" wx:for-item="month" wx:for-index="idx" wx:key="index">
         <view class="year_month">
-          <text class="year">{{nextYear}}年</text>
-          <text class="month">{{nextMonth}}月</text>
+          <text class="year">{{month.year}}年</text>
+          <text class="month">{{month.month}}月</text>
         </view>
         <view class="week">
           <text class="saturday">日</text>
@@ -44,15 +44,15 @@
           <text>五</text>
           <text class="sunday">六</text>
         </view>
-        <block wx:for="{{nextMonthArr}}" wx:key="index">
+        <block wx:for="{{month.monthArr}}" wx:key="index">
         <view class="week">
-            <text class="saturday {{item[0]['state']==true?'selected':''}}" data-date="{{item[0]['date']}}" data-key="{{index}}" data-keyitem="0" bindtap="select_date">{{item[0]['date']}}</text>
-            <text class="{{item[1]['state']==true?'selected':''}}" data-date="{{item[1]['date']}}" data-key="{{index}}" data-keyitem="1" bindtap="select_date">{{item[1]['date']}}</text>
-            <text class="{{item[2]['state']==true?'selected':''}}" data-date="{{item[2]['date']}}" data-key="{{index}}" data-keyitem="2" bindtap="select_date">{{item[2]['date']}}</text>
-            <text class="{{item[3]['state']==true?'selected':''}}" data-date="{{item[3]['date']}}" data-key="{{index}}" data-keyitem="3" bindtap="select_date">{{item[3]['date']}}</text>
-            <text class="{{item[4]['state']==true?'selected':''}}" data-date="{{item[4]['date']}}" data-key="{{index}}" data-keyitem="4" bindtap="select_date">{{item[4]['date']}}</text>
-            <text class="{{item[5]['state']==true?'selected':''}}" data-date="{{item[5]['date']}}" data-key="{{index}}" data-keyitem="5" bindtap="select_date">{{item[5]['date']}}</text>
-            <text class="sunday {{item[6]['state']==true?'selected':''}}" data-date="{{item[6]['date']}}" data-key="{{index}}" data-keyitem="6" bindtap="select_date">{{item[6]['date']}}</text> 
+            <text class="saturday {{item[0]['state']==true?'selected':''}}" data-month="{{idx}}" data-date="{{item[0]['date']}}" data-key="{{index}}" data-keyitem="0" bindtap="select_date">{{item[0]['date']}}</text>
+            <text class="{{item[1]['state']==true?'selected':''}}" data-month="{{idx}}" data-date="{{item[1]['date']}}" data-key="{{index}}" data-keyitem="1" bindtap="select_date">{{item[1]['date']}}</text>
+            <text class="{{item[2]['state']==true?'selected':''}}" data-month="{{idx}}" data-date="{{item[2]['date']}}" data-key="{{index}}" data-keyitem="2" bindtap="select_date">{{item[2]['date']}}</text>
+            <text class="{{item[3]['state']==true?'selected':''}}" data-month="{{idx}}" data-date="{{item[3]['date']}}" data-key="{{index}}" data-keyitem="3" bindtap="select_date">{{item[3]['date']}}</text>
+            <text class="{{item[4]['state']==true?'selected':''}}" data-month="{{idx}}" data-date="{{item[4]['date']}}" data-key="{{index}}" data-keyitem="4" bindtap="select_date">{{item[4]['date']}}</text>
+            <text class="{{item[5]['state']==true?'selected':''}}" data-month="{{idx}}" data-date="{{item[5]['date']}}" data-key="{{index}}" data-keyitem="5" bindtap="select_date">{{item[5]['date']}}</text>
+            <text class="sunday {{item[6]['state']==true?'selected':''}}" data-month="{{idx}}" data-date="{{item[6]['date']}}" data-key="{{index}}" data-keyitem="6" bindtap="select_date">{{item[6]['date']}}</text> 
         </view>
         </block>
       </view>
@@ -73,6 +73,7 @@ wepy.page({
     thisMonth: '',
     thisMonthArr: [],
     today: new Date().getDate(),
+    calendar: [],
     nextYear: '',
     nextMonth: '',
     nextMonthArr: [],
@@ -93,7 +94,8 @@ wepy.page({
       if (month == 'thisMonth') {
         var that = this.thisMonthArr;
       } else {
-        var that = this.nextMonthArr;
+        console.log(month);
+        var that = this.calendar[month].monthArr;
       }
       //切换选中状态
       if (that[index][item].state == true) {
@@ -106,7 +108,7 @@ wepy.page({
       if (month == 'thisMonth') {
         this.thisMonthArr = that;
       } else {
-        this.nextMonthArr = that;
+        this.calendar[month].monthArr = that;
       }
       this.saveSelDateArr();
     },
@@ -196,10 +198,14 @@ wepy.page({
         thisYear,
         thisMonth,
         thisMonthArr,
+        calendar,
+
         nextYear,
         nextMonth,
         nextMonthArr
       } = this;
+      console.log(calendar);
+
       let selDateArr = [];
       // 第一个月
       for (const week of thisMonthArr) {
@@ -209,11 +215,13 @@ wepy.page({
           }
         }
       }
-      // 第二个月
-      for (const week of nextMonthArr) {
-        for (const day of week) {
-          if (day && day.state) {
-            selDateArr.push(`${nextYear}-${nextMonth}-${day.date}`);
+      // 往后十二个月
+      for (const month of calendar) {
+        for (const week of month.monthArr) {
+          for (const day of week) {
+            if (day && day.state) {
+              selDateArr.push(`${month.year}-${month.month}-${day.date}`);
+            }
           }
         }
       }
@@ -222,14 +230,7 @@ wepy.page({
     },
     // 确认提交选项
     confirmSelect() {
-      const {
-        thisYear,
-        thisMonth,
-        thisMonthArr,
-        nextYear,
-        nextMonth,
-        nextMonthArr
-      } = this;
+      const { thisYear, thisMonth, thisMonthArr, calendar } = this;
       // const pages = getCurrentPages();
       // const prevPage = pages[pages.length - 2]; //上一个页面
       // prevPage.data.serveDateArr = selDateArr;
@@ -238,9 +239,7 @@ wepy.page({
         thisYear,
         thisMonth,
         thisMonthArr,
-        nextYear,
-        nextMonth,
-        nextMonthArr
+        calendar
       });
 
       wx.navigateBack();
@@ -252,35 +251,35 @@ wepy.page({
     const shortTime = wx.getStorageSync('shortTime');
     // 如果临时存储中有，说明用户还没有提交订单，需要回显上次勾选的日期
     if (shortTime) {
-      const {
-        thisYear,
-        thisMonth,
-        thisMonthArr,
-        nextYear,
-        nextMonth,
-        nextMonthArr
-      } = shortTime;
+      const { thisYear, thisMonth, thisMonthArr, calendar } = shortTime;
       this.thisYear = thisYear;
       this.thisMonth = thisMonth;
-      this.nextYear = nextYear;
-      this.nextMonth = nextMonth;
       this.thisMonthArr = thisMonthArr;
-      this.nextMonthArr = nextMonthArr;
+      this.calendar = calendar;
     } else {
       //初始化日历数据
-      var nextM_start = new Date(
-        new Date(new Date().toLocaleDateString()).setMonth(
-          new Date().getMonth() + 1
-        )
-      ); //下一个月
       var thisMonthArr = this.getDateArr(new Date());
-      var nextMonthArr = this.getDateArr(nextM_start);
       this.thisYear = new Date().getFullYear();
       this.thisMonth = new Date().getMonth() + 1;
-      this.nextYear = nextM_start.getFullYear();
-      this.nextMonth = nextM_start.getMonth() + 1;
       this.thisMonthArr = thisMonthArr;
-      this.nextMonthArr = nextMonthArr;
+
+      let calendar = [];
+      for (let index = 1; index <= 12; index++) {
+        let nextM_start = new Date(
+          new Date(new Date().toLocaleDateString()).setMonth(
+            new Date().getMonth() + index
+          )
+        );
+
+        let data = {
+          year: nextM_start.getFullYear(),
+          month: nextM_start.getMonth() + 1,
+          monthArr: this.getDateArr(nextM_start)
+        };
+        calendar.push(data);
+      }
+      console.log(calendar);
+      this.calendar = calendar;
     }
   }
 });
