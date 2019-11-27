@@ -50,8 +50,8 @@
       </view>
       <view class="serveInfoRow">
         <view class="serveInfoTitle">钥匙交接</view>
-        <picker value="{{selKey}}" range="{{keysList}}" range-key="{{'dictValue'}}" bindchange="keyChange">
-          <view class="picker">{{keysList[selKey].dictValue||'请选择'}}</view>
+        <picker value="{{selKey}}" range="{{keysList}}" range-key="{{'dictName'}}" bindchange="keyChange">
+          <view class="picker">{{keysList[selKey].dictName||'请选择'}}</view>
         </picker>
         <view class="serveInfoArrow"><image mode="aspectFill" src="../../image/arrow.png"/></view>
       </view>
@@ -149,7 +149,7 @@
       </view>
       <checkbox-group class="myPetList" bindchange="myPetChange">
         <label class="myPetRow" wx:for="{{myPetList}}" wx:key="unique">
-          <view class="myPetImage"><image mode="aspectFill" src="{{item.avatar}}"/></view>
+          <view class="myPetImage"><image mode="aspectFill" src="{{item.avatar||'../../image/default_pet.png'}}"/></view>
           <view class="myPetName">{{item.nickName}}</view>
           <view class="myPetCheckbox">
             <checkbox value="{{item.petId}}" checked="{{item.checked}}"></checkbox>
