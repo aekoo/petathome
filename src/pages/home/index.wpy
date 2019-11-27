@@ -176,7 +176,7 @@ wepy.page({
       }
     },
     // 查询预约服务状态
-    async getMyPet() {
+    async getServerAvailable() {
       try {
         let res = await getServerAvailable();
         const { results = {} } = res.data || {};
@@ -192,6 +192,7 @@ wepy.page({
     this.getTopScroll();
     this.getBannerData('top');
     this.getBannerData('button');
+    this.getServerAvailable();
     if (this.openId) {
       this.getMyPet();
       location();
