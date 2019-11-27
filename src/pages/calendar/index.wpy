@@ -74,9 +74,6 @@ wepy.page({
     thisMonthArr: [],
     today: new Date().getDate(),
     calendar: [],
-    nextYear: '',
-    nextMonth: '',
-    nextMonthArr: [],
     selDateArr: []
   },
   computed: {},
@@ -94,7 +91,6 @@ wepy.page({
       if (month == 'thisMonth') {
         var that = this.thisMonthArr;
       } else {
-        console.log(month);
         var that = this.calendar[month].monthArr;
       }
       //切换选中状态
@@ -194,17 +190,7 @@ wepy.page({
     },
     //保存选中日期，随时准备提交
     saveSelDateArr() {
-      const {
-        thisYear,
-        thisMonth,
-        thisMonthArr,
-        calendar,
-
-        nextYear,
-        nextMonth,
-        nextMonthArr
-      } = this;
-      console.log(calendar);
+      const { thisYear, thisMonth, thisMonthArr, calendar } = this;
 
       let selDateArr = [];
       // 第一个月
@@ -278,7 +264,6 @@ wepy.page({
         };
         calendar.push(data);
       }
-      console.log(calendar);
       this.calendar = calendar;
     }
   }
