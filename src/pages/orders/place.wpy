@@ -424,7 +424,7 @@ wepy.page({
         if (!timeFrame) {
           return Notify({ type: 'warning', message: '请选择服务时段' });
         }
-        if (!duration) {
+        if (!duration && duration != 0) {
           return Notify({ type: 'warning', message: '请选择服务时长' });
         }
         params = {
