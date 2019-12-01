@@ -62,7 +62,7 @@ wepy.page({
     detailAddress: '',
     phone: '',
     wechatNo: '',
-    whetherDefault: 0
+    whetherDefault: 1
   },
 
   computed: {},

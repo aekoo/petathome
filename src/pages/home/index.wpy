@@ -35,7 +35,7 @@
     <view class="myPetBox">
       <view class="myPetTitle">我的爱宠</view>
       <view class="myPetList">
-        <image class="myPetImage" mode="aspectFill" data-id="{{item.petId}}" @tap="editPet" wx:for="{{myPetList}}" wx:key="unique" src="{{item.avatar||'../../image/default_pet.png'}}"/>
+        <image class="myPetImage" mode="aspectFill" data-id="{{item.petId}}" data-type="{{item.type}}" @tap="editPet" wx:for="{{myPetList}}" wx:key="unique" src="{{item.avatar||'../../image/default_pet.png'}}"/>
       </view>
       <view class="myPetMore" @tap="goPage('/pages/me/mypet')" wx:if="{{myPetMore}}"></view>
       <view class="myPetAdd" @tap="goPage('/pages/me/addPet')"></view>
@@ -114,11 +114,14 @@ wepy.page({
       if (close == 0) {
         return wx.showToast({ title: '现在不可以预约哦~', icon: 'none' });
       }
+      if (this.locationName.indexOf('北京') == -1) {
+        return wx.showToast({ title: '该城市暂未开通服务~', icon: 'none' });
+      }
       wx.navigateTo({ url: `/pages/orders/place?type=${type}` });
     },
     editPet(e) {
-      const { id } = e.currentTarget.dataset;
-      wx.navigateTo({ url: `/pages/me/addPet?petId=${id}` });
+      const { id, type } = e.currentTarget.dataset;
+      wx.navigateTo({ url: `/pages/me/addPet?petId=${id}&type=${type}` });
     },
     toWebview(url) {
       wx.navigateTo({ url: `/pages/webview?url=${url}` });
@@ -198,7 +201,7 @@ wepy.page({
   onShow() {
     this.getTopScroll();
     this.getBannerData('top');
-    this.getBannerData('button');
+    this.getBannerData('bottom');
     this.getServerAvailable();
     if (typeof this.$wx.getTabBar === 'function' && this.$wx.getTabBar()) {
       this.$wx.getTabBar().setData({ selected: 0 });
