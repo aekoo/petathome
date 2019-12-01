@@ -266,6 +266,9 @@ wepy.page({
       if (!nickName) {
         return wx.showToast({ title: '请输入宠物昵称', icon: 'none' });
       }
+      if (!kindId) {
+        return wx.showToast({ title: '请选择宠物品种', icon: 'none' });
+      }
       let params = {
         userId: wx.getStorageSync('openId'),
         avatar,

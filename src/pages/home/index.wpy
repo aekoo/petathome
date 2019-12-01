@@ -134,7 +134,8 @@ wepy.page({
         let res = await getTopScrollingText({ position });
         const { results = [] } = res.data || {};
         // console.log(results);
-        this.notice = results[0];
+        this.notice = results[0] || {};
+        console.log(this.notice);
       } catch (error) {
         wx.showToast({ title: '获取通告信息出错', icon: 'none' });
         return -1;
@@ -189,16 +190,16 @@ wepy.page({
     }
   },
   onLoad() {
-    this.getTopScroll();
-    this.getBannerData('top');
-    this.getBannerData('button');
-    this.getServerAvailable();
     if (this.openId) {
       this.getMyPet();
       location();
     }
   },
   onShow() {
+    this.getTopScroll();
+    this.getBannerData('top');
+    this.getBannerData('button');
+    this.getServerAvailable();
     if (typeof this.$wx.getTabBar === 'function' && this.$wx.getTabBar()) {
       this.$wx.getTabBar().setData({ selected: 0 });
     }

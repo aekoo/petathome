@@ -3,8 +3,8 @@
   <view class="container">
     <nodata text="你还没地址，快新增一个吧" img="../../image/noAddress.png" wx:if="{{addressList.length<1}}"></nodata>
     <view class="addressList" wx:else>
-      <view class="addressRow" wx:for="{{addressList}}" wx:key="unique">
-        <view class="lable"><radio class="radio" value="0" checked="{{item.whetherDefault}}" color="#76B372"/></view>
+      <view class="addressRow" wx:for="{{addressList}}" wx:for-index="idx" wx:key="unique">
+        <view class="lable" @tap="addressClick" data-adindex="{{idx}}"><radio class="radio" value="0" checked="{{item.whetherDefault}}" color="#76B372"/></view>
         <view class="addressContent">
           <view class="linkman"><text class="name">{{item.realName}}</text><text class="phone">{{item.phone}}</text></view>
           <view class="contactAddress">{{item.province}}{{item.city}}{{item.area}}{{item.detailAddress}}</view>
@@ -18,12 +18,11 @@
 
 <script>
 import wepy from '@wepy/core';
-import { gainAddressList } from '@/api/index.js';
+import { gainAddressList, addOrUpdateAddress } from '@/api/index.js';
 
 wepy.page({
   data: {
-    addressList: [],
-    radio: '1'
+    addressList: []
   },
 
   computed: {},
@@ -37,16 +36,57 @@ wepy.page({
       const { id } = e.currentTarget.dataset;
       wx.navigateTo({ url: `add?addressId=${id}` });
     },
-    // 选中地址
-    onChange(event) {
-      this.setData({
-        radio: event.detail
-      });
+    // 切换默认地址
+    async addressClick(event) {
+      const { adindex } = event.currentTarget.dataset;
+      const {
+        addressId,
+        area,
+        city,
+        detailAddress,
+        phone,
+        province,
+        realName,
+        userId,
+        wechatNo,
+        whetherDefault
+      } = this.addressList[adindex];
+      if (whetherDefault == 1) return;
+      let params = {
+        addressId,
+        area,
+        city,
+        detailAddress,
+        phone,
+        province,
+        realName,
+        userId,
+        wechatNo,
+        whetherDefault: 1
+      };
+
+      try {
+        let res = await addOrUpdateAddress(params);
+        const { code, desc, results = {} } = res.data || {};
+        // 失败
+        if (code != 1) {
+          wx.showToast({ title: desc, icon: 'none' });
+          return;
+        }
+        // 成功
+        wx.showToast({ title: '默认地址已变更！', icon: 'none' });
+        this.getAddressList(true);
+      } catch (error) {
+        wx.showToast({ title: '切换默认地址出错', icon: 'none' });
+        return -1;
+      }
     },
     // 查询地址列表
-    async getAddressList() {
+    async getAddressList(flag) {
       try {
-        wx.showLoading({ title: '数据加载中...' });
+        if (!flag) {
+          wx.showLoading({ title: '数据加载中...' });
+        }
         let res = await gainAddressList({
           userId: wx.getStorageSync('openId')
         });
