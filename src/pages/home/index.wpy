@@ -41,11 +41,11 @@
       <view class="myPetAdd" @tap="goPage('/pages/me/addPet')"></view>
     </view>
     <!-- info banner -->    
-    <swiper class="info-banner" autoplay="true" circular="true" wx:if="{{bottomBannerList.length>0}}">
-      <swiper-item wx:for="{{bottomBannerList}}" wx:key="unique" data-link="{{item.link}}" @tap="bannerClick">
+    <block wx:if="{{bottomBannerList.length>0}}">
+      <view class="info-banner" wx:for="{{bottomBannerList}}" wx:key="unique" data-link="{{item.link}}" @tap="bannerClick">
         <image mode="aspectFill" src="{{item.image}}"/>
-      </swiper-item>
-    </swiper>
+      </view>
+    </block>
     <!--toast /-->
   </view>
 </template>
