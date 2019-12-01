@@ -41,9 +41,9 @@
       <view class="myPetAdd" @tap="goPage('/pages/me/addPet')"></view>
     </view>
     <!-- info banner -->    
-    <swiper class="info-banner" autoplay="true" circular="true" wx:if="{{bannerClick.length>0}}">
-      <swiper-item wx:for="{{buttomBannerList}}" wx:key="unique" data-link="{{item.link}}" @tap="bannerClick">
-        <view class="swiper-item"></view>
+    <swiper class="info-banner" autoplay="true" circular="true" wx:if="{{bottomBannerList.length>0}}">
+      <swiper-item wx:for="{{bottomBannerList}}" wx:key="unique" data-link="{{item.link}}" @tap="bannerClick">
+        <image mode="aspectFill" src="{{item.image}}"/>
       </swiper-item>
     </swiper>
     <!--toast /-->
@@ -72,7 +72,7 @@ wepy.page({
     topBannerList: [],
     myPetList: [],
     myPetMore: false,
-    buttomBannerList: [],
+    bottomBannerList: [],
     serviceList: []
   },
   watch: {
@@ -153,8 +153,8 @@ wepy.page({
         // console.log(results);
         if (position == 'top') {
           this.topBannerList = results;
-        } else if (position == 'buttom') {
-          this.buttomBannerList = results;
+        } else if (position == 'bottom') {
+          this.bottomBannerList = results;
         }
       } catch (error) {
         wx.showToast({ title: '获取banner信息出错', icon: 'none' });
