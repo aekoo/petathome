@@ -8,7 +8,7 @@
         <view class="petName">{{item.nickName}}</view>
         <view class="petVariety">{{KindList[item.kindId]}}</view>
         <view class="petActivity">
-          <view class="petEdit" data-id="{{item.petId}}" @tap="editPet"><image mode="aspectFill" src="../../image/edit.png"/></view>
+          <view class="petEdit" data-id="{{item.petId}}" data-type="{{item.type}}" @tap="editPet"><image mode="aspectFill" src="../../image/edit.png"/></view>
           <view class="petDelete" data-id="{{item.petId}}" data-name="{{item.nickName}}" @tap="deleteClick"><image mode="aspectFill" src="../../image/delete.png"/></view>
         </view>
       </view>
@@ -33,8 +33,8 @@ wepy.page({
       wx.navigateTo({ url: 'addPet' });
     },
     editPet(e) {
-      const { id } = e.currentTarget.dataset;
-      wx.navigateTo({ url: `addPet?petId=${id}` });
+      const { id, type } = e.currentTarget.dataset;
+      wx.navigateTo({ url: `addPet?petId=${id}&type=${type}` });
     },
     deleteClick(e) {
       const { id, name } = e.currentTarget.dataset;
@@ -75,15 +75,24 @@ wepy.page({
     // 查询品种
     async getPetKinds() {
       try {
-        let res = await gainPetKinds({ type: 0 });
-        const { results = {} } = res.data || {};
+        let catRes = await gainPetKinds({ type: 0 });
+        let dogRes = await gainPetKinds({ type: 1 });
+        const { results: catResults = {} } = catRes.data || {};
+        const { results: dogResults = {} } = dogRes.data || {};
         let kinds = {};
-        results.map(item => {
+        catResults.map(item => {
+          let { kindId, petName } = item;
+          kinds[kindId] = petName;
+        });
+        dogResults.map(item => {
           let { kindId, petName } = item;
           kinds[kindId] = petName;
         });
         this.KindList = kinds;
+        console.log(kinds);
       } catch (error) {
+        console.log(error);
+
         wx.showToast({ title: '获取品种列表出错', icon: 'none' });
         return -1;
       }

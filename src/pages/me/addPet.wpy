@@ -308,8 +308,11 @@ wepy.page({
     }
   },
   onLoad(props) {
+    const { petId, type } = props;
+    if (type) {
+      this.type = type;
+    }
     this.getPetList();
-    const { petId } = props;
     if (petId) {
       // 如果有带id过来
       this.petId = petId;
