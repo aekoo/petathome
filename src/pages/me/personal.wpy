@@ -91,7 +91,7 @@ wepy.page({
     //上传文件、头像
     async uploadAvatar(avatarUrl) {
       try {
-        wx.showLoading({ title: '头像上传中', mask: true });
+        setTimeout(() => wx.showLoading({ title: '头像上传中', mask: true }),300);
         let res = await uploadFile({
           type: 0,
           file: avatarUrl
