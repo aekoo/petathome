@@ -333,6 +333,7 @@ wepy.page({
         }
       }
       this.timeFrameArr = timeFrameArr;
+      this.timeFrame = null;
     },
 
     //取消高级选项
