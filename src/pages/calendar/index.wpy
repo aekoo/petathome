@@ -197,7 +197,7 @@ wepy.page({
       for (const week of thisMonthArr) {
         for (const day of week) {
           if (day && day.state) {
-            selDateArr.push(`${thisYear}-${thisMonth}-${day.date}`);
+            selDateArr.push(`${thisYear}-${thisMonth>9?thisMonth:'0'+thisMonth}-${day.date>9?day.date:'0'+day.date}`);
           }
         }
       }

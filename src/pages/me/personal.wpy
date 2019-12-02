@@ -91,6 +91,7 @@ wepy.page({
     //上传文件、头像
     async uploadAvatar(avatarUrl) {
       try {
+        wx.showLoading({ title: '头像上传中', mask: true });
         let res = await uploadFile({
           type: 0,
           file: avatarUrl
@@ -99,6 +100,8 @@ wepy.page({
         const { code, results = {} } = JSON.parse(res.data) || {};
         if (code == 1) {
           this.updateAvatar(results.imageUrl); //获取图片url,更新头像
+        } else {
+          setTimeout(() => wx.hideLoading(), 300);
         }
       } catch (error) {
         wx.showToast({ title: '上传头像出错了', icon: 'none' });
@@ -108,20 +111,17 @@ wepy.page({
     // 更新头像
     async updateAvatar(avatarUrl) {
       try {
-        wx.showLoading({ title: '头像上传中', mask: true });
         let res = await updateAvatar({
           userId: wx.getStorageSync('openId'),
           avatarUrl
         });
         // console.log(res);
+        setTimeout(() => wx.hideLoading(), 300);
         const { code } = res.data || {};
         if (code == 1) {
           this.getUserInfo(); //更新当前页面数据
           store.dispatch('changeFlag'); //更新"我的"页面数据
         }
-        setTimeout(() => {
-          wx.hideLoading();
-        }, 300);
       } catch (error) {
         wx.showToast({ title: '更新头像出错了', icon: 'none' });
         return -1;

@@ -150,7 +150,7 @@ wepy.page({
       wx.showActionSheet({
         itemList: ['拍照', '从相册中选择'],
         success(res) {
-          console.log(res.tapIndex);
+          // console.log(res.tapIndex);
           let sourceType = 'camera';
           if (res.tapIndex == 1) {
             sourceType = 'album';
@@ -171,11 +171,13 @@ wepy.page({
     //上传文件、头像
     async uploadAvatarAndFile(type, avatarUrl) {
       try {
+        wx.showLoading({ title: '请稍后...', mask: true });
         let res = await uploadFile({
           type,
           file: avatarUrl
         });
         // console.log(res);
+        setTimeout(() => wx.hideLoading(), 300);
         const { code, results = {} } = JSON.parse(res.data) || {};
         if (code == 1) {
           if (type == 3) {
