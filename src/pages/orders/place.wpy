@@ -111,7 +111,7 @@
         <view class="addressSheetClose" @tap="closeSheet"><image class="petImage" mode="aspectFill" src="../../image/close.png"/></view>
       </view>
       <view class="addaAdress" @tap="goPage('/pages/address/add')"><image class="addaAdressImg" mode="aspectFill" src="../../image/add.png"/><text>新增地址</text></view>
-      <view class="addressList">
+      <scroll-view scroll-y="true" class="addressList" style="height:40vh">
         <view class="addressRow" @tap="sheetAddressOk" data-index="{{idx}}" wx:for="{{addressList}}" wx:for-index="idx" wx:key="unique">
           <view class="lable"><radio class="radio" value="{{idx}}" checked="{{idx==selAddressIndex}}" color="#76B372"/></view>
           <view class="addressContent">
@@ -119,7 +119,7 @@
             <view class="contactAddress">{{item.province}}{{item.city}}{{item.area}}{{item.detailAddress}}</view>
           </view>
         </view>
-      </view>
+      </scroll-view>
     </view>
     <!-- 高级服务选择 -->
     <view class="actionSheet {{advancedSheetShow? 'openSheet':''}}">
@@ -127,26 +127,29 @@
         <view class="actionSheetCancel" @tap="closeSheet">取消</view>
         <view class="actionSheetOk" @tap="advancedSheetOk">确定</view>
       </view>
-      <checkbox-group class="sheetAdvancedList" bindchange="advancedChange">
-        <label class="sheetAdvancedRow" wx:for="{{advancedList}}" wx:for-index="idx" wx:key="unique">
-          <checkbox value="{{item.serverId}}" checked="{{item.checked}}"></checkbox>
-          <icon class="icon" type="success" size="20" color="#76B372" wx:if="{{item.checked}}"/>
-          <view class="advancedIcon" wx:else></view>
-          <text class="advancedContext">{{item.serverName}} （+{{item.showPrice}}元）</text>
-          <view class="advancedDouble">
-            <image class="minus" mode="aspectFill" src="../../image/minus{{item.multiple>1?'-s':''}}.png" data-index="{{idx}}" catchtap="minusClick"/>
-            <text class="multiple">{{item.multiple}}</text>
-            <image class="plus" mode="aspectFill" src="../../image/plus{{item.multiple<10?'-s':''}}.png" data-index="{{idx}}" catchtap="plusClick"/>
-          </view>
-        </label>
-      </checkbox-group>
+      <scroll-view scroll-y="true" style="height:33vh">
+        <checkbox-group class="sheetAdvancedList" bindchange="advancedChange">
+          <label class="sheetAdvancedRow" wx:for="{{advancedList}}" wx:for-index="idx" wx:key="unique">
+            <checkbox value="{{item.serverId}}" checked="{{item.checked}}"></checkbox>
+            <icon class="icon" type="success" size="20" color="#76B372" wx:if="{{item.checked}}"/>
+            <view class="advancedIcon" wx:else></view>
+            <text class="advancedContext">{{item.serverName}} （+{{item.showPrice}}元）</text>
+            <view class="advancedDouble">
+              <image class="minus" mode="aspectFill" src="../../image/minus{{item.multiple>1?'-s':''}}.png" data-index="{{idx}}" catchtap="minusClick"/>
+              <text class="multiple">{{item.multiple}}</text>
+              <image class="plus" mode="aspectFill" src="../../image/plus{{item.multiple<10?'-s':''}}.png" data-index="{{idx}}" catchtap="plusClick"/>
+            </view>
+          </label>
+        </checkbox-group>
+      </scroll-view>
     </view>
     <!-- 宠物选择 -->
-    <view class="actionSheet {{petSheetShow? 'openSheet':''}}">
+    <view class="actionSheet petSheet {{petSheetShow? 'openSheet':''}}">
       <view class="actionSheetNavigation">
         <view class="actionSheetCancel" @tap="myPetSheetCancel">取消</view>
         <view class="actionSheetOk" @tap="myPetSheetOk">确定</view>
       </view>
+      <scroll-view scroll-y="true" style="height:43vh">
       <checkbox-group class="myPetList" bindchange="myPetChange">
         <label class="myPetRow" wx:for="{{myPetList}}" wx:key="unique">
           <view class="myPetImage"><image mode="aspectFill" src="{{item.avatar||'../../image/default_pet.png'}}"/></view>
@@ -158,6 +161,7 @@
           </view>
         </label>
       </checkbox-group>
+      </scroll-view>
     </view>
     <view class="modal" wx:if="{{addressSheetShow || advancedSheetShow || petSheetShow}}"></view>
   </view>
