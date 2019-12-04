@@ -436,7 +436,7 @@ wepy.page({
 
       let params = {
         // 共用参数
-        payMoney: 0.01,
+        payMoney: this.payMoney,
         userId: wx.getStorageSync('openId'),
         serverType: this.type,
         addressId: this.addressList[this.selAddressIndex].addressId, //地址 id
