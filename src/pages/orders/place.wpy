@@ -111,7 +111,7 @@
         <view class="addressSheetClose" @tap="closeSheet"><image class="petImage" mode="aspectFill" src="../../image/close.png"/></view>
       </view>
       <view class="addaAdress" @tap="goPage('/pages/address/add')"><image class="addaAdressImg" mode="aspectFill" src="../../image/add.png"/><text>新增地址</text></view>
-      <scroll-view scroll-y="true" class="addressList" style="height:40vh">
+      <scroll-view scroll-y="true" class="addressList" style="height:41vh">
         <view class="addressRow" @tap="sheetAddressOk" data-index="{{idx}}" wx:for="{{addressList}}" wx:for-index="idx" wx:key="unique">
           <view class="lable"><radio class="radio" value="{{idx}}" checked="{{idx==selAddressIndex}}" color="#76B372"/></view>
           <view class="addressContent">
@@ -127,7 +127,7 @@
         <view class="actionSheetCancel" @tap="closeSheet">取消</view>
         <view class="actionSheetOk" @tap="advancedSheetOk">确定</view>
       </view>
-      <scroll-view scroll-y="true" style="height:33vh">
+      <scroll-view scroll-y="true" style="height:36vh">
         <checkbox-group class="sheetAdvancedList" bindchange="advancedChange">
           <label class="sheetAdvancedRow" wx:for="{{advancedList}}" wx:for-index="idx" wx:key="unique">
             <checkbox value="{{item.serverId}}" checked="{{item.checked}}"></checkbox>
@@ -149,7 +149,7 @@
         <view class="actionSheetCancel" @tap="myPetSheetCancel">取消</view>
         <view class="actionSheetOk" @tap="myPetSheetOk">确定</view>
       </view>
-      <scroll-view scroll-y="true" style="height:43vh">
+      <scroll-view scroll-y="true" style="height:44vh">
       <checkbox-group class="myPetList" bindchange="myPetChange">
         <label class="myPetRow" wx:for="{{myPetList}}" wx:key="unique">
           <view class="myPetImage"><image mode="aspectFill" src="{{item.avatar||'../../image/default_pet.png'}}"/></view>
@@ -333,6 +333,7 @@ wepy.page({
         }
       }
       this.timeFrameArr = timeFrameArr;
+      this.timeFrame = null;
     },
 
     //取消高级选项
@@ -453,7 +454,7 @@ wepy.page({
         };
       } else if (this.type == 1) {
         // 遛狗
-        if (!timeFrame) {
+        if (!timeFrame && timeFrame != 0) {
           return Notify({ type: 'warning', message: '请选择服务时段' });
         }
         if (!duration && duration != 0) {
@@ -557,7 +558,7 @@ wepy.page({
           priceDescribe = `=(${petNumPrice}元/${goodsName})x${serveDays}天`;
         }
         this.priceDescribe = priceDescribe;
-      } else if (this.type == 1) {
+      } else if (this.type == 1 && serveDays > 0) {
         /** 遛狗
          * 服务日期 * 宠物数量 * 服务时长
          **/
