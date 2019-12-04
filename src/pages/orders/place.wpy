@@ -77,7 +77,7 @@
       <view class="petList">
         <block wx:for="{{selPetList}}" wx:key="unique">
           <view class="petRow" wx:if="{{item.checked}}">
-            <image class="petImage" mode="aspectFill" src="{{item.avatar||'../../image/default_pet.png'}}"/>
+            <image class="petImage" mode="aspectFill" src="{{item.avatar||'../../image/default.png'}}"/>
             <view class="petName">{{item.nickName}}</view>
           </view>
         </block>
@@ -152,7 +152,7 @@
       <scroll-view scroll-y="true" style="height:44vh">
       <checkbox-group class="myPetList" bindchange="myPetChange">
         <label class="myPetRow" wx:for="{{myPetList}}" wx:key="unique">
-          <view class="myPetImage"><image mode="aspectFill" src="{{item.avatar||'../../image/default_pet.png'}}"/></view>
+          <view class="myPetImage"><image mode="aspectFill" src="{{item.avatar||'../../image/default.png'}}"/></view>
           <view class="myPetName">{{item.nickName}}</view>
           <view class="myPetCheckbox">
             <checkbox value="{{item.petId}}" checked="{{item.checked}}"></checkbox>

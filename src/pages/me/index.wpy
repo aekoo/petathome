@@ -15,7 +15,7 @@
         <view class="myPetBox" @tap="goPage('mypet')">
           <view class="myPetTitle">我的爱宠</view>
           <view class="myPetList">
-              <image class="myPetImage" mode="aspectFill" data-id="{{item.petId}}" data-type="{{item.type}}" catchtap="editPet" wx:for="{{myPetList}}" wx:key="unique" src="{{item.avatar||'../../image/default_pet.png'}}"/>
+              <image class="myPetImage" mode="aspectFill" data-id="{{item.petId}}" data-type="{{item.type}}" catchtap="editPet" wx:for="{{myPetList}}" wx:key="unique" src="{{item.avatar||'../../image/default.png'}}"/>
           </view>
           <view class="myPetMore" wx:if="{{myPetMore}}"></view>
           <view class="myPetBoxArrow">
@@ -70,7 +70,7 @@ wepy.page({
   data: {
     openId: wx.getStorageSync('openId') || '',
     userInfo: {
-      avatarUrl: '../../image/default.png',
+      avatar: '../../image/default.png',
       nickName: '请先登陆'
     },
     myPetList: [],

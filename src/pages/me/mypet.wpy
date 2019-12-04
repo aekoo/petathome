@@ -4,7 +4,7 @@
     <nodata text="添加您的爱宠，让我们为您的爱宠提供更优质的服务吧" img="../../image/noPet.png" wx:if="{{myPetList.length<1}}"></nodata>
     <view class="petList" wx:else>
       <view class="petCard" wx:for="{{myPetList}}" wx:key="unique">
-        <view class="petAvatar"><image mode="aspectFill" src="{{item.avatar||'../../image/default_pet.png'}}"/></view>
+        <view class="petAvatar"><image mode="aspectFill" src="{{item.avatar||'../../image/default.png'}}"/></view>
         <view class="petName">{{item.nickName}}</view>
         <view class="petVariety">{{KindList[item.kindId]}}</view>
         <view class="petActivity">

@@ -35,7 +35,7 @@
     <view class="myPetBox">
       <view class="myPetTitle">我的爱宠</view>
       <view class="myPetList">
-        <image class="myPetImage" mode="aspectFill" data-id="{{item.petId}}" data-type="{{item.type}}" @tap="editPet" wx:for="{{myPetList}}" wx:key="unique" src="{{item.avatar||'../../image/default_pet.png'}}"/>
+        <image class="myPetImage" mode="aspectFill" data-id="{{item.petId}}" data-type="{{item.type}}" @tap="editPet" wx:for="{{myPetList}}" wx:key="unique" src="{{item.avatar||'../../image/default.png'}}"/>
       </view>
       <view class="myPetMore" @tap="goPage('/pages/me/mypet')" wx:if="{{myPetMore}}"></view>
       <view class="myPetAdd" @tap="goPage('/pages/me/addPet')"></view>
