@@ -91,7 +91,11 @@ wepy.page({
       wx.getSystemInfo({
         success: function(res) {
           that.windowHeight = res.windowHeight;
-          that.scrollHeight = res.windowHeight - 94; //由于下面createSelectorQuery执行有问题,需等待微信官方解决，故这里预估减去94px,若下面代码生效会重新赋值给scrollHeight
+          //start 由于下面createSelectorQuery执行有问题,需等待微信官方解决，故这里预估减去94px,若下面代码生效会重新赋值给scrollHeight
+          const ipx = res.model.indexOf('iPhone X') != -1;
+          const minusValue = ipx ? 54 : 94;
+          that.scrollHeight = res.windowHeight - minusValue;
+          //end
         }
       });
 
