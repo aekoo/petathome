@@ -218,7 +218,7 @@ wepy.page({
 </script>
 <config>
 {
-    navigationBarTitleText: "宠物喂养",
+    navigationBarTitleText: "有宠在家",
     usingComponents: {
       "van-notice-bar": "~@/components/vant-weapp/notice-bar/index"
     }
