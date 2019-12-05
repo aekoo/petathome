@@ -718,9 +718,11 @@ wepy.page({
     const { type } = props;
     this.type = type || 0;
     if (type == 0) {
+      wx.setNavigationBarTitle({ title: '上门喂猫' });
       this.getAdvancedService();
       this.getPetAmountList();
     } else if (type == 1) {
+      wx.setNavigationBarTitle({ title: '上门遛狗' });
       this.getDogPetNumber();
     }
     this.getKeyList();
@@ -730,7 +732,7 @@ wepy.page({
 </script>
 <config>
 {
-    navigationBarTitleText: "预约上门",
+    navigationBarTitleText: "",
     usingComponents: {
       "van-notify": "~@/components/vant-weapp/notify/index"
     }
