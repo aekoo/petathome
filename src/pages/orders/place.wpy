@@ -309,28 +309,46 @@ wepy.page({
     },
     // 检查是否大于当前时间
     checkDateTime(selDateArr) {
-      const timeFrameArr = [];
+      let timeFrameArr = [];
+      const oneDay = 1000 * 24 * 3600;
       const thisDate = new Date();
-      for (const item of selDateArr) {
-        let itemDate = new Date(item);
-        if (thisDate.getTime() > itemDate.getTime()) {
-          const thisHours = thisDate.getHours();
-          if (thisHours < 8) {
-            timeFrameArr.unshift('08:00-10:00');
-          } else if (thisHours < 10) {
-            timeFrameArr.unshift('10:00-12:00');
-          } else if (thisHours < 12) {
-            timeFrameArr.unshift('12:00-14:00');
-          } else if (thisHours < 14) {
-            timeFrameArr.unshift('14:00-16:00');
-          } else if (thisHours < 16) {
-            timeFrameArr.unshift('16:00-18:00');
-          } else if (thisHours < 18) {
-            timeFrameArr.unshift('18:00-20:00');
-          } else if (thisHours < 20) {
-            timeFrameArr.unshift('20:00-22:00');
-          }
+      const thisTime = thisDate.getTime();
+      const itemTime = new Date(selDateArr[0]).getTime();
+
+      if (thisTime > itemTime && thisTime - itemTime < oneDay) {
+        const thisHours = thisDate.getHours();
+        if (thisHours < 8) {
+          timeFrameArr.push('08:00-10:00');
         }
+        if (thisHours < 10) {
+          timeFrameArr.push('10:00-12:00');
+        }
+        if (thisHours < 12) {
+          timeFrameArr.push('12:00-14:00');
+        }
+        if (thisHours < 14) {
+          timeFrameArr.push('14:00-16:00');
+        }
+        if (thisHours < 16) {
+          timeFrameArr.push('16:00-18:00');
+        }
+        if (thisHours < 18) {
+          timeFrameArr.push('18:00-20:00');
+        }
+        if (thisHours < 20) {
+          timeFrameArr.push('20:00-22:00');
+        }
+      } else {
+        timeFrameArr = [
+          ...timeFrameArr,
+          '08:00-10:00',
+          '10:00-12:00',
+          '12:00-14:00',
+          '14:00-16:00',
+          '16:00-18:00',
+          '18:00-20:00',
+          '20:00-22:00'
+        ];
       }
       this.timeFrameArr = timeFrameArr;
       this.timeFrame = null;
