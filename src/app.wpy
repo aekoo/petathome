@@ -35,6 +35,7 @@ wepy.app({
 <config>
 {
     pages: [
+      'pages/activity/index',
       'pages/home/index',
       'pages/service/index',
       'pages/orders/index',
