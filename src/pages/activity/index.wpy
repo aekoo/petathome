@@ -17,36 +17,20 @@
     <view class="serveInfoCard">
       <view class="cardTitle">服务信息</view>
       <view class="serveInfoRow">
-        <view class="serveInfoTitle">服务日期</view>
-        <view class="picker {{serveDateArr.length>3?'serveDate':''}}" @tap="goPage('/pages/calendar/index')">
-          <text wx:if="{{serveDateArr.length<1}}">{{'请选择'}}</text>
-          <text wx:elif="{{serveDateArr.length>5}}">{{serveDateShow}}等{{serveDateArr.length}}天</text>
-          <text wx:else>{{serveDateShow}}</text>
+        <view class="serveInfoTitle">服务种类</view>
+        <radio-group class="radio-group" bindchange="typeChange">
+          <label class="label_option {{type==idx?'checked':''}}" wx:for="{{typeArr}}" wx:for-index="idx" wx:key="unique">
+            <radio value="{{idx}}" checked="{{type==idx}}"></radio><text class="label_text">{{item}}</text>
+          </label>
+        </radio-group>
+      </view>
+      <view class="serveInfoRow">
+        <view class="serveInfoTitle">宠物数量(最多4只)</view>
+        <view class="petDouble">
+          <image class="minus" mode="aspectFill" src="../../image/minus{{petNum>1?'-s':''}}.png" data-index="{{idx}}" catchtap="minusClick"/>
+          <text class="multiple">{{petNum}}</text>
+          <image class="plus" mode="aspectFill" src="../../image/plus{{petNum<4?'-s':''}}.png" data-index="{{idx}}" catchtap="plusClick"/>
         </view>
-        <view class="serveInfoArrow"><image mode="aspectFill" src="../../image/arrow.png"/></view>
-      </view>
-      <view class="serveInfoRow" wx:if="{{type==1}}">
-        <view class="serveInfoTitle">服务时段</view>
-        <picker value="{{timeFrame}}" range="{{timeFrameArr}}" bindchange="timeFrameChange">
-          <view class="picker">{{timeFrameArr[timeFrame]||'请选择'}}</view>
-        </picker>
-        <view class="serveInfoArrow"><image mode="aspectFill" src="../../image/arrow.png"/></view>
-      </view>
-      <view class="serveInfoRow" wx:if="{{type==1}}">
-        <view class="serveInfoTitle">服务时长</view>
-        <radio-group class="radio-group" bindchange="durationChange">
-          <label class="label_option {{duration==idx?'checked':''}}" wx:for="{{durationArr}}" wx:for-index="idx" wx:key="unique">
-            <radio value="{{idx}}" checked="{{duration==idx}}"></radio><text class="label_text">{{item}}分钟</text>
-          </label>
-        </radio-group>
-      </view>
-      <view class="serveInfoRow {{petAmountList.length>4?'multiRow':''}}">
-        <view class="serveInfoTitle">宠物数量</view>
-        <radio-group class="radio-group" bindchange="petAmountChange">
-          <label class="label_option {{petAmount==idx?'checked':''}}" wx:for="{{petAmountList}}" wx:for-index="idx" wx:key="unique">
-            <radio value="{{idx}}" checked="{{petAmount==idx}}"></radio><text class="label_text">{{type==1?item.numberName:item.goodsName}}</text>
-          </label>
-        </radio-group>
       </view>
       <view class="serveInfoRow">
         <view class="serveInfoTitle">钥匙交接</view>
@@ -56,53 +40,20 @@
         <view class="serveInfoArrow"><image mode="aspectFill" src="../../image/arrow.png"/></view>
       </view>
     </view>
-    <view class="advancedOptions" wx:if="{{type==0}}">
-      <view class="advancedTitle">
-        <view class="advancedTitle-left">高级选择</view>
-        <view class="advancedTitle-right" @tap="openSheetAdvanced">添加选择</view>
-      </view>
-      <view class="advancedList">
-        <block wx:for="{{selAdvancedList}}" wx:key="unique">
-          <view class="advancedRow" wx:if="{{item.checked}}">
-            <text class="advancedName">{{item.serverName}}</text>
-            <text class="advancedPrice">¥{{item.showPrice}}</text>
-            <text class="advancedNum"> x{{item.multiple}}</text>
-          </view>
-        </block>
-      </view>
-    </view>
-    <view class="myPet">
-      <view class="cardTitle">我的宠物</view>
-      <view class="cardDesc">宠物信息能帮我们为您的宠物做更细致的服务哦</view>
-      <view class="petList">
-        <block wx:for="{{selPetList}}" wx:key="unique">
-          <view class="petRow" wx:if="{{item.checked}}">
-            <image class="petImage" mode="aspectFill" src="{{item.avatar||'../../image/default.png'}}"/>
-            <view class="petName">{{item.nickName}}</view>
-          </view>
-        </block>
-        <view class="addPet" @tap="openSheetPet"></view>
-      </view>
-      <view class="remark" @tap="textareaFocus">
-        <textarea
-          wx:if="{{remarkFocus}}"
-          focus="{{remarkFocus}}"
-          bindblur="bindTextAreaBlur"
-          value="{{remark}}"
-          auto-height="true"
-          cursor-spacing="20"
-          placeholder-class="placeholderStyle-textarea"
-          placeholder="填写备注，比如宠物的习惯和需要注意的事项等，或者其他需要告诉小爱的"
-         />
-         <text class="{{remark.length<1?'replacerPlaceholder':''}}" wx:else>{{remark.length>0?remark:'填写备注，比如宠物的习惯和需要注意的事项等，或者其他需要告诉小爱的'}}</text>
-      </view>
+    <view class="activityDesc">
+      <view class="cardTitle">活动说明</view>
+      <view class="description">1.本活动服务有效期为2020年1月1日-2020年12月31日。</view>
+      <view class="description">2.本活动包含服务次数9次，可预约上门喂猫或遛狗服务，服务种类选定后不可变更。</view>
+      <view class="description">3.平日、元旦、春节、五一、十一等假期均可预约使用。</view>
+      <view class="description">4.专属客服负责对接，优先安排服务人员。</view>
+      <view class="description">5.本活动最终解释权归有宠在家所有。</view>
     </view>
     <view class="submitOrderBox">
       <view class="submitOrderLeft">
         <view class="submitOrderPrice"><text>合计 ：</text><text class="price">¥{{payMoney}}</text></view>
         <view class="priceDescribe" wx:if="{{priceDescribe}}">{{priceDescribe}}</view>
       </view>
-      <view class="submitOrderButton" catchtap="placeAnOrder">立即下单</view>
+      <view class="submitOrderButton" catchtap="placeAnOrder">立即购买</view>
     </view>
     <!-- 地址选择 -->
     <view class="addressSheet {{addressSheetShow? 'openSheet':''}}">
@@ -121,49 +72,7 @@
         </view>
       </scroll-view>
     </view>
-    <!-- 高级服务选择 -->
-    <view class="actionSheet {{advancedSheetShow? 'openSheet':''}}">
-      <view class="actionSheetNavigation">
-        <view class="actionSheetCancel" @tap="closeSheet">取消</view>
-        <view class="actionSheetOk" @tap="advancedSheetOk">确定</view>
-      </view>
-      <scroll-view scroll-y="true" style="height:36vh">
-        <checkbox-group class="sheetAdvancedList" bindchange="advancedChange">
-          <label class="sheetAdvancedRow" wx:for="{{advancedList}}" wx:for-index="idx" wx:key="unique">
-            <checkbox value="{{item.serverId}}" checked="{{item.checked}}"></checkbox>
-            <icon class="icon" type="success" size="20" color="#76B372" wx:if="{{item.checked}}"/>
-            <view class="advancedIcon" wx:else></view>
-            <text class="advancedContext">{{item.serverName}} （+{{item.showPrice}}元）</text>
-            <view class="advancedDouble">
-              <image class="minus" mode="aspectFill" src="../../image/minus{{item.multiple>1?'-s':''}}.png" data-index="{{idx}}" catchtap="minusClick"/>
-              <text class="multiple">{{item.multiple}}</text>
-              <image class="plus" mode="aspectFill" src="../../image/plus{{item.multiple<10?'-s':''}}.png" data-index="{{idx}}" catchtap="plusClick"/>
-            </view>
-          </label>
-        </checkbox-group>
-      </scroll-view>
-    </view>
-    <!-- 宠物选择 -->
-    <view class="actionSheet petSheet {{petSheetShow? 'openSheet':''}}">
-      <view class="actionSheetNavigation">
-        <view class="actionSheetCancel" @tap="myPetSheetCancel">取消</view>
-        <view class="actionSheetOk" @tap="myPetSheetOk">确定</view>
-      </view>
-      <scroll-view scroll-y="true" style="height:44vh">
-      <checkbox-group class="myPetList" bindchange="myPetChange">
-        <label class="myPetRow" wx:for="{{myPetList}}" wx:key="unique">
-          <view class="myPetImage"><image mode="aspectFill" src="{{item.avatar||'../../image/default.png'}}"/></view>
-          <view class="myPetName">{{item.nickName}}</view>
-          <view class="myPetCheckbox">
-            <checkbox value="{{item.petId}}" checked="{{item.checked}}"></checkbox>
-            <icon class="icon" type="success" size="20" color="#76B372" wx:if="{{item.checked}}"/>
-            <view class="advancedIcon" wx:else></view>
-          </view>
-        </label>
-      </checkbox-group>
-      </scroll-view>
-    </view>
-    <view class="modal" wx:if="{{addressSheetShow || advancedSheetShow || petSheetShow}}"></view>
+    <view class="modal" wx:if="{{addressSheetShow}}"></view>
   </view>
 </template>
 
@@ -183,90 +92,34 @@ import {
 
 wepy.page({
   data: {
-    remarkFocus: false, //显示备注输入框
-    addressSheetShow: false, //地址选项
-    advancedSheetShow: false, //高级选项
-    petSheetShow: false, //高级选项
-    type: 0, //预约服务类型 0:喂猫 1:遛狗
     payMoney: '0.00',
     priceDescribe: '',
+    addressSheetShow: false, //地址选项
     // 地址
     addressList: [],
     selAddressIndex: null,
     selAddress: [],
-    // 服务日期
-    serveDateArr: [],
-    serveDateShow: '',
-    // 服务时段
-    timeFrameArr: [
-      '08:00-10:00',
-      '10:00-12:00',
-      '12:00-14:00',
-      '14:00-16:00',
-      '16:00-18:00',
-      '18:00-20:00',
-      '20:00-22:00'
-    ],
-    timeFrame: null,
-    // 服务时长
-    durationArr: ['30', '60'],
-    duration: 0,
+    // 服务类型
+    typeArr: ['上门喂猫', '上门遛狗'],
+    type: 0,
     // 宠物数量
-    petAmountList: [],
-    petAmount: 0,
+    petNum: 1,
     // 钥匙交接
     keysList: [],
-    selKey: null,
-    // 高级服务
-    advancedList: [],
-    selAdvancedList: [],
-    // 我的宠物
-    myPetList: [],
-    selPetList: [],
-    remark: ''
+    selKey: null
   },
 
   computed: {},
 
   methods: {
-    // 清除缓存数据
-    clearSrorage() {
-      wx.removeStorageSync('selAdvancedList');
-      wx.removeStorageSync('selPetList');
-      wx.removeStorageSync('shortTime');
-      wx.removeStorageSync('selDateArr');
-    },
     // 页面跳转
     goPage(url) {
       wx.navigateTo({ url });
     },
 
-    // 选择服务日期
-
-    // 选择服务时段
-    timeFrameChange(e) {
-      this.timeFrame = e.$wx.detail.value;
-    },
-    // 选择服务时长
-    durationChange(e) {
-      this.duration = e.$wx.detail.value;
-      this.calculatePrice();
-    },
-    // 选择宠物数量
-    petAmountChange(e) {
-      this.petAmount = e.$wx.detail.value;
-      this.calculatePrice();
-    },
-    // 选择钥匙交接
-    keyChange(e) {
-      this.selKey = e.$wx.detail.value;
-    },
-
-    //关闭选项
+    //关闭地址选项
     closeSheet() {
       this.addressSheetShow = false;
-      this.advancedSheetShow = false;
-      this.petSheetShow = false;
     },
     //打开地址选项
     openSheetAddress() {
@@ -279,163 +132,34 @@ wepy.page({
       this.selAddress = this.addressList[index]; //地址信息设置为服务地址
       this.closeSheet();
     },
-
-    //打开高级选项
-    openSheetAdvanced() {
-      this.advancedSheetShow = true;
+    // 选择服务种类
+    typeChange(e) {
+      this.type = e.$wx.detail.value;
     },
+    // 选择钥匙交接
+    keyChange(e) {
+      this.selKey = e.$wx.detail.value;
+    },
+
     minusClick(e) {
       const { index } = e.currentTarget.dataset;
-      if (this.advancedList[index].multiple > 1) {
-        this.advancedList[index].multiple--;
+      if (this.petNum > 1) {
+        this.petNum--;
       }
     },
     plusClick(e) {
       const { index } = e.currentTarget.dataset;
-      if (this.advancedList[index].multiple < 10) {
-        this.advancedList[index].multiple++;
+      if (this.petNum < 4) {
+        this.petNum++;
       }
-    },
-    advancedChange(e) {
-      const selData = e.$wx.detail.value;
-      this.advancedList.map(item => {
-        item.checked = false;
-        selData.map(i => {
-          if (i == item.serverId) {
-            item.checked = true;
-          }
-        });
-      });
-    },
-    // 检查是否大于当前时间
-    checkDateTime(selDateArr) {
-      let timeFrameArr = [];
-      const oneDay = 1000 * 24 * 3600;
-      const thisDate = new Date();
-      const thisTime = thisDate.getTime();
-      const itemTime = new Date(selDateArr[0]).getTime();
-
-      if (thisTime > itemTime && thisTime - itemTime < oneDay) {
-        const thisHours = thisDate.getHours();
-        if (thisHours < 8) {
-          timeFrameArr.push('08:00-10:00');
-        }
-        if (thisHours < 10) {
-          timeFrameArr.push('10:00-12:00');
-        }
-        if (thisHours < 12) {
-          timeFrameArr.push('12:00-14:00');
-        }
-        if (thisHours < 14) {
-          timeFrameArr.push('14:00-16:00');
-        }
-        if (thisHours < 16) {
-          timeFrameArr.push('16:00-18:00');
-        }
-        if (thisHours < 18) {
-          timeFrameArr.push('18:00-20:00');
-        }
-        if (thisHours < 20) {
-          timeFrameArr.push('20:00-22:00');
-        }
-      } else {
-        timeFrameArr = [
-          ...timeFrameArr,
-          '08:00-10:00',
-          '10:00-12:00',
-          '12:00-14:00',
-          '14:00-16:00',
-          '16:00-18:00',
-          '18:00-20:00',
-          '20:00-22:00'
-        ];
-      }
-      this.timeFrameArr = timeFrameArr;
-      this.timeFrame = null;
     },
 
-    //取消高级选项
-    advancedSheetCancel() {
-      const selAdvancedList = wx.getStorageSync('selAdvancedList');
-      if (selAdvancedList) {
-        // 之前有点过确定，还原到上次选中
-        this.advancedList = selAdvancedList.filter(item => item.serverId);
-      } else {
-        // 没有点过确定，清除所有选中
-        this.advancedList.map(item => {
-          item.checked = false;
-        });
-      }
-      this.closeSheet();
-    },
-    //确认高级选项
-    advancedSheetOk() {
-      const { advancedList } = this;
-      this.selAdvancedList = advancedList.filter(item => item.serverId); //页面展示使用
-      wx.setStorageSync('selAdvancedList', this.selAdvancedList);
-      this.calculatePrice();
-      this.closeSheet();
-    },
-
-    //打开宠物选项
-    openSheetPet() {
-      this.petSheetShow = true;
-    },
-    myPetChange(e) {
-      const selData = e.$wx.detail.value;
-      this.myPetList.map(item => {
-        item.checked = false;
-        selData.map(i => {
-          if (i == item.petId) {
-            item.checked = true;
-          }
-        });
-      });
-    },
-    //取消添加宠物
-    myPetSheetCancel() {
-      const selPetList = wx.getStorageSync('selPetList');
-      if (selPetList) {
-        // 之前有点过确定，还原到上次选中
-        this.myPetList = selPetList.filter(item => item.petId);
-      } else {
-        // 没有点过确定，清除所有选中
-        this.myPetList.map(item => {
-          item.checked = false;
-        });
-      }
-      this.closeSheet();
-    },
-    //确认添加宠物
-    myPetSheetOk() {
-      const { myPetList } = this;
-      this.selPetList = myPetList.filter(item => item.petId); //页面展示使用
-      wx.setStorageSync('selPetList', this.selPetList);
-      this.closeSheet();
-    },
-    // 备注
-    textareaFocus() {
-      this.remarkFocus = true;
-    },
-    bindTextAreaBlur(e) {
-      this.remarkFocus = false;
-      this.remark = e.$wx.detail.value;
-    },
+    
     // 提交订单
     async placeAnOrder() {
-      let {
-        selAddressIndex,
-        serveDateArr,
-        timeFrame,
-        duration,
-        petAmount,
-        selKey
-      } = this;
+      let { selAddressIndex, type, petAmount, selKey } = this;
       if (!selAddressIndex && selAddressIndex != 0) {
         return Notify({ type: 'warning', message: '请选择或添加收货地址' });
-      }
-      if (serveDateArr.length < 1) {
-        return Notify({ type: 'warning', message: '请选择服务日期' });
       }
       if (!petAmount && petAmount != 0) {
         return Notify({ type: 'warning', message: '请选择宠物数量' });
@@ -458,7 +182,6 @@ wepy.page({
         userId: wx.getStorageSync('openId'),
         serverType: this.type,
         addressId: this.addressList[this.selAddressIndex].addressId, //地址 id
-        serverDate: this.serveDateArr.join(','), //服务日期 string
         petNumber: this.petAmountList[this.petAmount].goodsId, //宠物数量 id string
         keyHandover: this.keysList[this.selKey].dictId, //钥匙交接 id
         petIds: petIds.join(','), //我的宠物 string
@@ -471,17 +194,12 @@ wepy.page({
           advancedService: JSON.stringify(advancedList) //高级服务 string
         };
       } else if (this.type == 1) {
-        // 遛狗
-        if (!timeFrame && timeFrame != 0) {
-          return Notify({ type: 'warning', message: '请选择服务时段' });
-        }
-        if (!duration && duration != 0) {
+        if (!type && type != 0) {
           return Notify({ type: 'warning', message: '请选择服务时长' });
         }
         params = {
           ...params,
-          serverPeriod: this.timeFrameArr[this.timeFrame], //服务时段 string
-          serverDuration: this.durationArr[this.duration] //服务时长 string
+          serverDuration: this.typeArr[this.type] //服务时长 string
         };
       }
       console.log(params);
@@ -553,7 +271,6 @@ wepy.page({
     },
     //计算总价
     calculatePrice() {
-      let serveDays = this.serveDateArr.length; //服务天数
       if (this.type == 0 && serveDays > 0) {
         /** 喂猫
          * 服务日期 * 宠物数量 * （高级选项*数量）
@@ -581,11 +298,11 @@ wepy.page({
          * 服务日期 * 宠物数量 * 服务时长
          **/
         let { serviceDurations } = this.petAmountList[this.petAmount];
-        const price = serviceDurations[this.duration].price; //宠物数量选项+服务时长 对应价格
+        const price = serviceDurations[this.type].price; //宠物数量选项+服务时长 对应价格
         this.payMoney = serveDays * price;
 
         const numberName = this.petAmountList[this.petAmount].numberName || ''; //宠物数量
-        const durationName = serviceDurations[this.duration].durationName; //服务时长
+        const durationName = serviceDurations[this.type].durationName; //服务时长
         let priceDescribe = `=(${price}元/${numberName}-${durationName}分钟)x${serveDays}天`;
         this.priceDescribe = priceDescribe;
       } else {
@@ -616,34 +333,6 @@ wepy.page({
         return -1;
       }
     },
-    // 查询宠物数量列表
-    async getPetAmountList() {
-      try {
-        let res = await queryPetNumberList({ classification: this.type });
-        const { results = {} } = res.data || {};
-        this.petAmountList = results;
-      } catch (error) {
-        wx.showToast({ title: '获取宠物数量选项出错', icon: 'none' });
-        return -1;
-      }
-    },
-    // 查询狗的数量列表
-    async getDogPetNumber() {
-      try {
-        let res = await queryDogPetNumber();
-        const { results = {} } = res.data || {};
-        this.petAmountList = results;
-        let { serviceDurations = [] } = results[0];
-        let durationArr = [];
-        serviceDurations.map(item => {
-          durationArr.push(item.durationName);
-        });
-        this.durationArr = durationArr;
-      } catch (error) {
-        wx.showToast({ title: '获取宠物数量选项出错', icon: 'none' });
-        return -1;
-      }
-    },
     // 查询钥匙交接列表
     async getKeyList() {
       try {
@@ -654,79 +343,18 @@ wepy.page({
         wx.showToast({ title: '获取钥匙交接选项出错', icon: 'none' });
         return -1;
       }
-    },
-    // 查询高级服务列表
-    async getAdvancedService() {
-      try {
-        let res = await queryAdvancedService({ classification: this.type });
-        const { results = {} } = res.data || {};
-        results.map(item => {
-          //给每个服务设置未选中,倍数为1
-          item.checked = false;
-          item.multiple = 1;
-        });
-        this.advancedList = results;
-      } catch (error) {
-        console.log(error);
-        wx.showToast({ title: '获取高级服务选项出错', icon: 'none' });
-        return -1;
-      }
-    },
-    // 查询我的宠物
-    async getMyPet() {
-      try {
-        wx.showLoading({ title: '数据加载中...' });
-        let res = await gainMyPet({
-          userId: wx.getStorageSync('openId'),
-          type: this.type
-        });
-        const { results = {} } = res.data || {};
-        results.map(item => {
-          item.checked = false; //给每个宠物设置未选中
-        });
-        this.myPetList = results; //列表勾选使用
-        setTimeout(() => wx.hideLoading(), 300);
-      } catch (error) {
-        console.log(error);
-        wx.showToast({ title: '查询我的宠物出错', icon: 'none' });
-        return -1;
-      }
     }
   },
   onPageScroll() {
     this.remarkFocus = false;
   },
-  onUnload() {
-    this.clearSrorage();
-  },
+  onUnload() {},
   onShow() {
     this.getAddressList();
-    const selDateArr = wx.getStorageSync('selDateArr'); //获取选择的日期
-    if (selDateArr) {
-      this.serveDateArr = selDateArr; //变更选择的日期
-      let showDate = selDateArr.map(item => {
-        const YTD = item.split('-');
-        return `${YTD[1]}月${YTD[2]}日`;
-      });
-      this.serveDateShow = showDate.slice(0, 5).join('、'); //界面显示用的日期
-      this.checkDateTime(selDateArr);
-      this.calculatePrice();
-    }
   },
   onLoad(props) {
-    this.clearSrorage();
-    const { type } = props;
-    this.type = type || 0;
-    if (type == 0) {
-      wx.setNavigationBarTitle({ title: '上门喂猫' });
-      this.getAdvancedService();
-      this.getPetAmountList();
-    } else if (type == 1) {
-      wx.setNavigationBarTitle({ title: '上门遛狗' });
-      this.getDogPetNumber();
-    }
+    // wx.setNavigationBarTitle({ title: '上门喂猫' });
     this.getKeyList();
-    this.getMyPet();
   }
 });
 </script>

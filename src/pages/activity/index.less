@@ -5,8 +5,7 @@
 
   .addressCard,
   .serveInfoCard,
-  .advancedOptions,
-  .myPet {
+  .activityDesc {
     margin: 24rpx 32rpx 0;
     background: #FFF;
     border-radius: 16rpx;
@@ -17,11 +16,6 @@
       line-height: 48rpx;
       font-size: 34rpx;
       color: @text-color;
-    }
-
-    .cardDesc {
-      font-size: 22rpx;
-      color: #949494;
     }
   }
 
@@ -124,15 +118,6 @@
       box-sizing: border-box;
       align-items: center;
 
-      // 多行
-      &.multiRow {
-        height: 216rpx;
-
-        .serveInfoTitle {
-          min-width: 166rpx;
-        }
-      }
-
       &:last-child {
         border: none;
       }
@@ -144,9 +129,8 @@
         color: @low-text-color;
       }
 
-      //性别
-      .radio-group,
-      .checkbox-group {
+      //服务种类
+      .radio-group {
         position: relative;
 
         .label_option {
@@ -183,12 +167,31 @@
         color: @text-color;
       }
 
-      .serveDate {
-        width: 460rpx;
-        line-height: 48rpx;
-        text-align: left;
-        font-size: 28rpx;
+      // 数量加减
+      .petDouble {
+        display: inline-block;
+        float: right;
+
+        .minus,
+        .plus {
+          display: inline-block;
+          vertical-align: middle;
+          padding: 4rpx;
+          width: 40rpx;
+          height: 40rpx;
+        }
+
+        .multiple {
+          display: inline-block;
+          vertical-align: middle;
+          width: 54rpx;
+          text-align: center;
+          font-size: 30rpx;
+          font-weight: 400;
+          color: @text-color;
+        }
       }
+
 
       .serveInfoArrow {
         position: absolute;
@@ -207,159 +210,14 @@
     }
   }
 
-  //高级选项
-  .advancedOptions {
-    padding: 24rpx;
-
-    .advancedTitle {
-      display: flex;
-      height: 48rpx;
-      line-height: 48rpx;
-
-      .advancedTitle-left {
-        flex: 1;
-        font-size: 34rpx;
-        color: @text-color;
-      }
-
-      .advancedTitle-right {
-        position: relative;
-        padding-left: 36rpx;
-        font-size: 30rpx;
-        color: @text-color;
-
-        &:active {
-          opacity: .6;
-        }
-
-        &::before {
-          position: absolute;
-          content: '';
-          top: 50%;
-          left: 0;
-          transform: translateY(-50%);
-          width: 28rpx;
-          height: 4rpx;
-          background: #E2BF51;
-        }
-
-        &::after {
-          position: absolute;
-          content: '';
-          top: 50%;
-          left: 12rpx;
-          transform: translateY(-50%);
-          width: 4rpx;
-          height: 28rpx;
-          background: #E2BF51;
-        }
-      }
-    }
-
-    .advancedList {
-      font-size: 30rpx;
-      color: @low-text-color;
-
-      .advancedRow {
-        margin-top: 22rpx;
-
-        .advancedName {}
-
-        .advancedPrice {
-          margin-left: 20rpx;
-        }
-
-        .advancedNum {
-          margin-left: 8rpx;
-        }
-      }
-    }
-  }
-
   //我的宠物
-  .myPet {
+  .activityDesc {
     padding: 24rpx;
 
-    .petList {
-      display: flex;
-      flex-direction: row;
-      flex-wrap: wrap;
-
-      .petRow {
-        margin-top: 22rpx;
-        margin-right: 40rpx;
-        max-width: 100rpx;
-        text-align: center;
-
-        .petImage {
-          width: 92rpx;
-          height: 92rpx;
-          border-radius: 50%;
-          border: 2rpx solid #F0F0F0;
-        }
-
-        .petName {
-          font-size: 24rpx;
-          color: @text-color;
-          overflow: hidden;
-          white-space: nowrap;
-          text-overflow: ellipsis;
-        }
-      }
-
-      .addPet {
-        position: relative;
-        margin-top: 22rpx;
-        width: 92rpx;
-        height: 92rpx;
-        background: #F9F0DD;
-        border-radius: 50%;
-
-        &:active {
-          opacity: .6;
-        }
-
-        &::before {
-          position: absolute;
-          content: '';
-          top: 50%;
-          left: 50%;
-          transform: translateX(-50%) translateY(-50%);
-          width: 32rpx;
-          height: 4rpx;
-          background: #E2BF51;
-        }
-
-        &::after {
-          position: absolute;
-          content: '';
-          top: 50%;
-          left: 50%;
-          transform: translateX(-50%) translateY(-50%);
-          width: 4rpx;
-          height: 32rpx;
-          background: #E2BF51;
-        }
-      }
-    }
-
-    .remark {
-      margin-top: 20rpx;
-      padding: 10rpx 16rpx;
-      min-height: 208rpx;
-      border: 2rpx solid #F0F0F0;
-
-      textarea {
-        width: 100%;
-        min-height: 208rpx;
-      }
-
-      .replacerPlaceholder {
-        min-height: 208rpx;
-        line-height: 24rpx;
-        font-size: 32rpx;
-        color: #C9C9C9;
-      }
+    .description {
+      margin-top: 24rpx;
+      font-size: 22rpx;
+      color: #949494;
     }
   }
 }
@@ -534,166 +392,6 @@
           margin-top: 8rpx;
           font-size: 26rpx;
           color: @low-text-color;
-        }
-      }
-    }
-  }
-}
-
-
-//上拉选项
-.actionSheet {
-  position: fixed;
-  width: 100%;
-  height: 42vh;
-  z-index: 20;
-
-  bottom: -42vh;
-  background: #FFF;
-  transition: all .26s ease-out;
-
-  &.petSheet {
-    height: 50vh;
-    bottom: -50vh;
-  }
-  &.openSheet {
-    bottom: 0;
-  }
-
-  .actionSheetNavigation {
-    margin: 22rpx 32rpx 0;
-    height: 48rpx;
-
-    .actionSheetCancel {
-      float: left;
-      font-size: 34rpx;
-      color: #929292;
-    }
-
-    .actionSheetOk {
-      float: right;
-      font-size: 34rpx;
-      color: @select-color;
-    }
-  }
-
-  // 高级服务
-  .sheetAdvancedList {
-    margin: 0 32rpx;
-    padding: 0 4rpx;
-
-    .sheetAdvancedRow {
-      display: inline-block;
-      margin-top: 40rpx;
-      width: 100%;
-      height: 48rpx;
-      font-size: 34rpx;
-      color: @text-color;
-
-      &:last-child {
-        margin-bottom: 58rpx;
-      }
-
-      checkbox {
-        display: none;
-      }
-
-      .icon {
-        vertical-align: middle;
-      }
-
-      .advancedIcon {
-        display: inline-block;
-        vertical-align: middle;
-        width: 34rpx;
-        height: 34rpx;
-        border-radius: 50%;
-        border: 2rpx solid #D9D9D9;
-      }
-
-      .advancedContext {
-        margin-left: 22rpx;
-        vertical-align: middle;
-      }
-
-      // 倍数加减
-      .advancedDouble {
-        display: inline-block;
-        float: right;
-
-        .minus,
-        .plus {
-          display: inline-block;
-          vertical-align: middle;
-          padding: 4rpx;
-          width: 40rpx;
-          height: 40rpx;
-        }
-
-        .multiple {
-          display: inline-block;
-          vertical-align: middle;
-          width: 54rpx;
-          text-align: center;
-          font-size: 30rpx;
-          font-weight: 400;
-          color: @text-color;
-        }
-      }
-    }
-  }
-
-  // 我的宠物
-  .myPetList {
-    margin: 32rpx 0;
-    overflow: auto;
-    box-sizing: border-box;
-
-    .myPetRow {
-      display: flex;
-      margin: 16rpx 32rpx;
-      padding: 20rpx;
-      height: 92rpx;
-      line-height: 92rpx;
-      background: #fff;
-      box-shadow: 0 0 28rpx rgba(0, 0, 0, 0.06);
-      border-radius: 16rpx;
-
-      .myPetImage {
-        width: 92rpx;
-        height: 92rpx;
-        border: 2rpx solid #F0F0F0;
-        border-radius: 50%;
-        overflow: hidden;
-      }
-
-      .myPetName {
-        flex: 1;
-        margin-left: 20rpx;
-        font-size: 34rpx;
-        font-weight: 500;
-        color: @text-color;
-        overflow: hidden;
-        white-space: nowrap;
-        text-overflow: ellipsis;
-      }
-
-      .myPetCheckbox {
-        checkbox {
-          display: none;
-        }
-
-        .icon {
-          margin-top: 20rpx;
-        }
-
-        .advancedIcon {
-          display: inline-block;
-          vertical-align: middle;
-          width: 34rpx;
-          height: 34rpx;
-          border-radius: 50%;
-          border: 2rpx solid #D9D9D9;
         }
       }
     }
