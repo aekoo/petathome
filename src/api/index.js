@@ -178,6 +178,16 @@ export const deleteAddress = (data) => {
 
 
 
+// 查询活动
+export const gainActivityInfo = (data) => {
+  let pathUrl = '/activity/queryActivityInfo'
+  return fetch.post(REQ_URL + pathUrl, data)
+}
+// 活动购买
+export const activityPlaceAnOrder = (data) => {
+  let pathUrl = '/activity/placeAnOrder'
+  return fetch.post(REQ_URL + pathUrl, data)
+}
 
 
 // 文件上传

@@ -125,7 +125,12 @@ wepy.page({
       wx.navigateTo({ url: `/pages/me/addPet?petId=${id}&type=${type}` });
     },
     toWebview(url) {
-      wx.navigateTo({ url: `/pages/webview?url=${url}` });
+      if (url.indexOf('http') != -1) {
+        wx.navigateTo({ url: `/pages/webview?url=${url}` });
+      // } else if (url.indexOf('activity') != -1) {
+      } else {
+        wx.navigateTo({ url: `/pages/activity/index?activityId=${url}` });
+      }
     },
     bannerClick(e) {
       const { link } = e.currentTarget.dataset;

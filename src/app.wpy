@@ -35,7 +35,6 @@ wepy.app({
 <config>
 {
     pages: [
-      'pages/activity/index',
       'pages/home/index',
       'pages/service/index',
       'pages/orders/index',
@@ -53,6 +52,7 @@ wepy.app({
       'pages/city/index',
       'pages/calendar/index',
       'pages/webview',
+      'pages/activity/index',
     ],
     window: {
       backgroundTextStyle: 'light',
