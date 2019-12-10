@@ -51,6 +51,7 @@ wepy.app({
       'pages/address/add',
       'pages/city/index',
       'pages/calendar/index',
+      'pages/protocol',
       'pages/webview',
       'pages/activity/index',
     ],

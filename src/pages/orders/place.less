@@ -364,6 +364,43 @@
   }
 }
 
+.agreement {
+  display: flex;
+  margin-top: 24rpx;
+  padding: 0 36rpx;
+  font-size: 26rpx;
+  color: @low-text-color;
+
+  .radio {
+    display: none;
+  }
+
+  .icon {
+    vertical-align: middle;
+  }
+
+  .protocolIcon {
+    display: inline-block;
+    vertical-align: middle;
+    width: 34rpx;
+    height: 34rpx;
+    border-radius: 50%;
+    border: 2rpx solid #D9D9D9;
+  }
+
+  .protocolBox {
+    flex: 1;
+    margin-left: 10rpx;
+    vertical-align: middle;
+
+    .protocol {
+      display: inline;
+      text-decoration: underline;
+      color: #E2BF51;
+    }
+  }
+}
+
 // 下单
 .submitOrderBox {
   display: flex;
@@ -556,6 +593,7 @@
     height: 50vh;
     bottom: -50vh;
   }
+
   &.openSheet {
     bottom: 0;
   }

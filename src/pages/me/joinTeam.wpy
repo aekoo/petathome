@@ -89,6 +89,12 @@
         </checkbox-group>
       </view>
     </view>
+    <view class="agreement" bindtap="protocolChange">
+      <radio class="radio" checked="{{agree}}"></radio>
+      <icon class="icon" type="success" size="20" color="#76B372" wx:if="{{agree}}"/>
+      <view class="protocolIcon" wx:else></view>
+      <view class="protocolBox">我已阅读并同意<view class="protocol" catchtap="{{goPage('/pages/protocol?type=2')}}">铲屎官&遛狗官申请协议</view></view>
+    </view>
     <view class="submitBtn" @tap="joinTeam">提交</view>
   </view>
 </template>
@@ -101,6 +107,7 @@ import { joinTeam } from '@/api/index.js';
 wepy.page({
   store,
   data: {
+    agree: true,
     ageArray: [],
     educationArray: ['其他', '中专', '大专', '本科', '研究生', '博士'],
     whetherArr: ['是', '否'],
@@ -131,6 +138,14 @@ wepy.page({
   computed: {},
 
   methods: {
+    // 页面跳转
+    goPage(url) {
+      wx.navigateTo({ url });
+    },
+    // 协议
+    protocolChange() {
+      this.agree = !this.agree;
+    },
     generateAge() {
       let arr = [];
       for (let i = 1; i <= 100; i++) {
@@ -212,7 +227,8 @@ wepy.page({
         hasPet,
         vaccination,
         workingStatus,
-        canServerTime
+        canServerTime,
+        agree
       } = this;
 
       if (!realName) {
@@ -235,6 +251,12 @@ wepy.page({
       }
       if (!canServerTime) {
         return wx.showToast({ title: '请选择可服务时间', icon: 'none' });
+      }
+      if (!agree) {
+        return wx.showToast({
+          title: '请先同意铲屎官&遛狗官申请协议',
+          icon: 'none'
+        });
       }
       let params = {
         realName,

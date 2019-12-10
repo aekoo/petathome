@@ -92,10 +92,16 @@
           auto-height="true"
           cursor-spacing="20"
           placeholder-class="placeholderStyle-textarea"
-          placeholder="填写备注，比如宠物的习惯和需要注意的事项等，或者其他需要告诉小爱的"
+          placeholder="填写备注，比如宠物的习惯和需要注意的事项等"
          />
-         <text class="{{remark.length<1?'replacerPlaceholder':''}}" wx:else>{{remark.length>0?remark:'填写备注，比如宠物的习惯和需要注意的事项等，或者其他需要告诉小爱的'}}</text>
+         <text class="{{remark.length<1?'replacerPlaceholder':''}}" wx:else>{{remark.length>0?remark:'填写备注，比如宠物的习惯和需要注意的事项等'}}</text>
       </view>
+    </view>
+    <view class="agreement" bindtap="protocolChange">
+      <radio class="radio" checked="{{agree}}"></radio>
+      <icon class="icon" type="success" size="20" color="#76B372" wx:if="{{agree}}"/>
+      <view class="protocolIcon" wx:else></view>
+      <view class="protocolBox">我已阅读并同意<view class="protocol" catchtap="{{goPage('/pages/protocol?type=1')}}">有宠在家服务协议</view></view>
     </view>
     <view class="submitOrderBox">
       <view class="submitOrderLeft">
@@ -187,6 +193,7 @@ wepy.page({
     addressSheetShow: false, //地址选项
     advancedSheetShow: false, //高级选项
     petSheetShow: false, //高级选项
+    agree: true,
     type: 0, //预约服务类型 0:喂猫 1:遛狗
     payMoney: '0.00',
     priceDescribe: '',
@@ -239,6 +246,10 @@ wepy.page({
     // 页面跳转
     goPage(url) {
       wx.navigateTo({ url });
+    },
+    // 协议
+    protocolChange() {
+      this.agree = !this.agree;
     },
 
     // 选择服务日期
@@ -424,6 +435,7 @@ wepy.page({
     // 提交订单
     async placeAnOrder() {
       let {
+        agree,
         selAddressIndex,
         serveDateArr,
         timeFrame,
@@ -442,6 +454,9 @@ wepy.page({
       }
       if (!selKey) {
         return Notify({ type: 'warning', message: '请选择钥匙交接方式' });
+      }
+      if (!agree) {
+        return Notify({ type: 'warning', message: '请先同意有宠在家服务协议' });
       }
 
       let petIds = [];

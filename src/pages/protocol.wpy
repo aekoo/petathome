@@ -1,0 +1,58 @@
+<style lang="less" src="./protocol.less"></style>
+<template>
+  <view class="container">
+    <view class="protocol" wx:if="{{type==1}}">
+
+      <view class="title">有宠在家服务协议</view>
+
+      <view class="article">为保证服务质量，请您知悉并遵守以下协议：</view>
+      <view class="article">1.购买有宠在家（以下简称：本平台）上门喂猫或上门遛狗等服务，宠物主应如实提供宠物健康状况，并保证宠物已接种疫苗且仍在有效期内，如有隐瞒，一切后果由宠物主承担，本平台概不负责。</view>
+      <view class="article">2.宠物主应在服务前提供宠物相关信息，包含且不限于宠物种类，年龄，性别，性格，生活习惯，身体状态等，如有特殊需求，应在下单时填写在备注信息中并以此为准。</view>
+      <view class="article">3.在服务过程中，宠物主应配合本平台服务人员，向其提供咨询和协助。</view>
+      <view class="article">4.在服务过程中，如宠物主有其他特殊需求，例：购买猫粮、狗粮、猫砂等，应提前协商并支付相关费用。本平台服务人员有权拒绝临时增加的服务需求。</view>
+      <view class="article">5.在服务过程中，宠物需要的食品，用品等均由宠物主提供。</view>
+      <view class="article">6.本平台服务人员将在服务中以照片或视频的形式为宠物主提供信息反馈，以便更好的了解宠物状态。</view>
+      <view class="article">7.如在服务过程中发现宠物生病、受伤等状况，本平台服务人员将及时通知宠物主，在宠物主同意的情况下，及时就医。如因宠物本身应激反应，急病，宠物主无法提供疫苗接种记录或健康报告的情况，医疗费用由宠物主自行承担。</view>
+      <view class="article">8.本平台服务人员均接受过培训及背景调查，如在服务中因服务人员原因导致家庭财产损失，宠物患病，受伤，死亡等，经权威机构责任判定，本平台对下单人最高承担1000元人民币赔付。</view>
+      <view class="article">9.服务费用应在下单时支付，预约服务日期当天取消服务，已付费用不予退还。购买包周，包月，包季，包年服务产品，服务周期内取消服务，该周期服务费用不予退还。</view>
+      <view class="article">10.购买包周，包月，包季，包年服务产品，服务时间不包含元旦、春节、清明、五一、端午、中秋、国庆等长短假期，假期服务费用另行结算。</view>
+      
+    </view>
+    <view class="protocol" wx:elif="{{type==2}}">
+
+      <view class="title">铲屎官&遛狗官申请协议</view>
+      
+      <view class="article">1.申请人自愿申请成为有宠在家（以下简称：本平台）服务人员，遵守本平台的服务流程、规则及服务安排。</view>
+      <view class="article">2.申请人承诺提交给本平台的申请信息均为真实、有效的信息，如有隐瞒，责任自负。</view>
+      <view class="article">3.申请人承诺无犯罪记录，无滥用药物历史，无虐待动物等非正常心理问题，无传染病史，身体健康，如有隐瞒，责任自负。</view>
+      <view class="article">4.申请人平日服务薪酬每周三按周结算，元旦、春节、清明、五一、端午、中秋、国庆等法定假期以当年情况确定结算周期。薪酬计算以本平台公告为准。</view>
+      <view class="article">5.因申请人原因，对客户家庭财产，他人健康，宠物健康，本平台品牌造成损失，申请人承担全部责任并对造成的损失进行赔偿。</view>
+      <view class="article">6.在服务过程中，申请人如因交通事故，宠物抓、咬伤等情况造成申请人患病、残疾、死亡，根据当地三甲医院出示的诊断证明及缴费记录，本平台对申请人最高承担500元人民币赔付。</view>
+      <view class="article">7.申请人因个人原因未按计划提供服务且未提前24小时报备，本平台将扣除申请人当周全部服务订单薪酬并取消申请人服务资格。如对本平台品牌造成损失，申请人承担赔偿责任。</view>
+
+    </view>
+  </view>
+</template>
+
+<script>
+import wepy from '@wepy/core';
+
+wepy.page({
+  data: {
+    type: 1
+  },
+
+  computed: {},
+
+  methods: {},
+  onLoad(option) {
+    const { type } = option;
+    this.type = type || 1;
+  }
+});
+</script>
+<config>
+{
+    navigationBarTitleText: "",
+}
+</config>
