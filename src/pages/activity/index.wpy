@@ -25,11 +25,11 @@
         </radio-group>
       </view>
       <view class="serveInfoRow">
-        <view class="serveInfoTitle">宠物数量(最多4只)</view>
+        <view class="serveInfoTitle">宠物数量(最多{{num}}只)</view>
         <view class="petDouble">
           <image class="minus" mode="aspectFill" src="../../image/minus{{petNumber>1?'-s':''}}.png" data-index="{{idx}}" catchtap="minusClick"/>
           <text class="multiple">{{petNumber}}</text>
-          <image class="plus" mode="aspectFill" src="../../image/plus{{petNumber<4?'-s':''}}.png" data-index="{{idx}}" catchtap="plusClick"/>
+          <image class="plus" mode="aspectFill" src="../../image/plus{{petNumber<num?'-s':''}}.png" data-index="{{idx}}" catchtap="plusClick"/>
         </view>
       </view>
       <view class="serveInfoRow">
@@ -86,6 +86,7 @@ wepy.page({
   data: {
     addressSheetShow: false, //地址选项
     description: [],
+    num: 1,
 
     activityId: '',
     payMoney: '0.00',
@@ -139,7 +140,7 @@ wepy.page({
     },
     plusClick(e) {
       const { index } = e.currentTarget.dataset;
-      if (this.petNumber < 4) {
+      if (this.petNumber < this.num) {
         this.petNumber++;
       }
     },
@@ -157,7 +158,7 @@ wepy.page({
       let params = {
         userId: wx.getStorageSync('openId'),
         activityId: this.activityId,
-        payMoney: 0.01,
+        payMoney: this.payMoney,
         serverType: this.serverType,
         addressId: this.addressList[this.selAddressIndex].addressId, //地址 id
         petNumber: this.petNumber, //宠物数量
@@ -246,6 +247,7 @@ wepy.page({
         const { results = {} } = res.data || {};
 
         this.activityId = activityId || '';
+        this.num = results.num || 1;
         this.payMoney = results.totalPrice || '0.00';
         this.description = results.description
           ? results.description.split(/\n/)
