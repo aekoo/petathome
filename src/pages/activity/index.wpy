@@ -44,6 +44,12 @@
       <view class="cardTitle">活动说明</view>
       <view class="description" wx:for="{{description}}" wx:key="unique">{{item}}</view>
     </view>
+    <view class="agreement" bindtap="protocolChange">
+      <radio class="radio" checked="{{agree}}"></radio>
+      <icon class="icon" type="success" size="20" color="#76B372" wx:if="{{agree}}"/>
+      <view class="protocolIcon" wx:else></view>
+      <view class="protocolBox">我已阅读并同意<view class="protocol" catchtap="{{goPage(`/pages/webview?url=${encodeURIComponent('https://petinhome.net/static/protocol.html?type=1')}`)}}">有宠在家服务协议</view></view>
+    </view>
     <view class="submitOrderBox">
       <view class="submitOrderLeft">
         <view class="submitOrderPrice"><text>合计 ：</text><text class="price">¥{{payMoney}}</text></view>
@@ -87,6 +93,7 @@ wepy.page({
     addressSheetShow: false, //地址选项
     description: [],
     num: 1,
+    agree: true,
 
     activityId: '',
     payMoney: '0.00',
@@ -106,6 +113,10 @@ wepy.page({
     // 页面跳转
     goPage(url) {
       wx.navigateTo({ url });
+    },
+    // 协议
+    protocolChange() {
+      this.agree = !this.agree;
     },
 
     //关闭地址选项
@@ -147,12 +158,15 @@ wepy.page({
 
     // 提交订单
     async placeAnOrder() {
-      let { selAddressIndex, serverType, petNumber, selKey } = this;
+      let { agree, selAddressIndex, serverType, petNumber, selKey } = this;
       if (!selAddressIndex && selAddressIndex != 0) {
         return Notify({ type: 'warning', message: '请选择或添加收货地址' });
       }
       if (!selKey) {
         return Notify({ type: 'warning', message: '请选择钥匙交接方式' });
+      }
+      if (!agree) {
+        return Notify({ type: 'warning', message: '请先同意有宠在家服务协议' });
       }
 
       let params = {

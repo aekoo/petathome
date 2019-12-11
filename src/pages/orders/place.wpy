@@ -101,7 +101,7 @@
       <radio class="radio" checked="{{agree}}"></radio>
       <icon class="icon" type="success" size="20" color="#76B372" wx:if="{{agree}}"/>
       <view class="protocolIcon" wx:else></view>
-      <view class="protocolBox">我已阅读并同意<view class="protocol" catchtap="{{goPage('/pages/protocol?type=1')}}">有宠在家服务协议</view></view>
+      <view class="protocolBox">我已阅读并同意<view class="protocol" catchtap="{{goPage(`/pages/webview?url=${encodeURIComponent('https://petinhome.net/static/protocol.html?type=1')}`)}}">有宠在家服务协议</view></view>
     </view>
     <view class="submitOrderBox">
       <view class="submitOrderLeft">
