@@ -127,7 +127,7 @@ wepy.page({
     toWebview(url) {
       if (url.indexOf('http') != -1) {
         wx.navigateTo({ url: `/pages/webview?url=${url}` });
-      // } else if (url.indexOf('activity') != -1) {
+        // } else if (url.indexOf('activity') != -1) {
       } else {
         wx.navigateTo({ url: `/pages/activity/index?activityId=${url}` });
       }
@@ -218,6 +218,13 @@ wepy.page({
     if (typeof this.$wx.getTabBar === 'function' && this.$wx.getTabBar()) {
       this.$wx.getTabBar().setData({ selected: 0 });
     }
+  },
+  onShareAppMessage(options) {
+    return {
+      title: '有宠在家 PETINHOME', // 默认是小程序的名称(可以写slogan等)
+      path: '/pages/home/index', // 默认是当前页面，必须是以‘/’开头的完整路径
+      imageUrl: '../../image/share.png' //自定义图片路径，可以是本地文件路径、代码包文件路径或者网络图片路径，支持PNG及JPG，不传入 imageUrl 则使用默认截图。显示图片长宽比是 5:4
+    };
   }
 });
 </script>

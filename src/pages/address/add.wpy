@@ -134,6 +134,9 @@ wepy.page({
       if (!this.verifyPhone(phone)) {
         return wx.showToast({ title: '请输入正确的手机号', icon: 'none' });
       }
+      if (!wechatNo) {
+        return wx.showToast({ title: '请输入您的微信号', icon: 'none' });
+      }
       let params = {
         userId: wx.getStorageSync('openId'),
         realName,

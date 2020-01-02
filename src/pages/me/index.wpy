@@ -8,7 +8,7 @@
                 <image mode="aspectFill" src="{{userInfo.avatar}}" />
             </view>
             <view class="userHeaderBox">
-              <view class="userHeaderName">{{userInfo.nickName}}</view>
+              <view class="userHeaderName {{userInfo.nickName.length>3?'minName':''}}">{{userInfo.nickName}}</view>
               <!-- <view class="userHeaderPhone">{{userInfo.phone}}</view> -->
             </view>
         </view>
@@ -74,7 +74,7 @@ wepy.page({
       nickName: '请先登陆'
     },
     myPetList: [],
-    myPetMore: false,
+    myPetMore: false
   },
   watch: {
     // 监听登录后openId变化
