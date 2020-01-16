@@ -73,6 +73,12 @@ wepy.page({
     },
     regionChange: function(e) {
       console.log('省市区选择改变，值为', e.$wx.detail.value);
+      if (e.$wx.detail.value[0].indexOf('北京') == -1) {
+        return wx.showToast({
+          title: '暂不支持北京以外的城市',
+          icon: 'none'
+        });
+      }
       this.region = e.$wx.detail.value;
       this.province = e.$wx.detail.value[0];
       this.city = e.$wx.detail.value[1];
@@ -228,14 +234,15 @@ wepy.page({
     }
   },
   onLoad(props) {
-    // console.log(props);
-    const { province, city, district } = store.state.locationInfo;
-    if (province) {
-      this.region = [province, city, district];
-      this.province = province;
-      this.city = city;
-      this.area = district;
-    }
+    // 定位str
+    // const { province, city, district } = store.state.locationInfo;
+    // if (province) {
+    //   this.region = [province, city, district];
+    //   this.province = province;
+    //   this.city = city;
+    //   this.area = district;
+    // }
+    // 定位end
 
     const { addressId } = props;
     if (addressId) {
